@@ -1,4 +1,5 @@
 Model = function(){
+	this.bindingType = 'simple';
 }; //INIT
 Model.prototype = {
 }; //Model
@@ -32,9 +33,26 @@ Controller = function(){
 	this.view = new View();
 }; //INIT
 Controller.prototype = {
-	this.setDatabase: function(database){
+	setDatabase: function(database){
 		this.model.database = database;
-	} //setDatabase
+	}, //setDatabase
+	setBindingType: function(bindingType){
+		this.model.bindingType = bindingType;
+		if(bindingType === 'sequence'){
+			$('#div-sequence-column').show();
+			$('#div-date-column').find('input').val('');
+			$('#div-date-column').hide();
+		} else if(bindingType === 'date'){
+			$('#div-sequence-column').find('input').val('');
+			$('#div-sequence-column').hide();
+			$('#div-date-column').show();
+		} else{
+			$('#div-sequence-column').find('input').val('');
+			$('#div-sequence-column').hide();
+			$('#div-date-column').find('input').val('');
+			$('#div-date-column').hide();
+		} //if
+	} //setBindingType
 }; //Controller
 
 function toast(msg){
@@ -42,5 +60,4 @@ function toast(msg){
 } //toast
 
 controller = new Controller();
-
 controller.view.init();

@@ -25,12 +25,6 @@
 <!-- js cols -->
 <script src="/resource/js/lib/js_cols.min.js"></script>
 
-<!-- server adpater js -->
-<script src="/resource/js/server-adapter.js"></script>
-
-<!-- scripts js -->
-<script src="/resource/js/new-script.js"></script>
-
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">
 
@@ -45,7 +39,7 @@
 				<label class="pull-right">database</label>
 			</div>
 			<div class="col-xs-10" id="div-database">
-				TODO
+				<div>loading databases...</div>
 				<hr />
 			</div>
 		</div>
@@ -66,19 +60,19 @@
 			</div>
 			<div class="col-xs-10">
 				<div class="radio">
-					<label><input type="radio" name="radio-binding-type" value="simple-binding" checked>simple binding</label>
+					<label><input type="radio" name="radio-binding-type" value="simple-binding" onclick="controller.setBindingType('simple');" checked>simple binding</label>
 				</div>
 				<div class="radio">
-					<label><input type="radio" name="radio-binding-type" value="sequence-binding">sequence binding</label>
+					<label><input type="radio" name="radio-binding-type" value="sequence-binding" onclick="controller.setBindingType('sequence');">sequence binding</label>
 				</div>
 				<div class="radio">
-					<label><input type="radio" name="radio-binding-type" value="date-binding">date binding</label>
+					<label><input type="radio" name="radio-binding-type" value="date-binding" onclick="controller.setBindingType('date');">date binding</label>
 				</div>
 				<hr />
 			</div>
 		</div>
 		
-		<div class="row" id="div-sequence-column">
+		<div class="row" id="div-sequence-column" style="display: none;">
 			<div class="col-xs-2">
 				<label class="pull-right">sequence column</label>
 			</div>
@@ -88,7 +82,7 @@
 			</div>
 		</div>
 		
-		<div class="row" id="div-date-column">
+		<div class="row" id="div-date-column" style="display: none;">
 			<div class="col-xs-2">
 				<label class="pull-right">date column</label>
 			</div>
@@ -97,8 +91,22 @@
 				<hr />
 			</div>
 		</div>
+		
+		<hr />
+		
+		<div class="row">
+			<div class="col-xs-12 text-center">
+				<button type="button" class="btn btn-primary">make script</button>
+			</div>
+		</div>
 	</div>
 	<!-- end of container -->
+	
+	<!-- server adpater js -->
+	<script src="/resource/js/server-adapter.js"></script>
+
+	<!-- scripts js -->
+	<script src="/resource/js/new-script.js"></script>
 	
 </body>
 </html>
