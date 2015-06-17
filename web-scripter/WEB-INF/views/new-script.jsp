@@ -16,6 +16,10 @@
 <link href="http://bootswatch.com/superhero/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
+<!-- bootstrap switch -->
+<link href="http://www.bootstrap-switch.org/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet">
+<script src="http://www.bootstrap-switch.org/dist/js/bootstrap-switch.js"></script>
+
 <!-- bootbox -->
 <script src="https://github.com/makeusabrew/bootbox/releases/download/v4.4.0/bootbox.min.js"></script>
 
@@ -88,6 +92,67 @@
 			</div>
 			<div class="col-xs-10">
 				<input type="text" class="input form-control" />
+				<hr />
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-xs-2">
+				<label class="pull-right">select column</label>
+			</div>
+			<div class="col-xs-10">
+				<input type="text" class="input form-control" value="*"/>
+				<hr />
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-xs-2">
+				<label class="pull-right">column delimiter</label>
+			</div>
+			<div class="col-xs-10">
+				<input type="text" class="input form-control" value="|"/>
+				<hr />
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-xs-2">
+				<label class="pull-right">period</label>
+			</div>
+			<div class="col-xs-10">
+				<input type="text" class="input form-control" value="6"/>
+				<hr />
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-xs-2">
+				<label class="pull-right">expiredTimeInHour</label>
+			</div>
+			<div class="col-xs-10">
+				<input type="checkbox" name="expired-time-in-hour-checkbox" checked>
+				<input type="text" class="input form-control" value="3"/>
+				<hr />
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-xs-2">
+				<label class="pull-right">outputPath</label>
+			</div>
+			<div class="col-xs-10">
+				<input type="text" class="input form-control" value="/data/outputpath/"/>
+				<hr />
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-xs-2">
+				<label class="pull-right">charset</label>
+			</div>
+			<div class="col-xs-10">
+				<input type="text" class="input form-control" value="utf-8"/>
 				<hr />
 			</div>
 		</div>

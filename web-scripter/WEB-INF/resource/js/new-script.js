@@ -8,6 +8,8 @@ View = function(){
 }; //INIT
 View.prototype = {
 	init: function(){
+		$('[name="expired-time-in-hour-checkbox"]').bootstrapSwitch();
+		
 		serverAdapter.getRegisteredDatabases(function(response){
 			if(response.success != 1){
 				toast(response.errmsg);
