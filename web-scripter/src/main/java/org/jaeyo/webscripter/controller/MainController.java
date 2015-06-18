@@ -34,9 +34,19 @@ public class MainController {
 		return new ModelAndView("scripts");
 	} //scripts
 	
+	@RequestMapping(value = "/NewScript/", method = RequestMethod.GET)
+	public ModelAndView newScript(){
+		return new ModelAndView("new-script");
+	} //newScript
+	
 	@RequestMapping(value = "/Databases/", method = RequestMethod.GET)
 	public ModelAndView databases(){
 		return new ModelAndView("databases");
+	} //databases
+	
+	@RequestMapping(value = "/NewDatabase/", method = RequestMethod.GET)
+	public ModelAndView newDatabase(){
+		return new ModelAndView("new-database");
 	} //databases
 	
 	@RequestMapping(value = "/Configuration/", method = RequestMethod.GET)
@@ -44,10 +54,7 @@ public class MainController {
 		return new ModelAndView("configuration");
 	} //configuration
 	
-	@RequestMapping(value = "/NewScript/", method = RequestMethod.GET)
-	public ModelAndView newScript(){
-		return new ModelAndView("new-script");
-	} //newScript
+	
 	
 	
 	@RequestMapping(value = "/Script/Run/", method = RequestMethod.POST)
