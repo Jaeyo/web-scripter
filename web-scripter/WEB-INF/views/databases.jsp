@@ -30,7 +30,7 @@
 <script src="/resource/js/server-adapter.js"></script>
 
 <!-- scripts js -->
-<script src="/resource/js/scripts.js"></script>
+<script src="/resource/js/databases.js"></script>
 
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">

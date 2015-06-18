@@ -29,27 +29,27 @@ public class MainController {
 		return scripts();
 	} //main
 	
-	@RequestMapping(value = "/Scripts/", method = RequestMethod.GET)
+	@RequestMapping(value = "/ViewScripts/", method = RequestMethod.GET)
 	public ModelAndView scripts(){
 		return new ModelAndView("scripts");
 	} //scripts
 	
-	@RequestMapping(value = "/NewScript/", method = RequestMethod.GET)
+	@RequestMapping(value = "/ViewNewScript/", method = RequestMethod.GET)
 	public ModelAndView newScript(){
 		return new ModelAndView("new-script");
 	} //newScript
 	
-	@RequestMapping(value = "/Databases/", method = RequestMethod.GET)
+	@RequestMapping(value = "/ViewDatabases/", method = RequestMethod.GET)
 	public ModelAndView databases(){
 		return new ModelAndView("databases");
 	} //databases
 	
-	@RequestMapping(value = "/NewDatabase/", method = RequestMethod.GET)
+	@RequestMapping(value = "/ViewNewDatabase/", method = RequestMethod.GET)
 	public ModelAndView newDatabase(){
 		return new ModelAndView("new-database");
 	} //databases
 	
-	@RequestMapping(value = "/Configuration/", method = RequestMethod.GET)
+	@RequestMapping(value = "/ViewConfiguration/", method = RequestMethod.GET)
 	public ModelAndView configuration(){
 		return new ModelAndView("configuration");
 	} //configuration

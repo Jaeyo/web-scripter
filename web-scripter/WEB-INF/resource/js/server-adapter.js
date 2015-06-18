@@ -12,8 +12,4 @@ serverAdapter = new function(){
 			}
 		});
 	}; //ajaxCall
-	
-	this.getRegisteredDatabases = function(callback){
-		//TODO
-	} //getRegisteredDatabases
 }; //serverAdapter
