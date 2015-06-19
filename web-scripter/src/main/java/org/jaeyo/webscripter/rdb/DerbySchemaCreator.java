@@ -43,8 +43,9 @@ public class DerbySchemaCreator {
 		
 		if(existingTableNames.contains("DATABASE") == false)
 			jdbcTmpl.execute("create table database ( "
-					+ "sequence integer not null, "
-					+ "mapping_name varchar(100) not null, "
+					+ "sequence integer not null primary key, "
+					+ "mapping_name varchar(100) not null unique, "
+					+ "memo varchar(300) , "
 					+ "driver varchar(100) not null, "
 					+ "connection_url varchar(100) not null, "
 					+ "username varchar(100) not null, "

@@ -51,6 +51,7 @@ Controller.prototype = {
 	}, //refreshJdbcView
 	save: function(){
 		var dbName = $("#input-database-mapping-name").val();
+		var memo = ''; //TODO IMME
 		var jdbcDriver = $("#input-jdbc-driver").val();
 		var jdbcConnUrl = $("#input-jdbc-connection-url").val();
 		var jdbcUsername = $("#input-jdbc-username").val();
@@ -69,7 +70,7 @@ Controller.prototype = {
 		} //catch
 		
 		serverAdapter.ajaxCall('/Database/', 'post', 
-			{'dbMappingName': dbName, 'jdbcDriver': jdbcDriver, 'jdbcConnUrl': jdbcConnUrl, 'jdbcUsername': jdbcUsername, 'jdbcPassword': jdbcPassword},
+			{'dbMappingName': dbName, 'memo': memo, 'jdbcDriver': jdbcDriver, 'jdbcConnUrl': jdbcConnUrl, 'jdbcUsername': jdbcUsername, 'jdbcPassword': jdbcPassword},
 			function(resp){
 				if(resp.success != 1){
 					toast(resp.errmsg);

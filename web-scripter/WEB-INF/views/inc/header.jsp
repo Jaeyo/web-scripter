@@ -18,9 +18,9 @@
 		</div>
 		<div class="collapse navbar-collapse" id="navbar-menu">
 			<ul class="nav navbar-nav">
-				<li><a href="/Scripts/">scripts</a></li>
-				<li><a href="/Databases/">databases</a></li>
-				<li><a href="/Configuration/">configuration</a></li>
+				<li><a href="/ViewScripts/">scripts</a></li>
+				<li><a href="/ViewDatabases/">databases</a></li>
+				<li><a href="/ViewConfiguration/">configuration</a></li>
 			</ul>
 		</div>
 		<!-- /.navbar-collapse -->

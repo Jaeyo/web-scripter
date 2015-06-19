@@ -6,8 +6,10 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 
+import org.jaeyo.webscripter.exception.DuplicateException;
 import org.jaeyo.webscripter.service.DatabaseService;
 import org.jaeyo.webscripter.service.MainService;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +30,18 @@ public class DatabaseController {
 	@RequestMapping(value = "/Database/", method = RequestMethod.POST)
 	public @ResponseBody String postDatabase(
 			@RequestParam(value = "dbMappingName", required = true) String dbMappingName,
+			@RequestParam(value = "memo", required = true) String memo,
 			@RequestParam(value = "jdbcDriver", required = true) String jdbcDriver,
 			@RequestParam(value = "jdbcConnUrl", required = true) String jdbcConnUrl,
 			@RequestParam(value = "jdbcUsername", required = true) String jdbcUsername,
 			@RequestParam(value = "jdbcPassword", required = true) String jdbcPassword){
 		try{
-			databaseService.save(dbMappingName, jdbcDriver, jdbcConnUrl, jdbcUsername, jdbcPassword);
+			databaseService.save(dbMappingName, memo, jdbcDriver, jdbcConnUrl, jdbcUsername, jdbcPassword);
 			return new JSONObject().put("success", 1).toString();
+		} catch(DuplicateException e){
+			String msg = e.getMessage();
+			logger.warn(msg);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
 		} catch(Exception e){
 			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
 			logger.error(msg, e);
@@ -45,8 +52,8 @@ public class DatabaseController {
 	@RequestMapping(value = "/Databases/", method = RequestMethod.GET)
 	public @ResponseBody String getDatabases(){
 		try{
-			TODO IMME
-			return new JSONObject().put("success", 1).toString();
+			JSONArray databases = databaseService.loadDatabases();
+			return new JSONObject().put("success", 1).put("databases", databases).toString();
 		} catch(Exception e){
 			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
 			logger.error(msg, e);
