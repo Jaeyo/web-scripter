@@ -21,17 +21,30 @@ View.prototype = {
 			return;
 		
 		if(vendor === 'oracle'){
-			$("#input-jdbc-driver").val("oracle blabla");
-			$("#input-jdbc-connection-url").val(dbIp + ":" + dbPort + ":" + dbSid);
+			if(dbPort === '')
+				dbPort = 1521;
+			$("#input-jdbc-driver").val("oracle.jdbc.driver.OracleDriver");
+			$("#input-jdbc-connection-url").val('jdbc:oracle:thin:@' + dbIp + ':' + dbPort + ':' + dbSid);
 		} else if(vendor === 'mysql'){
-			$("#input-jdbc-driver").val("mysql blabla");
-			$("#input-jdbc-connection-url").val(dbIp + ":" + dbPort + ":" + dbSid);
+			if(dbPort === '')
+				dbPort = 3306;
+			$("#input-jdbc-driver").val("com.mysql.jdbc.Driver");
+			$("#input-jdbc-connection-url").val('jdbc:mysql://' + dbIp + ':' + dbPort + '/' + dbSid);
 		} else if(vendor === 'mssql'){
-			$("#input-jdbc-driver").val("mssql blabla");
-			$("#input-jdbc-connection-url").val(dbIp + ":" + dbPort + ":" + dbSid);
+			if(dbPort === '')
+				dbPort = 1433;
+			$("#input-jdbc-driver").val("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			$("#input-jdbc-connection-url").val('jdbc:sqlserver://' + dbIp + ':' + dbPort + ';databaseName=' + dbSid);
 		} else if(vendor === 'db2'){
-			$("#input-jdbc-driver").val("db2 blabla");
-			$("#input-jdbc-connection-url").val(dbIp + ":" + dbPort + ":" + dbSid);
+			if(dbPort === '')
+				dbPort = 50000;
+			$("#input-jdbc-driver").val("com.ibm.db2.jcc.DB2Driver");
+			$("#input-jdbc-connection-url").val('jdbc:db2://' + dbIp + ':' + dbPort + '/' + dbSid);
+		} else if(vendor === 'tibero'){
+			if(dbPort === '')
+				dbPort = 8629;
+			$("#input-jdbc-driver").val("com.tmax.tibero.jdbc.TbDriver");
+			$("#input-jdbc-connection-url").val('jdbc:tibero:thin:@' + dbIp + ':' + dbPort + ':' + dbSid);
 		} //if
 	} //refreshJdbcView
 }; //View
@@ -59,6 +72,7 @@ Controller.prototype = {
 		var dbVendor = this.model.dbVendor;
 		
 		try{
+			precondition(dbName != null && dbName.trim().length != 0, "database mapping name is empty");
 			precondition(dbVendor != null, "select database vendor");
 			precondition(jdbcDriver != null && jdbcDriver.trim().length != 0, "JDBC.Driver is empty");
 			precondition(jdbcConnUrl != null && jdbcConnUrl.trim().length != 0, "JDBC.ConnectionURL is empty");

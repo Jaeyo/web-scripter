@@ -5,22 +5,22 @@ Model.prototype = {
 
 View = function(){
 }; //INIT
-View.prototype: function(){
+View.prototype = {
 	makeDatabaseDOM: function(database){
 		var dom = '';
 		dom += '<div class="row well">';
 		dom += '<div class="col-xs-3">';
-		dom += '<h4>' + database.mapping_name + '</h4>';
-		dom += '<p style="font-size: 80%">' + database.memo + '</p>';
+		dom += '<h4>' + database.MAPPING_NAME + '</h4>';
+		dom += '<p style="font-size: 80%">' + database.MEMO + '</p>';
 		dom += '</div>';
 		dom += '<div class="col-xs-7">';
-		dom += '<div>driver : <label>' + database.driver + '</label></div>';
+		dom += '<div>driver : <label>' + database.DRIVER + '</label></div>';
 		dom += '<hr class="divider-light" />';
-		dom += '<div>connection url : <label>' + database.connection_url + '</label></div>';
+		dom += '<div>connection url : <label>' + database.CONNECTION_URL + '</label></div>';
 		dom += '<hr class="divider-light" />';
-		dom += '<div>username : <label>' + database.username + '</label></div>';
+		dom += '<div>username : <label>' + database.USERNAME + '</label></div>';
 		dom += '<hr class="divider-light" />';
-		dom += '<div>password : <label>' + database.password + '</label></div>';
+		dom += '<div>password : <label>' + database.PASSWORD + '</label></div>';
 		dom += '<hr class="divider-light" />';
 		dom += '</div>';
 		dom += '<div class="col-xs-2">';
@@ -58,10 +58,10 @@ Controller.prototype = {
 				var dom = '';
 				
 				if(databases== null || databases.length === 0)
-					dom = this.view.makeEmptyDatabaseDOM();
+					dom = controller.view.makeEmptyDatabaseDOM();
 				else
-					for(var database in databases)
-						dom += this.view.makeDatabaseDOM(database);
+					for(var i=0; i<databases.length; i++)
+						dom += controller.view.makeDatabaseDOM(databases[i]);
 				
 				$("#div-databases").html(dom);
 			});
@@ -73,3 +73,4 @@ function toast(msg){
 } //toast
 
 controller = new Controller();
+controller.loadDatabase();

@@ -42,7 +42,8 @@
 	
 	<div class="container">
 		<div class="row">
-			<button type="button" class="btn btn-primary pull-right" style="margin-bottom: 15px;">new script</button>
+			<button type="button" class="btn btn-primary pull-right" style="margin-bottom: 15px;"
+				onclick="window.location.href='/ViewNewScript/'">new script</button>
 		</div>
 	
 		<div class="row">

@@ -58,6 +58,7 @@
 						<li><a href="#" onclick="controller.setDbVendor('mysql');">MySQL</a></li>
 						<li><a href="#" onclick="controller.setDbVendor('mssql');">MSSQL</a></li>
 						<li><a href="#" onclick="controller.setDbVendor('db2');">DB2</a></li>
+						<li><a href="#" onclick="controller.setDbVendor('tibero');">Tibero</a></li>
 						<li><a href="#" onclick="controller.setDbVendor('etc');">etc</a></li>
 					</ul>
 				</div>

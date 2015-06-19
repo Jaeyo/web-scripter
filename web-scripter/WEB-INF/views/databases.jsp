@@ -42,57 +42,11 @@
 	
 	<div class="container">
 		<div class="row">
-			<button type="button" class="btn btn-primary pull-right" style="margin-bottom: 15px;">new script</button>
+			<button type="button" class="btn btn-primary pull-right" style="margin-bottom: 15px;" 
+				onclick="window.location.href='/ViewNewDatabase/'">new database</button>
 		</div>
 	
 		<div id="div-databases">
-			<div class="row well">
-				<div class="col-xs-3">
-					<h4>mizuno test db</h4>
-					<p style="font-size: 80%">this is test db</p>
-				</div>
-				<div class="col-xs-7">
-					<div>connection url : <label>blablabla</label></div>
-					<hr class="divider-light" />
-					<div>connection url : <label>blablabla</label></div>
-					<hr class="divider-light" />
-					<div>connection url : <label>blablabla</label></div>
-					<hr class="divider-light" />
-					<div>connection url : <label>blablabla</label></div>
-					<hr class="divider-light" />
-				</div>
-				<div class="col-xs-2">
-					<div>
-						<button type="button" class="btn btn-sm btn-info">edit</button>
-						<button type="button" class="btn btn-sm btn-info">remove</button>
-					</div>
-				</div>
-			</div>
-			
-			<hr />
-			
-			<div class="row well">
-				<div class="col-xs-3">
-					<h4>mizuno test db</h4>
-					<p style="font-size: 80%">this is test db</p>
-				</div>
-				<div class="col-xs-7">
-					<div>connection url : <label>blablabla</label></div>
-					<hr class="divider-light" />
-					<div>connection url : <label>blablabla</label></div>
-					<hr class="divider-light" />
-					<div>connection url : <label>blablabla</label></div>
-					<hr class="divider-light" />
-					<div>connection url : <label>blablabla</label></div>
-					<hr class="divider-light" />
-				</div>
-				<div class="col-xs-2">
-					<div>
-						<button type="button" class="btn btn-sm btn-info">edit</button>
-						<button type="button" class="btn btn-sm btn-info">remove</button>
-					</div>
-				</div>
-			</div>
 		</div>
 		
 		<hr />
