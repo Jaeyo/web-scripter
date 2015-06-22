@@ -39,6 +39,16 @@
 	
 	<div class="container">
 		<div class="row">
+			<div class="col-xs-4"><label class="pull-right">script name</label></div>
+			<div class="col-xs-4">
+				<div style="margin-bottom: 20px;"><input id="input-script-name" type="text" class="input form-control" /></div>
+			</div>
+			<div class="col-xs-4">
+				<button type="button" class="btn btn-primary pull-right" onclick="controller.save();">save</button>
+			</div>
+		</div>
+		<hr />
+		<div class="row">
 			<div class="col-xs-6">
 				<div class="row">
 					<div class="col-xs-2">
@@ -128,7 +138,7 @@
 						<label class="pull-right">period</label>
 					</div>
 					<div class="col-xs-10">
-						<input id="text-period" type="text" class="input form-control" value="6" onkeyup="controller.refreshScript();" />
+						<input id="text-period" type="text" class="input form-control" value="60" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -138,8 +148,7 @@
 						<label class="pull-right">expiredTimeInHour</label>
 					</div>
 					<div class="col-xs-10">
-						<input type="checkbox" name="expired-time-in-hour-checkbox" checked>
-						<input id="text-expired-time-in-hour" type="text" class="input form-control" value="3" onkeyup="controller.refreshScript();" />
+						<input id="text-expired-time-in-hour" type="text" class="input form-control" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -168,9 +177,11 @@
 				
 			</div>
 			<div class="col-xs-6">
-				<textarea id="textarea-script" class="form-control" rows="50"></textarea>
+				<textarea id="textarea-script" class="form-control" rows="38"></textarea>
 			</div>
 		</div>
+		
+		<hr />
 	</div>
 	<!-- end of container -->
 	

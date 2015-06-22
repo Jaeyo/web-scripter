@@ -51,5 +51,12 @@ public class DerbySchemaCreator {
 					+ "username varchar(100) not null, "
 					+ "password varchar(100) not null, "
 					+ "regdate timestamp not null )");
+		
+		if(existingTableNames.contains("SCRIPT") == false)
+			jdbcTmpl.execute("create table script ( "
+					+ "sequence integer not null primary key, "
+					+ "script_name varchar(100) not null unique, "
+					+ "script long varchar, "
+					+ "regdate timestamp not null )");
 	} //checkTables
 } // class

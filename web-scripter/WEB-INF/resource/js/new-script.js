@@ -12,8 +12,6 @@ View = function(){
 }; //INIT
 View.prototype = {
 	init: function(){
-		$('[name="expired-time-in-hour-checkbox"]').bootstrapSwitch();
-		
 		serverAdapter.ajaxCall('/Databases/', 'get', {}, function(resp){
 			if(resp.success != 1){
 				toast(resp.errmsg);
@@ -42,13 +40,18 @@ Controller = function(){
 	this.view = new View();
 }; //INIT
 Controller.prototype = {
-	setDatabase: function(database){
-		serverAdapter. TODO IMME
-		//TODO IMME
-		this.model.database = database;
-		$("#dropdown-database").find('button').html(database);
+	setDatabase: function(mappingName){
+		serverAdapter.ajaxCall('/Database/' + mappingName + '/', 'get', {}, function(resp){
+			if(resp.success != 1){
+				toast(resp.errmsg);
+				return;
+			} //if
+			
+			controller.model.database = resp.database;
+			controller.refreshScript();
+		});
 		
-		this.refreshScript();
+		$("#dropdown-database").find('button').html(mappingName);
 	}, //setDatabase
 	setBindingType: function(bindingType){
 		this.model.bindingType = bindingType;
@@ -84,12 +87,37 @@ Controller.prototype = {
 		this.view.newScriptGenerator.charset = $('#text-charset').val();
 		
 		$('#textarea-script').val(this.view.newScriptGenerator.getScript());
-	} //refreshScript
+	}, //refreshScript
+	save: function(){
+		var scriptName = $("#input-script-name").val();
+		var script = $("#textarea-script").val();
+	
+		try{
+			precondition(scriptName != null && scriptName.trim().length != 0, "script name is empty");
+			precondition(script != null && script.trim().length != 0, "script is empty");
+		} catch(e){
+			toast(e.message);
+			return;
+		} //catch
+	
+		serverAdapter.ajaxCall('/Script/', 'post', {'scriptName': scriptName, 'script': script}, function(resp){
+			if(resp.success != 1){
+				toast(resp.errmsg);
+				return;
+			} //if
+			window.location.href = '/ViewScripts/';
+		});
+	} //save
 }; //Controller
 
 function toast(msg){
 	bootbox.alert(msg);
 } //toast
+
+function precondition(condition, message){
+	if(condition == false)
+		throw Error(message);
+} //precondition
 
 controller = new Controller();
 controller.view.init();

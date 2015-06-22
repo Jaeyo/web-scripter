@@ -47,7 +47,8 @@
 				<div style="margin-bottom: 20px;"><input id="input-database-mapping-name" type="text" class="input form-control" /></div>
 			</div>
 			<div class="col-xs-4"></div>
-			
+		</div>
+		<div class="row">
 			<div class="col-xs-6">
 				<hr />
 				<div id="dropdown-database-vendor" class="dropdown" style="margin-bottom: 30px;">
