@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.jaeyo.webscripter.rdb.DerbyDataSource;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -31,4 +32,10 @@ public class DatabaseDAO {
 		logger.info("");
 		return ds.getJdbcTmpl().queryForJsonArray("select sequence, mapping_name, memo, driver, connection_url, username, password, regdate from database");
 	} //loadDatabases
+	
+	public JSONObject loadDatabase(String mappingName){
+		logger.info("mappingName: {}", mappingName);
+		JSONArray rows = ds.getJdbcTmpl().queryForJsonArray("select sequence, mapping_name, memo, driver, connection_url, username, password, regdate from database where mapping_name = ?", mappingName);
+		return rows.getJSONObject(0);
+	} //loadDatabase
 } //class

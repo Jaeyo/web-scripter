@@ -1,15 +1,5 @@
-NewScriptGenerator = function(dbName, dbVendor, selectColumn, tableName, bindingType, period, expiredTimeInHour, delimiter, outputPath, charset){
+NewScriptGenerator = function(){
 	this.id = new Date().getTime();
-	this.dbName = dbName;
-	this.dbVendor = dbVendor;
-	this.selectColumn = selectColumn;
-	this.tableName = tableName;
-	this.bindingType = bindingType;
-	this.period = period;
-	this.expiredTimeInHour = expiredTimeInHour;
-	this.delimiter = delimiter;
-	this.outputPath = outputPath;
-	this.charset = charset;
 }; //INIT
 NewScriptGenerator.prototype = {
 	getScript: function(){
@@ -26,14 +16,14 @@ NewScriptGenerator.prototype = {
 		} //if
 		
 		script += '\n';
-		script += 'var delimiter = "' + this.delmiter + '";\n';
+		script += 'var delimiter = "' + this.delimiter + '";\n';
 		
 		script += this.getScript_commonVariable() + '\n';
 		script += '//-----------------------------------------------------------------\n';
 		
 		script += 'logger.info("script started");\n';
 		if(this.bindingType != 'simple')
-			script += getScript_getSmallerConditionFromSimpleRepo() + '\n';
+			script += this.getScript_getSmallerConditionFromSimpleRepo() + '\n';
 		
 		script += 'scheduler.schedule(period, new java.lang.Runnable(){\n';
 		script += '\trun: function(){\n';
@@ -41,14 +31,14 @@ NewScriptGenerator.prototype = {
 		script += '\t\t\tlogger.info("task started");\n\n';
 		
 		if(this.bindingType === 'sequence')
-			script += getScript_getMaxQuery() + '\n';
+			script += this.getScript_getMaxQuery() + '\n';
 		
 		if(this.bindingType != 'simple')
-			script += getScript_getBiggerConditionFromDb() + '\n';
+			script += this.getScript_getBiggerConditionFromDb() + '\n';
 		
-		script += getScript_queryAndWriteFile() + '\n';
+		script += this.getScript_queryAndWriteFile() + '\n';
 		if(this.bindingType != 'simple')
-			script += getScript_setBiggerConditionToSimpleRepo() + '\n';
+			script += this.getScript_setBiggerConditionToSimpleRepo() + '\n';
 	
 		script += '\t\t\tlogger.info("task finished");\n';
 		script += '\t\t} catch(e){ \n';
@@ -151,7 +141,7 @@ NewScriptGenerator.prototype = {
 			} else if(this.dbVendor === 'mysql'){
 				script += '\t\t\t\t\t" where " + conditionColumn + " > str_to_date(\'" + smallerCondition + "\', \'%Y-%m-%d %H:%i:%s\') "\n';
 				script += '\t\t\t\t\t" and " + conditionColumn + " <= str_to_date(\'" + biggerCondition + "\', \'%Y-%m-%d %H:%i:%s\') "\n';
-			} else if*(this.dbVendor === 'mssql'){
+			} else if(this.dbVendor === 'mssql'){
 				script += '\t\t\t\t\t" where " + conditionColumn + " > \'" + smallerCondition + "\'"\n';
 				script += '\t\t\t\t\t" and " + conditionColumn + " <= \'" + biggerCondition + "\'";\n';
 			} //if

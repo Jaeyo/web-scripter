@@ -44,8 +44,13 @@
 					<div class="col-xs-2">
 						<label class="pull-right">database</label>
 					</div>
-					<div class="col-xs-10" id="div-database">
-						<div>loading databases...</div>
+					<div class="col-xs-10">
+						<div id="dropdown-database" class="dropdown">
+							<button class="btn btn-default dropdown-toggle" type="button"
+							data-toggle="dropdown" aria-haspopup="true" aria-expand="true">select database <span class="caret"></span></button>
+							<ui class="dropdown-menu" aria-labelledby="dropdown-btn-database">
+							</ui>
+						</div>
 						<hr />
 					</div>
 				</div>
@@ -55,7 +60,7 @@
 						<label class="pull-right">table name</label>
 					</div>
 					<div class="col-xs-10">
-						<input type="text" class="input form-control" />
+						<input id="text-table-name" type="text" class="input form-control" value="insert-table-name" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -83,7 +88,7 @@
 						<label class="pull-right">sequence column</label>
 					</div>
 					<div class="col-xs-10">
-						<input type="text" class="input form-control" />
+						<input id="text-sequence-column" type="text" class="input form-control" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -93,7 +98,7 @@
 						<label class="pull-right">date column</label>
 					</div>
 					<div class="col-xs-10">
-						<input type="text" class="input form-control" />
+						<input id="text-date-column" type="text" class="input form-control" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -103,7 +108,7 @@
 						<label class="pull-right">select column</label>
 					</div>
 					<div class="col-xs-10">
-						<input type="text" class="input form-control" value="*"/>
+						<input id="text-select-column" type="text" class="input form-control" value="*" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -113,7 +118,7 @@
 						<label class="pull-right">column delimiter</label>
 					</div>
 					<div class="col-xs-10">
-						<input type="text" class="input form-control" value="|"/>
+						<input id="text-column-delimiter" type="text" class="input form-control" value="|" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -123,7 +128,7 @@
 						<label class="pull-right">period</label>
 					</div>
 					<div class="col-xs-10">
-						<input type="text" class="input form-control" value="6"/>
+						<input id="text-period" type="text" class="input form-control" value="6" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -134,7 +139,7 @@
 					</div>
 					<div class="col-xs-10">
 						<input type="checkbox" name="expired-time-in-hour-checkbox" checked>
-						<input type="text" class="input form-control" value="3"/>
+						<input id="text-expired-time-in-hour" type="text" class="input form-control" value="3" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -144,7 +149,7 @@
 						<label class="pull-right">outputPath</label>
 					</div>
 					<div class="col-xs-10">
-						<input type="text" class="input form-control" value="/data/outputpath/"/>
+						<input id="text-output-path" type="text" class="input form-control" value="/data/outputpath/" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
@@ -154,21 +159,16 @@
 						<label class="pull-right">charset</label>
 					</div>
 					<div class="col-xs-10">
-						<input type="text" class="input form-control" value="utf-8"/>
+						<input id="text-charset" type="text" class="input form-control" value="utf-8" onkeyup="controller.refreshScript();" />
 						<hr />
 					</div>
 				</div>
 				
 				<hr />
 				
-				<div class="row">
-					<div class="col-xs-12 text-center">
-						<button type="button" class="btn btn-primary">make script</button>
-					</div>
-				</div>
 			</div>
 			<div class="col-xs-6">
-				<textarea class="form-control" rows="20"></textarea>
+				<textarea id="textarea-script" class="form-control" rows="50"></textarea>
 			</div>
 		</div>
 	</div>
@@ -176,6 +176,9 @@
 	
 	<!-- server adpater js -->
 	<script src="/resource/js/server-adapter.js"></script>
+
+	<!-- new-script-generator js -->
+	<script src="/resource/js/new-script-generator.js"></script>
 
 	<!-- scripts js -->
 	<script src="/resource/js/new-script.js"></script>

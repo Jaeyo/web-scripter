@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.jaeyo.webscripter.dao.DatabaseDAO;
 import org.jaeyo.webscripter.exception.DuplicateException;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,4 +27,8 @@ public class DatabaseService {
 	public JSONArray loadDatabases(){
 		return databaseDAO.loadDatabases();
 	} //loadDatabases
+	
+	public JSONObject loadDatabase(String mappingName){
+		return databaseDAO.loadDatabase(mappingName);
+	} //loadDatabase
 } //class
