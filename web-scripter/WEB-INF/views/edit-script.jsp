@@ -30,7 +30,7 @@
 <script src="/resource/js/server-adapter.js"></script>
 
 <!-- scripts js -->
-<script src="/resource/js/scripts.js"></script>
+<script src="/resource/js/edit-script.js"></script>
 
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">
@@ -42,41 +42,18 @@
 	
 	<div class="container">
 		<div class="row">
-			<button type="button" class="btn btn-primary pull-right" style="margin-bottom: 15px;"
-				onclick="window.location.href='/View/NewScript/'">new script</button>
+			<div class="col-xs-4"></div>
+			<div class="col-xs-4">
+				<input id="input-script-name" type="text" class="input form-control" />
+			</div>
+			<div class="col-xs-4">
+				<button type="button" class="btn btn-primary pull-right">save</button>
+			</div>
 		</div>
 	
 		<div class="row">
-			<div id="div-scripts" class="col-xs-12 well">
-			
-			
-				<!--  
-				<div class="row">
-					<div class="col-xs-6">
-						<h4>test1.js</h4>
-						<p style="font-size: 80%">this is test script 1</p>
-					</div>
-					<div class="col-xs-6">
-						<button type="button" class="btn btn-sm btn-info">start</button>
-						<button type="button" class="btn btn-sm btn-info">stop</button>
-						<button type="button" class="btn btn-sm btn-info">script</button>
-					</div>
-				</div>
-				
-				<hr />
-				
-				<div class="row">
-					<div class="col-xs-6">
-						<h4>test1.js</h4>
-						<p style="font-size: 80%">this is test script 1</p>
-					</div>
-					<div class="col-xs-6">
-						<button type="button" class="btn btn-sm btn-info">start</button>
-						<button type="button" class="btn btn-sm btn-info">stop</button>
-						<button type="button" class="btn btn-sm btn-info">script</button>
-					</div>
-				</div>
-				-->
+			<div class="col-xs-12 well">
+				<textarea id="textarea-script" width="100%" height="100%"></textarea>
 			</div>
 		</div>
 	</div>

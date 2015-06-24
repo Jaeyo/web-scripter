@@ -90,7 +90,7 @@ Controller.prototype = {
 					toast(resp.errmsg);
 					return;
 				} //if
-				location.replace("/ViewDatabases/");
+				location.replace("/View/Databases/");
 			}
 		);
 	} //save

@@ -36,7 +36,7 @@ View.prototype = {
 	makeEmptyDatabaseDOM: function(){
 		var dom = '';
 		dom += '<div class="row well">';
-		dom += '<label>there  is no registered database</label>';
+		dom += '<label>there is no registered database</label>';
 		dom += '</div>';
 		return dom;
 	} //makeEmptyDatabaseDOM

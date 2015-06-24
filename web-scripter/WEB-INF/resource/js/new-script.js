@@ -20,7 +20,7 @@ View.prototype = {
 			
 			if(resp.databases.length == 0){
 				toast('no available databases. register a database first');
-				window.location.href = '/ViewNewDatabase/';
+				window.location.href = '/View/NewDatabase/';
 				return;
 			} //if
 			
@@ -105,7 +105,7 @@ Controller.prototype = {
 				toast(resp.errmsg);
 				return;
 			} //if
-			window.location.href = '/ViewScripts/';
+			window.location.href = '/View/Scripts/';
 		});
 	} //save
 }; //Controller

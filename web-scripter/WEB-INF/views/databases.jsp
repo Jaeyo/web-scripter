@@ -43,7 +43,7 @@
 	<div class="container">
 		<div class="row">
 			<button type="button" class="btn btn-primary pull-right" style="margin-bottom: 15px;" 
-				onclick="window.location.href='/ViewNewDatabase/'">new database</button>
+				onclick="window.location.href='/View/NewDatabase/'">new database</button>
 		</div>
 	
 		<div id="div-databases">

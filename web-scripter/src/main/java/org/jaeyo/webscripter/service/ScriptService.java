@@ -2,9 +2,8 @@ package org.jaeyo.webscripter.service;
 
 import javax.inject.Inject;
 
-import org.jaeyo.webscripter.dao.DatabaseDAO;
 import org.jaeyo.webscripter.dao.ScriptDAO;
-import org.jaeyo.webscripter.exception.DuplicateException;
+import org.jaeyo.webscripter.exception.NotFoundException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -20,4 +19,12 @@ public class ScriptService {
 	public void save(String scriptName, String script){
 		scriptDAO.save(scriptName, script);
 	} //save
+	
+	public JSONArray loadScripts(){
+		return scriptDAO.loadScripts();
+	} //loadScripts
+	
+	public JSONObject loadScript(String sequence) throws NotFoundException{
+		return scriptDAO.loadScript(sequence);
+	} //loadScript
 } //class

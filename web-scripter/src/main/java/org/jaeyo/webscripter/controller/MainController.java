@@ -26,34 +26,13 @@ public class MainController {
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView main(){
-		return scripts();
+		return new ModelAndView("scripts");
 	} //main
 	
-	@RequestMapping(value = "/ViewScripts/", method = RequestMethod.GET)
-	public ModelAndView scripts(){
-		return new ModelAndView("scripts");
-	} //scripts
-	
-	@RequestMapping(value = "/ViewNewScript/", method = RequestMethod.GET)
-	public ModelAndView newScript(){
-		return new ModelAndView("new-script");
-	} //newScript
-	
-	@RequestMapping(value = "/ViewDatabases/", method = RequestMethod.GET)
-	public ModelAndView databases(){
-		return new ModelAndView("databases");
-	} //databases
-	
-	@RequestMapping(value = "/ViewNewDatabase/", method = RequestMethod.GET)
-	public ModelAndView newDatabase(){
-		return new ModelAndView("new-database");
-	} //databases
-	
-	@RequestMapping(value = "/ViewConfiguration/", method = RequestMethod.GET)
+	@RequestMapping(value = "/View/Configuration/", method = RequestMethod.GET)
 	public ModelAndView configuration(){
 		return new ModelAndView("configuration");
 	} //configuration
-	
 	
 	
 	

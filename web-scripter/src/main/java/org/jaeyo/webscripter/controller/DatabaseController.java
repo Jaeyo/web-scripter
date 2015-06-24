@@ -29,6 +29,18 @@ public class DatabaseController {
 	@Inject
 	private DatabaseService databaseService;
 	
+	@RequestMapping(value = "/View/Databases/", method = RequestMethod.GET)
+	public ModelAndView databases(){
+		return new ModelAndView("databases");
+	} //databases
+	
+	@RequestMapping(value = "/View/NewDatabase/", method = RequestMethod.GET)
+	public ModelAndView newDatabase(){
+		return new ModelAndView("new-database");
+	} //databases
+	
+	
+	
 	@RequestMapping(value = "/Database/", method = RequestMethod.POST)
 	public @ResponseBody String postDatabase(
 			@RequestParam(value = "dbMappingName", required = true) String dbMappingName,
