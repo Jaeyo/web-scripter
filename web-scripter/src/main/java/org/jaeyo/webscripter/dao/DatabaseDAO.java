@@ -38,4 +38,9 @@ public class DatabaseDAO {
 		JSONArray rows = ds.getJdbcTmpl().queryForJsonArray("select sequence, mapping_name, memo, driver, connection_url, username, password, regdate from database where mapping_name = ?", mappingName);
 		return rows.getJSONObject(0);
 	} //loadDatabase
+	
+	public void removeDatabase(long sequence){
+		logger.info("sequence: {}", sequence);
+		ds.getJdbcTmpl().update("delete from database where sequence = ?", sequence);
+	} //removeDatabase
 } //class

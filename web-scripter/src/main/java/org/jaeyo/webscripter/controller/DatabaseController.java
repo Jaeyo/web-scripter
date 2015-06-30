@@ -86,4 +86,16 @@ public class DatabaseController {
 			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
 		} //catch
 	} //postDatabase
+	
+	@RequestMapping(value = "/Database/{sequence}/", method = RequestMethod.DELETE)
+	public @ResponseBody String getDatabase(@PathVariable("sequence") long sequence){
+		try{
+			databaseService.removeDatabase(sequence);
+			return new JSONObject().put("success", 1).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //postDatabase
 } //class

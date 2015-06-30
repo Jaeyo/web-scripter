@@ -31,4 +31,8 @@ public class DatabaseService {
 	public JSONObject loadDatabase(String mappingName){
 		return databaseDAO.loadDatabase(mappingName);
 	} //loadDatabase
+	
+	public void removeDatabase(long sequence){
+		databaseDAO.removeDatabase(sequence);
+	} //remvoeDatabase
 } //class

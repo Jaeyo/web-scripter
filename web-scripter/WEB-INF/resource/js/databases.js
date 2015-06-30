@@ -25,8 +25,8 @@ View.prototype = {
 		dom += '</div>';
 		dom += '<div class="col-xs-2">';
 		dom += '<div>';
-		dom += '<button type="button" class="btn btn-sm btn-info">edit</button>';
-		dom += '<button type="button" class="btn btn-sm btn-info">remove</button>';
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.editDatabase(\'' + database.SEQUENCE + '\')">edit</button>';
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.removeDatabase(\'' + database.SEQUENCE + '\')">remove</button>';
 		dom += '</div>';
 		dom += '</div>';
 		dom += '</div>';
@@ -65,7 +65,24 @@ Controller.prototype = {
 				
 				$("#div-databases").html(dom);
 			});
-		} //loadDatabas
+		}, //loadDatabas
+		editDatabase: function(sequence){
+			//TODO IMME
+		}, //editDatabas
+		removeDatabase: function(sequence){
+			bootbox.confirm("remove database", function(result){
+				if(result === true){
+					serverAdapter.ajaxCall('/Database/' + sequence + '/', 'delete', {}, function(resp){
+						if(resp.success != 1){
+							toast(resp.errmsg);
+							return;
+						} //if
+						
+						window.location.href = '/View/Databases/';
+					});
+				} //if
+			});
+		} //removeDatabase
 }; //Controller
 
 function toast(msg){
