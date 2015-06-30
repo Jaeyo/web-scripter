@@ -26,6 +26,11 @@
 <!-- js cols -->
 <script src="/resource/js/lib/js_cols.min.js"></script>
 
+<!-- code mirror -->
+<script src="http://codemirror.net/lib/codemirror.js"></script>
+<link href="http://codemirror.net/lib/codemirror.css" rel="stylesheet">
+<script src="http://codemirror.net/mode/javascript/javascript.js"></script>
+
 <!-- server adpater js -->
 <script src="/resource/js/server-adapter.js"></script>
 

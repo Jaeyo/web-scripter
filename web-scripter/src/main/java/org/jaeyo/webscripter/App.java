@@ -18,5 +18,7 @@ public class App {
 		JettyServer jetty = new JettyServer();
 		jetty.start();
 		jetty.join();
+		
+		TODO apply http://codemirror.net/doc/manual.html
 	} //main
 } //class
