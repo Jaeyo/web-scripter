@@ -25,10 +25,24 @@ Controller.prototype = {
 			} //if
 			
 			var script = resp.script;
-			console.log(resp); //DEBUG
-			console.log(script); //DEBUG
+			controller.model.sequence = script.SEQUENCE;
+			$("#input-script-name").val(script.SCRIPT_NAME);
+			$("#textarea-script").val(script.SCRIPT);
 		});
-	} //loadScripts
+	}, //loadScripts
+	saveScript: function(){
+		var scriptName = $("#input-script-name").val();
+		var script = $("#textarea-script").val();
+		var sequence = this.model.sequence;
+		serverAdapter.ajaxCall('/Script/' + sequence + '/', 'put', {'scriptName': scriptName, 'script': script}, function(resp){ 
+			if(resp.success != 1){
+				toast(resp.errmsg);
+				return;
+			} //if
+			
+			window.location.href = '/View/Scripts/';
+		});
+	} //saveScript
 }; //Controller
 
 function toast(msg){

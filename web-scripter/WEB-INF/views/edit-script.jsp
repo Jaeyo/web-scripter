@@ -47,13 +47,15 @@
 				<input id="input-script-name" type="text" class="input form-control" />
 			</div>
 			<div class="col-xs-4">
-				<button type="button" class="btn btn-primary pull-right">save</button>
+				<button type="button" class="btn btn-primary pull-right" onclick="controller.saveScript();">save</button>
 			</div>
 		</div>
+		
+		<hr />
 	
 		<div class="row">
 			<div class="col-xs-12 well">
-				<textarea id="textarea-script" width="100%" height="100%"></textarea>
+				<textarea id="textarea-script" rows=30 style="width: 100%; height: 100%;"></textarea>
 			</div>
 		</div>
 	</div>

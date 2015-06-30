@@ -48,35 +48,6 @@
 	
 		<div class="row">
 			<div id="div-scripts" class="col-xs-12 well">
-			
-			
-				<!--  
-				<div class="row">
-					<div class="col-xs-6">
-						<h4>test1.js</h4>
-						<p style="font-size: 80%">this is test script 1</p>
-					</div>
-					<div class="col-xs-6">
-						<button type="button" class="btn btn-sm btn-info">start</button>
-						<button type="button" class="btn btn-sm btn-info">stop</button>
-						<button type="button" class="btn btn-sm btn-info">script</button>
-					</div>
-				</div>
-				
-				<hr />
-				
-				<div class="row">
-					<div class="col-xs-6">
-						<h4>test1.js</h4>
-						<p style="font-size: 80%">this is test script 1</p>
-					</div>
-					<div class="col-xs-6">
-						<button type="button" class="btn btn-sm btn-info">start</button>
-						<button type="button" class="btn btn-sm btn-info">stop</button>
-						<button type="button" class="btn btn-sm btn-info">script</button>
-					</div>
-				</div>
-				-->
 			</div>
 		</div>
 	</div>

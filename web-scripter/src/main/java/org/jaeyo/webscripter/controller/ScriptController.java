@@ -53,6 +53,21 @@ public class ScriptController {
 		} //catch
 	} //postScript
 	
+	@RequestMapping(value = "/Script/{sequence}/", method = RequestMethod.PUT)
+	public @ResponseBody String putScript(
+			@PathVariable("sequence") long sequence,
+			@RequestParam(value = "scriptName", required = true) String scriptName,
+			@RequestParam(value = "script", required = true) String script){
+		try{
+			scriptService.edit(sequence, scriptName, script);
+			return new JSONObject().put("success", 1).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //postScript
+	
 	@RequestMapping(value = "/Scripts/", method = RequestMethod.GET)
 	public @ResponseBody String getScripts(){
 		try{
@@ -66,7 +81,7 @@ public class ScriptController {
 	} //getScripts
 	
 	@RequestMapping(value = "/Script/{sequence}", method = RequestMethod.GET)
-	public @ResponseBody String getScript(@PathVariable("sequence") String sequence){
+	public @ResponseBody String getScript(@PathVariable("sequence") long sequence){
 		try{
 			JSONObject script = scriptService.loadScript(sequence);
 			return new JSONObject().put("success", 1).put("script", script).toString();
@@ -76,4 +91,28 @@ public class ScriptController {
 			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
 		} //catch
 	} //getScript
+	
+	@RequestMapping(value = "/Script/Start/{sequence}", method = RequestMethod.PUT)
+	public @ResponseBody String startScript(@PathVariable("sequence") long sequence){
+		try{
+			scriptService.startScript(sequence);
+			return new JSONObject().put("success", 1).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //startScript
+	
+	@RequestMapping(value = "/Script/Stop/{sequence}", method = RequestMethod.PUT)
+	public @ResponseBody String stopScript(@PathVariable("sequence") long sequence){
+		try{
+			scriptService.stopScript(sequence);
+			return new JSONObject().put("success", 1).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //stopScript
 } //class

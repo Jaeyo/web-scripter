@@ -21,9 +21,18 @@ View.prototype = {
 		dom += '<p style="font-size: 80%">this is test script 1</p>';
 		dom += '</div>';
 		dom += '<div class="col-xs-6">';
-		dom += '<button type="button" class="btn btn-sm btn-info">start</button>&nbsp;';
-		dom += '<button type="button" class="btn btn-sm btn-info">stop</button>&nbsp;';
-		dom += '<button type="button" class="btn btn-sm btn-info" onclick="window.location.href=\'/View/EditScript/' + script.SEQUENCE + '/\'">script</button>&nbsp;';
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.startScript(\'' + script.SEQUENCE + '\')"';
+		if(script.IS_RUNNING === true)
+			dom += ' disabled ';
+		dom += '>start</button>&nbsp;';
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.stopScript(\'' + script.SEQUENCE + '\')"';
+		if(script.IS_RUNNING === false)
+			dom += ' disabled ';
+		dom += '>stop</button>&nbsp;';
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="window.location.href=\'/View/EditScript/' + script.SEQUENCE + '/\'"';
+		if(script.IS_RUNNING === true)
+			dom += ' disabled ';
+		dom += '>script</button>&nbsp;';
 		dom += '</div>';
 		dom += '</div>';
 		dom += '<hr />';
@@ -54,7 +63,27 @@ Controller.prototype = {
 			
 			$("#div-scripts").html(dom);
 		});
-	} //loadScripts
+	}, //loadScripts
+	startScript: function(sequence){
+		serverAdapter.ajaxCall('/Script/Start/' + sequence + '/', 'put', {}, function(resp){
+			if(resp.success != 1){
+				toast(resp.errmsg);
+				return;
+			} //if
+			
+			window.location.href='/View/Scripts/';
+		});
+	}, //startScript
+	stopScript: function(sequence){
+		serverAdapter.ajaxCall('/Script/Stop/' + sequence + '/', 'put', {}, function(resp){
+			if(resp.success != 1){
+				toast(resp.errmsg);
+				return;
+			} //if
+			
+			window.location.href='/View/Scripts/';
+		});
+	} //stopScript
 }; //Controller
 
 function toast(msg){

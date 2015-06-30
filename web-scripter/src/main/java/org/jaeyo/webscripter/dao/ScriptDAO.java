@@ -24,12 +24,19 @@ public class ScriptDAO {
 				+ "values(next value for main_seq, ?, ?, ?)", scriptName, script, new Date());
 	} //save
 	
+	public void edit(long sequence, String scriptName, String script){
+		logger.info("sequence: {}, scriptName: {}", sequence, scriptName);
+		ds.getJdbcTmpl().update("update script set script_name = ?, script = ?, regdate = ? "
+				+ "where sequence = ?",
+				scriptName, script, new Date(), sequence);
+	} //edit
+	
 	public JSONArray loadScripts(){
 		logger.info("");
 		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate from script");
 	} //loadScripts
 	
-	public JSONObject loadScript(String sequence) throws NotFoundException{
+	public JSONObject loadScript(long sequence) throws NotFoundException{
 		logger.info("sequence: {}", sequence);
 		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate from script where sequence = ?", sequence);
 		

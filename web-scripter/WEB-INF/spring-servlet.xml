@@ -21,6 +21,7 @@
 	<context:component-scan base-package="org.jaeyo.webscripter.service" />
 	<context:component-scan base-package="org.jaeyo.webscripter.dao" />
 	<context:component-scan base-package="org.jaeyo.webscripter.rdb" />
+	<context:component-scan base-package="org.jaeyo.webscripter.script" />
 	
 	<mvc:resources location="/resource/" mapping="/resource/**" />
 	
