@@ -34,9 +34,6 @@
 <!-- server adpater js -->
 <script src="/resource/js/server-adapter.js"></script>
 
-<!-- scripts js -->
-<script src="/resource/js/edit-script.js"></script>
-
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">
 
@@ -65,6 +62,9 @@
 		</div>
 	</div>
 	<!-- end of container -->
+	
+	<!-- scripts js -->
+	<script src="/resource/js/edit-script.js"></script>
 	
 </body>
 </html>

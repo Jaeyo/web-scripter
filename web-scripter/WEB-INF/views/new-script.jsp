@@ -29,6 +29,11 @@
 <!-- js cols -->
 <script src="/resource/js/lib/js_cols.min.js"></script>
 
+<!-- code mirror -->
+<script src="http://codemirror.net/lib/codemirror.js"></script>
+<link href="http://codemirror.net/lib/codemirror.css" rel="stylesheet">
+<script src="http://codemirror.net/mode/javascript/javascript.js"></script>
+
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">
 
@@ -177,7 +182,7 @@
 				
 			</div>
 			<div class="col-xs-6">
-				<textarea id="textarea-script" class="form-control" rows="38"></textarea>
+				<textarea id="textarea-script" class="form-control" style="height: 100%" rows="38"></textarea>
 			</div>
 		</div>
 		

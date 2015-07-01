@@ -31,8 +31,17 @@ View.prototype = {
 			} //for i
 		});
 		
+		this.codeMirror($("#textarea-script")[0]);
 		controller.refreshScript();
-	} //init
+	}, //init
+	codeMirror: function(dom){
+		this.editor = CodeMirror.fromTextArea($("#textarea-script")[0], {
+			lineNumbers: true,
+			extraKeys: {"Ctrl-Space": "autocomplete"},
+			mode: {name: "javascript", globalVars: true}
+		});
+		this.editor.setSize(null, 800);
+	} //codeMirror
 }; //View
 
 Controller = function(){
@@ -86,11 +95,11 @@ Controller.prototype = {
 		this.view.newScriptGenerator.outputPath = $('#text-output-path').val();
 		this.view.newScriptGenerator.charset = $('#text-charset').val();
 		
-		$('#textarea-script').val(this.view.newScriptGenerator.getScript());
+		this.view.editor.setValue(this.view.newScriptGenerator.getScript());
 	}, //refreshScript
 	save: function(){
 		var scriptName = $("#input-script-name").val();
-		var script = $("#textarea-script").val();
+		var script = this.view.editor.getValue();
 	
 		try{
 			precondition(scriptName != null && scriptName.trim().length != 0, "script name is empty");

@@ -19,6 +19,6 @@ public class App {
 		jetty.start();
 		jetty.join();
 		
-		TODO apply http://codemirror.net/doc/manual.html
+//		TODO apply http://codemirror.net/doc/manual.html
 	} //main
 } //class

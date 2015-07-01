@@ -6,6 +6,17 @@ Model.prototype = {
 View = function(){
 }; //INIT
 View.prototype = {
+	init: function(){
+		this.codeMirror($("#textarea-script")[0]);
+	}, //init
+	codeMirror: function(dom){
+		this.editor = CodeMirror.fromTextArea(dom, {
+			lineNumbers: true,
+			extraKeys: {"Ctrl-Space": "autocomplete"},
+			mode: {name: "javascript", globalVars: true}
+		});
+		this.editor.setSize(null, 800);
+	} //codeMirror
 }; //View
 
 Controller = function(){
@@ -27,12 +38,12 @@ Controller.prototype = {
 			var script = resp.script;
 			controller.model.sequence = script.SEQUENCE;
 			$("#input-script-name").val(script.SCRIPT_NAME);
-			$("#textarea-script").val(script.SCRIPT);
+			controller.view.editor.setValue(script.SCRIPT);
 		});
 	}, //loadScripts
 	saveScript: function(){
 		var scriptName = $("#input-script-name").val();
-		var script = $("#textarea-script").val();
+		var script = this.view.editor.getValue();
 		var sequence = this.model.sequence;
 		serverAdapter.ajaxCall('/Script/' + sequence + '/', 'put', {'scriptName': scriptName, 'script': script}, function(resp){ 
 			if(resp.success != 1){
@@ -51,4 +62,5 @@ function toast(msg){
 
 controller = new Controller();
 
+controller.view.init();
 controller.loadScript();
