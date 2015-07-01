@@ -25,4 +25,20 @@ public class FileWriteStatisticsService {
 	public void deleteUnderTimestamp(long timestamp){
 		fileWriteStatisticsDAO.deleteUnderTimestamp(timestamp);
 	} //deleteUnderTimestamp
+	
+	public JSONArray getScriptStatistics(long sequence){
+		logger.info("sequence: {}", sequence);
+		JSONArray statistics = fileWriteStatisticsDAO.getScriptStatistics(sequence);
+		JSONArray rebuildedStatistics = new JSONArray();
+		
+		for (int i = 0; i < statistics.length(); i++) {
+			JSONObject row = statistics.getJSONObject(i);
+			JSONArray rebuildedRow = new JSONArray();
+			rebuildedRow.put(row.get("COUNT_TIMESTAMP"));
+			rebuildedRow.put(row.get("COUNT_VALUE"));
+			rebuildedStatistics.put(rebuildedRow);
+		} //for i
+		
+		return rebuildedStatistics;
+	} //getScriptStatistics
 } //class

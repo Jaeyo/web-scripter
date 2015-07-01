@@ -26,18 +26,12 @@
 <!-- js cols -->
 <script src="/resource/js/lib/js_cols.min.js"></script>
 
-<!-- code mirror -->
-<script src="http://codemirror.net/lib/codemirror.js"></script>
-<link href="http://codemirror.net/lib/codemirror.css" rel="stylesheet">
-<script src="https://codemirror.net/addon/hint/show-hint.js"></script>
-<link href="https://codemirror.net/addon/hint/show-hint.css" rel="stylesheet">
-<script src="http://codemirror.net/addon/hint/javascript-hint.js"></script>
-<script src="http://codemirror.net/addon/hint/anyword-hint.js"></script>
-<script src="http://codemirror.net/mode/javascript/javascript.js"></script>
-<link href="http://codemirror.net/theme/base16-dark.css" rel="stylesheet">
-
 <!-- server adpater js -->
 <script src="/resource/js/server-adapter.js"></script>
+
+<!-- highcharts -->
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="/resource/js/lib/highcharts-theme/dark-unica.js"></script>
 
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">
@@ -49,29 +43,14 @@
 	
 	<div class="container">
 		<div class="row">
-			<div class="col-xs-4"></div>
-			<div class="col-xs-4">
-				<input id="input-script-name" type="text" class="input form-control" />
-			</div>
-			<div class="col-xs-4">
-				<button type="button" class="btn btn-primary pull-right" onclick="controller.saveScript();">save</button>
-			</div>
-		</div>
-		
-		<hr />
-	
-		<div class="row">
-			<div class="col-xs-12 well">
-				<textarea id="textarea-script" rows=30 style="width: 100%; height: 100%;"></textarea>
+			<div class="col-xs-12">
+				<div id="div-chart" style="width: 100%; height: 400px;"></div>
 			</div>
 		</div>
 	</div>
 	<!-- end of container -->
 	
 	<input type="hidden" id="hiddenSequence" value="${sequence}" />
-	
-	<!-- scripts js -->
-	<script src="/resource/js/edit-script.js"></script>
-	
+	<script src="/resource/js/script-statistics.js"></script>
 </body>
 </html>

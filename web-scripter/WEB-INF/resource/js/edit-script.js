@@ -39,9 +39,7 @@ Controller = function(){
 }; //INIT
 Controller.prototype = {
 	loadScript: function(){
-		var urlPath = $(location).attr('pathname');
-		var splitedUrl = urlPath.split('/');
-		var scriptSequence = splitedUrl[splitedUrl.length-2];
+		var scriptSequence = $("#hiddenSequence").val();
 		
 		serverAdapter.ajaxCall('/Script/' + scriptSequence + '/', 'get', {}, function(resp){
 			if(resp.success != 1){

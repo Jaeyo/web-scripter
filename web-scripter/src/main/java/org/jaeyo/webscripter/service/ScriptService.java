@@ -4,6 +4,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.jaeyo.webscripter.dao.FileWriteStatisticsDAO;
 import org.jaeyo.webscripter.dao.ScriptDAO;
 import org.jaeyo.webscripter.exception.AlreadyStartedException;
 import org.jaeyo.webscripter.exception.NotFoundException;
@@ -23,6 +24,8 @@ public class ScriptService {
 	private ScriptDAO scriptDAO;
 	@Inject
 	private ScriptExecutor scriptExecutor;
+	@Inject
+	private FileWriteStatisticsDAO fileWriteStatisticsDAO;
 	
 	public void save(String scriptName, String script){
 		scriptDAO.save(scriptName, script);

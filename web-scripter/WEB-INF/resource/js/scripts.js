@@ -33,6 +33,7 @@ View.prototype = {
 		if(script.IS_RUNNING === true)
 			dom += ' disabled ';
 		dom += '>script</button>&nbsp;';
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="window.location.href=\'/View/Statistics/' + script.SEQUENCE + '/\'">statistics</button>';
 		dom += '</div>';
 		dom += '</div>';
 		dom += '<hr />';

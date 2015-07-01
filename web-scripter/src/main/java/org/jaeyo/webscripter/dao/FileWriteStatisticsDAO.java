@@ -26,4 +26,11 @@ public class FileWriteStatisticsDAO {
 		logger.info("timestamp: {}", timestamp);
 		ds.getJdbcTmpl().update("delete from filewrite_statistics where count_timestamp < ?", new Date(timestamp));
 	} //deleteUnderTimestamp
+	
+	public JSONArray getScriptStatistics(long sequence){
+		logger.info("sequence: {}", sequence);
+		return ds.getJdbcTmpl().queryForJsonArray("select count_timestamp, count_value from filewrite_statistics "
+				+ "where script_sequence = ? "
+				+ "order by count_timestamp", sequence);
+	} //getScriptStatistics
 }  //class

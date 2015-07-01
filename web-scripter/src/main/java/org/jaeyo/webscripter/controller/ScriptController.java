@@ -2,6 +2,7 @@ package org.jaeyo.webscripter.controller;
 
 import javax.inject.Inject;
 
+import org.jaeyo.webscripter.service.FileWriteStatisticsService;
 import org.jaeyo.webscripter.service.ScriptService;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,6 +22,8 @@ public class ScriptController {
 	
 	@Inject
 	private ScriptService scriptService;
+	@Inject
+	private FileWriteStatisticsService fileWriteStatisticsService;
 	
 	@RequestMapping(value = "/View/Scripts/", method = RequestMethod.GET)
 	public ModelAndView viewScripts(){
@@ -32,10 +35,20 @@ public class ScriptController {
 		return new ModelAndView("new-script");
 	} //newScript
 	
-	@RequestMapping(value = "/View/EditScript/*", method = RequestMethod.GET)
-	public ModelAndView viewEditScript(){
-		return new ModelAndView("edit-script");
+	@RequestMapping(value = "/View/EditScript/{sequence}/", method = RequestMethod.GET)
+	public ModelAndView viewEditScript(@PathVariable("sequence") long sequence){
+		ModelAndView mv = new ModelAndView("edit-script");
+		mv.addObject("sequence", sequence);
+		return mv;
 	} //scripts
+	
+	@RequestMapping(value = "/View/Statistics/{sequence}/", method = RequestMethod.GET)
+	public ModelAndView viewStatistics(@PathVariable("sequence") long sequence){
+		ModelAndView mv = new ModelAndView("script-statistics");
+		mv.addObject("sequence", sequence);
+		return mv;
+	} //scripts
+	
 	
 	
 	
@@ -115,4 +128,17 @@ public class ScriptController {
 			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
 		} //catch
 	} //stopScript
+	
+	@RequestMapping(value = "/Script/Statistics/{sequence}", method = RequestMethod.GET)
+	public @ResponseBody String getScriptStatistics(@PathVariable("sequence") long sequence){
+		try{
+			JSONArray statistics = fileWriteStatisticsService.getScriptStatistics(sequence);
+			JSONObject script = scriptService.loadScript(sequence);
+			return new JSONObject().put("success", 1).put("name", script.getString("SCRIPT_NAME")).put("statistics", statistics).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //getScriptStatistics
 } //class
