@@ -29,6 +29,10 @@
 <!-- code mirror -->
 <script src="http://codemirror.net/lib/codemirror.js"></script>
 <link href="http://codemirror.net/lib/codemirror.css" rel="stylesheet">
+<script src="https://codemirror.net/addon/hint/show-hint.js"></script>
+<link href="https://codemirror.net/addon/hint/show-hint.css" rel="stylesheet">
+<script src="http://codemirror.net/addon/hint/javascript-hint.js"></script>
+<script src="http://codemirror.net/addon/hint/anyword-hint.js"></script>
 <script src="http://codemirror.net/mode/javascript/javascript.js"></script>
 
 <!-- server adpater js -->

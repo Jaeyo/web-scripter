@@ -1,4 +1,7 @@
 Model = function(){
+	this.customAutoComplete = ['dateUtil', 'dbHandler', 'fileExporter', 'fileReader', 
+	                           'outputFileDeleteTask', 'runtimeUtil', 'scheduler', 
+	                           'simpleRepo', 'stringUtil', 'logger'];
 }; //INIT
 Model.prototype = {
 }; //Model
@@ -15,7 +18,17 @@ View.prototype = {
 			extraKeys: {"Ctrl-Space": "autocomplete"},
 			mode: {name: "javascript", globalVars: true}
 		});
+		
 		this.editor.setSize(null, 800);
+		
+		var originalHint = CodeMirror.hint.javascript;
+		CodeMirror.hint.javascript = function(cm){
+			var inner = originalHint(cm) || {from: cm.getCursor(), to: cm.getCursor(), list: []};
+			var customAutoComplete = controller.model.customAutoComplete;
+			for(var i=0; i<customAutoComplete.length; i++)
+				inner.list.push(customAutoComplete[i]);
+			return inner;
+		};
 	} //codeMirror
 }; //View
 
