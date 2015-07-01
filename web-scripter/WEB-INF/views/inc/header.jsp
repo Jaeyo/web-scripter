@@ -21,6 +21,7 @@
 				<li><a href="/View/Scripts/">scripts</a></li>
 				<li><a href="/View/Databases/">databases</a></li>
 				<li><a href="/View/Configuration/">configuration</a></li>
+				<li><a href="/View/EmbedDb/">embeddb</a></li>
 			</ul>
 		</div>
 		<!-- /.navbar-collapse -->
