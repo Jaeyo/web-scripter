@@ -1,6 +1,9 @@
 package org.jaeyo.webscripter;
 
 import org.jaeyo.webscripter.common.Conf;
+import org.jaeyo.webscripter.common.SpringBeans;
+import org.jaeyo.webscripter.common.Util;
+import org.jaeyo.webscripter.controller.DatabaseController;
 import org.jaeyo.webscripter.rdb.DerbySchemaCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +17,9 @@ public class App {
 		new DerbySchemaCreator().check();
 		
 		Conf.set(Conf.PORT, 1234);
-		
+	
 		JettyServer jetty = new JettyServer();
 		jetty.start();
 		jetty.join();
-		
-//		TODO apply http://codemirror.net/doc/manual.html
 	} //main
 } //class

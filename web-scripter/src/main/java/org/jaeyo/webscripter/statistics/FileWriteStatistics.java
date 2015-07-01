@@ -1,0 +1,63 @@
+package org.jaeyo.webscripter.statistics;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+import javax.inject.Inject;
+
+import org.jaeyo.webscripter.service.FileWriteStatisticsService;
+import org.springframework.stereotype.Component;
+
+@Component
+public class FileWriteStatistics {
+	private Map<Long, TreeMap<Long, AtomicLong>> counters = new HashMap<Long, TreeMap<Long,AtomicLong>>();
+	private Timer timer = new Timer();
+	
+	@Inject
+	private FileWriteStatisticsService fileWriteStatisticsService;
+	
+	public FileWriteStatistics() {
+		timer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				synchronized (counters) {
+					for(Entry<Long, TreeMap<Long, AtomicLong>> counterEntry : counters.entrySet()){
+						long scriptSequence = counterEntry.getKey();
+						TreeMap<Long, AtomicLong> counter = counterEntry.getValue();
+						while(counter.keySet().size() >= 2){
+							long oldCountTimestamp = counter.firstKey();
+							long oldCountValue = counter.remove(oldCountTimestamp).get();
+							fileWriteStatisticsService.insertStatistics(scriptSequence, oldCountTimestamp, oldCountValue);
+						} //if
+					} //for counter
+				} //sync
+				
+				fileWriteStatisticsService.deleteUnderTimestamp(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+			} //run
+		}, 60*1000, 60*1000);
+	} //INIT
+
+	public void incrementCount(long scriptSequence){
+		synchronized (counters) {
+			TreeMap<Long, AtomicLong> counter = counters.get(scriptSequence);
+			if(counter == null){
+				counter = new TreeMap<Long, AtomicLong>();
+				counters.put(scriptSequence, counter);
+			} //if
+
+			long timestamp = System.currentTimeMillis();
+			timestamp -= timestamp % (60*1000);
+			AtomicLong countValue = counter.get(timestamp);
+			if(countValue == null){
+				countValue = new AtomicLong(0L);
+				counter.put(timestamp, countValue);
+			} //if
+			countValue.incrementAndGet();
+		} //sync
+	} //incrementCount
+} //class

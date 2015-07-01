@@ -12,7 +12,7 @@ public class Scheduler {
 	private Map<Long, SchedulerTimer> timers = new HashMap<Long, SchedulerTimer>();
 	
 	public void schedule(long delay, long period, final Runnable task) {
-		long sequence = Long.parseLong(Thread.currentThread().getName().replace("ScriptThread-", ""));
+		final long sequence = Long.parseLong(Thread.currentThread().getName().replace("ScriptThread-", ""));
 		SchedulerTimer timer = timers.get(sequence);
 		if(timer == null){
 			timer = new SchedulerTimer();
@@ -22,6 +22,7 @@ public class Scheduler {
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
+				Thread.currentThread().setName("ScriptThread-" + sequence);
 				task.run();
 			} // run
 		}, delay, period);

@@ -1,25 +1,20 @@
 package org.jaeyo.webscripter.common;
 
-import java.util.Collection;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 
-import org.eclipse.jetty.webapp.WebAppContext;
-
-public class SpringBeans {
-	private static WebAppContext context;
-
-	public static WebAppContext getContext() {
-		return context;
-	}
-
-	public static void setContext(WebAppContext context) {
-		SpringBeans.context = context;
-	}
+public class SpringBeans implements ApplicationContextAware{
+	private static ApplicationContext context;
 	
-	public <T> T getBean(Class<T> clazz){
+	public static <T> T getBean(Class<T> clazz){
 		return context.getBean(clazz);
 	} //getBean
-	
-	public <T> Collection<T> getBeans(Class<T> clazz){
-		return context.getBeans(clazz);
-	} //getBeans
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		context = applicationContext;
+	} //setApplicationContext
 } // class

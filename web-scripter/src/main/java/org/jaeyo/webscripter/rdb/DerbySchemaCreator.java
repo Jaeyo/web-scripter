@@ -58,5 +58,11 @@ public class DerbySchemaCreator {
 					+ "script_name varchar(100) not null unique, "
 					+ "script long varchar, "
 					+ "regdate timestamp not null )");
+		
+		if(existingTableNames.contains("FILEWRITE_STATISTICS") == false)
+			jdbcTmpl.execute("create table filewrite_statistics ( "
+					+ "script_sequence integer not null, "
+					+ "count_timestamp timestamp not null, "
+					+ "count_value integer not null )");
 	} //checkTables
 } // class

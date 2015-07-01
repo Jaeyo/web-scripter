@@ -10,7 +10,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.jaeyo.webscripter.common.Conf;
 import org.jaeyo.webscripter.common.Path;
-import org.jaeyo.webscripter.common.SpringBeans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -28,7 +27,6 @@ public class JettyServer {
 			int port = Conf.getAs(Conf.PORT);
 			
 			WebAppContext context = getWebAppContext();
-			SpringBeans.setContext(context);
 			
 			server = new Server(port);
 			server.setHandler(context);

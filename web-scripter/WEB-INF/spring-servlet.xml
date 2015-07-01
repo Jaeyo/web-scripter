@@ -22,8 +22,11 @@
 	<context:component-scan base-package="org.jaeyo.webscripter.dao" />
 	<context:component-scan base-package="org.jaeyo.webscripter.rdb" />
 	<context:component-scan base-package="org.jaeyo.webscripter.script" />
+	<context:component-scan base-package="org.jaeyo.webscripter.statistics" />
 	
 	<mvc:resources location="/resource/" mapping="/resource/**" />
+	
+	<bean id="springApplicationContext" class="org.jaeyo.webscripter.common.SpringBeans"></bean>
 	
 	<bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
 		<property name="prefixJson" value="false"/>

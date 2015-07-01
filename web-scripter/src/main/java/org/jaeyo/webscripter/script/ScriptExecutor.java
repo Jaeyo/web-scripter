@@ -11,8 +11,14 @@ import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 
 import org.jaeyo.webscripter.exception.AlreadyStartedException;
-import org.jaeyo.webscripter.exception.ScriptNotRunningException;
+import org.jaeyo.webscripter.script.bindings.DateUtil;
+import org.jaeyo.webscripter.script.bindings.DbHandler;
+import org.jaeyo.webscripter.script.bindings.FileExporter;
+import org.jaeyo.webscripter.script.bindings.FileReader;
+import org.jaeyo.webscripter.script.bindings.OutputFileDeleteTask;
+import org.jaeyo.webscripter.script.bindings.RuntimeUtil;
 import org.jaeyo.webscripter.script.bindings.Scheduler;
+import org.jaeyo.webscripter.script.bindings.SimpleRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -36,8 +42,15 @@ public class ScriptExecutor {
 					Thread.currentThread().setName(String.format("ScriptThread-%s", sequence));
 					
 					Bindings bindings = new SimpleBindings();
-					bindings.put("logger", logger);
+					bindings.put("dbHandler", new DbHandler());
+					bindings.put("dateUtil", new DateUtil());
 					bindings.put("scheduler", schedulerBinding);
+					bindings.put("fileExporter", new FileExporter());
+					bindings.put("simpleRepo", new SimpleRepo());
+					bindings.put("logger", logger);
+					bindings.put("runtimeUtil", new RuntimeUtil());
+					bindings.put("outputFileDeleteTask", new OutputFileDeleteTask()); 
+					bindings.put("fileReader", new FileReader());
 					ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
 					scriptEngine.eval(script, bindings);
 				} catch(Exception e){

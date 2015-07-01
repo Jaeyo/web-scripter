@@ -14,17 +14,18 @@ View.prototype = {
 	codeMirror: function(queryDOM, queryResultDOM){
 		this.queryEditor = CodeMirror.fromTextArea(queryDOM, {
 			lineNumbers: true,
-			extraKeys: {"Ctrl-Space": "autocomplete"},
+			extraKeys: {"Ctrl-Space": "autocomplete", "Ctrl-Enter": function(){controller.runQuery();}},
 			mode: 'text/x-sql',
 			hintOptions: { tables: {
 				DATABASE: {},
-				SCRIPT: {}
+				SCRIPT: {},
+				FILEWRITE_STATISTICS: {}
 			}}
 		});
 		
 		this.queryResultEditor = CodeMirror.fromTextArea(queryResultDOM, {
 			lineNumbers: true,
-			extraKeys: {"Ctrl-Space": "autocomplete"},
+			extraKeys: {"Ctrl-Space": "autocomplete", "Ctrl-Return": "alert();"},
 			mode: {name: "javascript", json: true}
 		});
 		
