@@ -15,7 +15,10 @@ View.prototype = {
 	codeMirror: function(dom){
 		this.editor = CodeMirror.fromTextArea(dom, {
 			lineNumbers: true,
-			extraKeys: {"Ctrl-Space": "autocomplete"},
+			extraKeys: {"Ctrl-Space": "autocomplete", 
+				"Ctrl-Enter": function(){ controller.saveScript(); },
+				"Ctrl-s": function(){ controller.saveScript(); }
+			},
 			mode: {name: "javascript", globalVars: true}
 		});
 		

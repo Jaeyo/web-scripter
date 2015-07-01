@@ -14,8 +14,13 @@ public class EmbedDbDAO {
 	@Inject
 	private DerbyDataSource ds;
 	
-	public JSONArray runQuery(String query){
+	public JSONArray query(String query){
 		logger.info("query: {}", query);
 		return ds.getJdbcTmpl().queryForJsonArray(query);
 	} //runQuery
+	
+	public void execute(String query){
+		logger.info("query: {}", query);
+		ds.getJdbcTmpl().execute(query);
+	} //execute
 }  //class

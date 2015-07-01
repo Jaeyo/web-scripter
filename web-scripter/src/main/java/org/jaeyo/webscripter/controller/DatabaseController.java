@@ -30,14 +30,21 @@ public class DatabaseController {
 	private DatabaseService databaseService;
 	
 	@RequestMapping(value = "/View/Databases/", method = RequestMethod.GET)
-	public ModelAndView databases(){
+	public ModelAndView viewDatabases(){
 		return new ModelAndView("databases");
 	} //databases
 	
 	@RequestMapping(value = "/View/NewDatabase/", method = RequestMethod.GET)
-	public ModelAndView newDatabase(){
+	public ModelAndView viewNewDatabases(){
 		return new ModelAndView("new-database");
-	} //databases
+	} //viewNewDatabases
+	
+	@RequestMapping(value = "/View/EditDatabase/${sequence}/", method = RequestMethod.GET)
+	public ModelAndView viewEditDatabase(@PathVariable("sequence") long sequence){
+		ModelAndView mv = new ModelAndView("edit-database");
+		mv.addObject("sequence", sequence);
+		return mv;
+	} //viewEditdatabase
 	
 	
 	
@@ -63,6 +70,28 @@ public class DatabaseController {
 		} //catch
 	} //postDatabase
 	
+	@RequestMapping(value = "/Database/", method = RequestMethod.PUT)
+	public @ResponseBody String putDatabase(
+			@RequestParam(value = "dbMappingName", required = true) String dbMappingName,
+			@RequestParam(value = "memo", required = true) String memo,
+			@RequestParam(value = "jdbcDriver", required = true) String jdbcDriver,
+			@RequestParam(value = "jdbcConnUrl", required = true) String jdbcConnUrl,
+			@RequestParam(value = "jdbcUsername", required = true) String jdbcUsername,
+			@RequestParam(value = "jdbcPassword", required = true) String jdbcPassword){
+		try{
+			TODO IMME
+			return new JSONObject().put("success", 1).toString();
+		} catch(DuplicateException e){
+			String msg = e.getMessage();
+			logger.warn(msg);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //postDatabase
+	
 	@RequestMapping(value = "/Databases/", method = RequestMethod.GET)
 	public @ResponseBody String getDatabases(){
 		try{
@@ -75,10 +104,10 @@ public class DatabaseController {
 		} //catch
 	} //getDatabases
 	
-	@RequestMapping(value = "/Database/{mappingName}/", method = RequestMethod.GET)
-	public @ResponseBody String getDatabase(@PathVariable("mappingName") String mappingName){
+	@RequestMapping(value = "/Database/{sequence}/", method = RequestMethod.GET)
+	public @ResponseBody String getDatabase(@PathVariable("sequence") long sequence){
 		try{
-			JSONObject database = databaseService.loadDatabase(mappingName);
+			JSONObject database = databaseService.loadDatabase(sequence);
 			return new JSONObject().put("success", 1).put("database", database).toString();
 		} catch(Exception e){
 			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
@@ -88,7 +117,7 @@ public class DatabaseController {
 	} //postDatabase
 	
 	@RequestMapping(value = "/Database/{sequence}/", method = RequestMethod.DELETE)
-	public @ResponseBody String getDatabase(@PathVariable("sequence") long sequence){
+	public @ResponseBody String deleteDatabase(@PathVariable("sequence") long sequence){
 		try{
 			databaseService.removeDatabase(sequence);
 			return new JSONObject().put("success", 1).toString();

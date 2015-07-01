@@ -1,9 +1,6 @@
 package org.jaeyo.webscripter;
 
 import org.jaeyo.webscripter.common.Conf;
-import org.jaeyo.webscripter.common.SpringBeans;
-import org.jaeyo.webscripter.common.Util;
-import org.jaeyo.webscripter.controller.DatabaseController;
 import org.jaeyo.webscripter.rdb.DerbySchemaCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,5 +18,7 @@ public class App {
 		JettyServer jetty = new JettyServer();
 		jetty.start();
 		jetty.join();
+		
+		TODO edit-database.js 부터 
 	} //main
 } //class

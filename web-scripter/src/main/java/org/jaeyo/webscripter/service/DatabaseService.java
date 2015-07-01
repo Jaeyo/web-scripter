@@ -28,8 +28,8 @@ public class DatabaseService {
 		return databaseDAO.loadDatabases();
 	} //loadDatabases
 	
-	public JSONObject loadDatabase(String mappingName){
-		return databaseDAO.loadDatabase(mappingName);
+	public JSONObject loadDatabase(long sequence){
+		return databaseDAO.loadDatabase(sequence);
 	} //loadDatabase
 	
 	public void removeDatabase(long sequence){
