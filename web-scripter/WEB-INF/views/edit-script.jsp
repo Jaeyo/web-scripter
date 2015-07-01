@@ -34,6 +34,7 @@
 <script src="http://codemirror.net/addon/hint/javascript-hint.js"></script>
 <script src="http://codemirror.net/addon/hint/anyword-hint.js"></script>
 <script src="http://codemirror.net/mode/javascript/javascript.js"></script>
+<link href="http://codemirror.net/theme/base16-dark.css" rel="stylesheet">
 
 <!-- server adpater js -->
 <script src="/resource/js/server-adapter.js"></script>

@@ -20,6 +20,7 @@ View.prototype = {
 		});
 		
 		this.editor.setSize(null, 800);
+		this.editor.setOption("theme", "base16-dark");
 		
 		var originalHint = CodeMirror.hint.javascript;
 		CodeMirror.hint.javascript = function(cm){
