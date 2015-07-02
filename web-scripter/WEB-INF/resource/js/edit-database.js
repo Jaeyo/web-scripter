@@ -22,6 +22,7 @@ Controller.prototype = {
 			} //if
 			
 			var database = resp.database;
+			$("#input-mapping-name").val(database.MAPPING_NAME);
 			$("#input-jdbc-driver").val(database.DRIVER);
 			$("#input-jdbc-connection-url").val(database.CONNECTION_URL);
 			$("#input-jdbc-username").val(database.USERNAME);
@@ -29,11 +30,30 @@ Controller.prototype = {
 		});
 	}, //loadDatabase
 	saveDatabase: function(){
+		var mappingName = $("#input-mapping-name").val();
 		var driver = $("#input-jdbc-driver").val();
 		var connectionUrl = $("#input-jdbc-connection-url").val();
 		var username = $("#input-jdbc-username").val();
 		var password = $("#input-jdbc-password").val();
-		//TODO IMME
+		
+		var params = {
+			'sequence': this.model.sequence,
+			'dbMappingName': mappingName,
+			'memo': '',
+			'jdbcDriver': driver,
+			'jdbcConnUrl': connectionUrl,
+			'jdbcUsername': username,
+			'jdbcPassword': password
+		};
+		
+		serverAdapter.ajaxCall('/Database/', 'put', params, function(resp){
+			if(resp.success != 1){
+				toast(resp.errmsg);
+				return;
+			} //if
+			
+			window.location.href = '/View/Databases/';
+		});
 	} //saveDatabase
 }; //Controller
 

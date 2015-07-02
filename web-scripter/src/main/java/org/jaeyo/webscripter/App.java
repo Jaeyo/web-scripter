@@ -19,6 +19,6 @@ public class App {
 		jetty.start();
 		jetty.join();
 		
-		TODO edit-database.js 부터 
+		//TODO jquery 이용한 dynamic dom creation으로 레거시 코드 치환
 	} //main
 } //class

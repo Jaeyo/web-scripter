@@ -1,15 +1,9 @@
 package org.jaeyo.webscripter.controller;
 
 import javax.inject.Inject;
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.SimpleBindings;
-import javax.websocket.server.PathParam;
 
 import org.jaeyo.webscripter.exception.DuplicateException;
 import org.jaeyo.webscripter.service.DatabaseService;
-import org.jaeyo.webscripter.service.MainService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -39,12 +33,20 @@ public class DatabaseController {
 		return new ModelAndView("new-database");
 	} //viewNewDatabases
 	
-	@RequestMapping(value = "/View/EditDatabase/${sequence}/", method = RequestMethod.GET)
+	@RequestMapping(value = "/View/EditDatabase/{sequence}/", method = RequestMethod.GET)
 	public ModelAndView viewEditDatabase(@PathVariable("sequence") long sequence){
 		ModelAndView mv = new ModelAndView("edit-database");
 		mv.addObject("sequence", sequence);
 		return mv;
 	} //viewEditdatabase
+	
+	@RequestMapping(value = "/View/Database/Query/{sequence}/", method = RequestMethod.GET)
+	public ModelAndView viewDatabaseQuery(@PathVariable("sequence") long sequence){
+		ModelAndView mv = new ModelAndView("database-query");
+		mv.addObject("sequence", sequence);
+		return mv;
+	} //viewEditdatabase
+	
 	
 	
 	
@@ -72,6 +74,7 @@ public class DatabaseController {
 	
 	@RequestMapping(value = "/Database/", method = RequestMethod.PUT)
 	public @ResponseBody String putDatabase(
+			@RequestParam(value = "sequence", required = true) long sequence,
 			@RequestParam(value = "dbMappingName", required = true) String dbMappingName,
 			@RequestParam(value = "memo", required = true) String memo,
 			@RequestParam(value = "jdbcDriver", required = true) String jdbcDriver,
@@ -79,7 +82,7 @@ public class DatabaseController {
 			@RequestParam(value = "jdbcUsername", required = true) String jdbcUsername,
 			@RequestParam(value = "jdbcPassword", required = true) String jdbcPassword){
 		try{
-			TODO IMME
+			databaseService.update(sequence, dbMappingName, memo, jdbcDriver, jdbcConnUrl, jdbcUsername, jdbcPassword);
 			return new JSONObject().put("success", 1).toString();
 		} catch(DuplicateException e){
 			String msg = e.getMessage();
@@ -121,6 +124,20 @@ public class DatabaseController {
 		try{
 			databaseService.removeDatabase(sequence);
 			return new JSONObject().put("success", 1).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //postDatabase
+	
+	@RequestMapping(value = "/Database/Query/{sequence}/", method = RequestMethod.GET)
+	public @ResponseBody String deleteDatabase(
+			@PathVariable("sequence") long sequence,
+			@RequestParam(value = "query", required = true) String query){
+		try{
+			JSONArray queryResult = databaseService.runQuery(sequence, query);
+			return new JSONObject().put("success", 1).put("result", queryResult).toString();
 		} catch(Exception e){
 			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
 			logger.error(msg, e);

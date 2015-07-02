@@ -26,11 +26,27 @@
 <!-- js cols -->
 <script src="/resource/js/lib/js_cols.min.js"></script>
 
+<!-- code mirror -->
+<script src="http://codemirror.net/lib/codemirror.js"></script>
+<link href="http://codemirror.net/lib/codemirror.css" rel="stylesheet">
+
+<script src="https://codemirror.net/mode/sql/sql.js"></script>
+<script src="http://codemirror.net/mode/javascript/javascript.js"></script>
+
+<script src="https://codemirror.net/addon/hint/show-hint.js"></script>
+<link href="https://codemirror.net/addon/hint/show-hint.css" rel="stylesheet">
+<script src="https://codemirror.net/addon/hint/sql-hint.js"></script>
+
+<link href="http://codemirror.net/theme/base16-dark.css" rel="stylesheet">
+
 <!-- server adpater js -->
 <script src="/resource/js/server-adapter.js"></script>
 
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">
+
+<!-- loading css -->
+<link href="/resource/css/loading.css" rel="stylesheet">
 
 </head>
 
@@ -39,42 +55,31 @@
 	
 	<div class="container">
 		<div class="row">
-			<div class="col-xs-4"></div>
-			<div class="col-xs-4">
-				<input id="input-mapping-name" type="text" class="input form-control" />
+			<div class="col-xs-12">
+				<textarea id="textarea-query" style="width: 100%; height: 100px"></textarea>
 			</div>
-			<div class="col-xs-4"></div>
+		</div>
+		
+		<div class="row" style="margin-top: 15px;">
+			<div class="col-xs-12">
+				<div id="div-loading" class="col-xs-12"></div>
+				<button type="button" class="btn btn-primary pull-right" style="margin-left: 10px" onclick="controller.runQuery();">run query</button>
+			</div>
 		</div>
 		
 		<hr />
 		
 		<div class="row">
-			<div class="col-xs-3"></div>
-			<div class="col-xs-6">
-				<div class="well">
-					<div><label>JDBC.Driver</label></div>
-					<div style="margin-bottom: 13px;"><input id="input-jdbc-driver" type="text" class="input-sm form-control" /></div>
-					
-					<div><label>JDBC.ConnectionURL</label></div>
-					<div style="margin-bottom: 13px;"><input id="input-jdbc-connection-url" type="text" class="input-sm form-control" /></div>
-					
-					<div><label>JDBC.Username</label></div>
-					<div style="margin-bottom: 13px;"><input id="input-jdbc-username" type="text" class="input-sm form-control" /></div>
-					
-					<div><label>JDBC.Password</label></div>
-					<div style="margin-bottom: 13px;"><input id="input-jdbc-password" type="password" class="input-sm form-control" /></div>
-					
-					<button type="button" class="btn btn-primary" onclick="controller.saveDatabase();">save</button>
-				</div>
+			<div class="col-xs-12">
+				<textarea id="textarea-query-result" style="width: 100%; height: 300px"></textarea>
 			</div>
-			<div class="col-xs-3"></div>
 		</div>
 	</div>
 	<!-- end of container -->
 	
-	<!-- edit-database js -->
-	<input id="hidden-sequence" type="hidden" value="${sequence}" />
-	<script src="/resource/js/edit-database.js"></script>
+	<!-- scripts js -->
+	<input type="hidden" id="hidden-sequence" value="${sequence}" />
+	<script src="/resource/js/database-query.js"></script>
 	
 </body>
 </html>

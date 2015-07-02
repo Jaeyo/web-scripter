@@ -25,8 +25,9 @@ View.prototype = {
 		dom += '</div>';
 		dom += '<div class="col-xs-2">';
 		dom += '<div>';
-		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.editDatabase(\'' + database.SEQUENCE + '\')">edit</button>';
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="window.location.href=\'/View/EditDatabase/' + database.SEQUENCE + '/\';">edit</button>';
 		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.removeDatabase(\'' + database.SEQUENCE + '\')">remove</button>';
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="window.location.href=\'/View/Database/Query/' + database.SEQUENCE + '/\';">query</button>';
 		dom += '</div>';
 		dom += '</div>';
 		dom += '</div>';
