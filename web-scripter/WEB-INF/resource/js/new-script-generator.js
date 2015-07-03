@@ -4,26 +4,26 @@ NewScriptGenerator = function(){
 NewScriptGenerator.prototype = {
 	getScript: function(){
 		var script = '';
-		script += 'var id = "' + this.id + '";\n\n';
+		script += 'var id = "{id}";\n\n'.format(this);
 		
-		script += this.getScript_getTableNameFunction() + '\n\n';
+		script += '{getScript_getTableNameFunction}\n\n'.format(this);
 		
 		script += '//common\n';
-		script += 'var period = ' + this.period + ' * 1000;\n';
+		script += 'var period = {period} * 1000;\n'.format(this);
 		if(this.expiredTimeInHour > 0){
-			script += 'var expiredTime = ' + this.expiredTimeInHour + ' * 60 * 60 * 1000\n';
+			script += 'var expiredTime = {expiredTimeInHour} * 60 * 60 * 1000;\n'.format(this);
 			script += 'outputFileDeleteTask.startMonitoring(10*1000, expiredTime);\n';
 		} //if
 		
 		script += '\n';
-		script += 'var delimiter = "' + this.delimiter + '";\n';
+		script += 'var delimiter = "{delimiter}";\n'.format(this);
 		
-		script += this.getScript_commonVariable() + '\n';
+		script += '{getScript_commonVariable}\n'.format(this);
 		script += '//-----------------------------------------------------------------\n';
 		
 		script += 'logger.info("script started");\n';
 		if(this.bindingType != 'simple')
-			script += this.getScript_getSmallerConditionFromSimpleRepo() + '\n';
+			script += '{getScript_getSmallerConditionFromSimpleRepo}\n'.format(this);
 		
 		script += 'scheduler.schedule(period, new java.lang.Runnable(){\n';
 		script += '\trun: function(){\n';
@@ -31,16 +31,16 @@ NewScriptGenerator.prototype = {
 		script += '\t\t\tlogger.info("task started");\n\n';
 		
 		if(this.bindingType === 'sequence')
-			script += this.getScript_getMaxQuery() + '\n';
+			script += '{getScript_getMaxQuery}\n'.format(this);
 		
 		if(this.bindingType != 'simple')
-			script += this.getScript_getBiggerConditionFromDb() + '\n';
+			script += '{getScript_getBiggerConditionFromDb}\n'.format(this);
 		
 		script += this.getScript_queryAndWriteFile() + '\n';
 		if(this.bindingType != 'simple')
-			script += this.getScript_setBiggerConditionToSimpleRepo() + '\n';
+			script += '{getScript_setBiggerConditionToSimpleRepo}\n'.format(this);
 	
-		script += '\t\t\tlogger.info("task finished");\n';
+		script += '\t\t\tlogger.info("task finished");\n'.format(this);
 		script += '\t\t} catch(e){ \n';
 		script += '\t\t\tlogger.error(e);\n';
 		script += '\t\t} //catch\n';
@@ -72,16 +72,16 @@ NewScriptGenerator.prototype = {
 	
 	getScript_commonVariable: function(){
 		var script = '';
-		script += 'var dbName = "' + this.dbName + '";\n';
-		script += 'var originalTableName = "' + this.tableName + '";\n';
-		script += 'var selectColumn = "' + this.selectColumn + '";\n';
-		script += 'var outputPath = "' + this.outputPath + '";\n';
-		script += 'var charset = "' + this.charset+ '";\n';
+		script += 'var dbName = "{dbName}";\n'.format(this);
+		script += 'var originalTableName = "{tableName}";\n'.format(this);
+		script += 'var selectColumn = "{selectColumn}";\n'.format(this);
+		script += 'var outputPath = "{outputPath}";\n'.format(this);
+		script += 'var charset = "{charset}";\n'.format(this);
 		
 		if(this.bindingType === 'sequence'){
-			script += 'var conditionColumn = "' + this.sequenceColumn + '";\n';
+			script += 'var conditionColumn = "{sequenceColumn}";\n'.format(this);
 		} else if(this.bindingType === 'date'){
-			script += 'var conditionColumn = "' + this.dateColumn + '";\n';
+			script += 'var conditionColumn = "{dateColumn}";\n'.format(this);
 		} //if
 		
 		script += '\n';

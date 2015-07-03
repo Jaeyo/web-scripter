@@ -29,7 +29,7 @@ View.prototype = {
 			
 			for(var i=0; i<resp.databases.length; i++){
 				var database = resp.databases[i];
-				var dom = '<li><a href="#" onclick="controller.setDatabase(\'' + database.SEQUENCE + '\');">' + database.MAPPING_NAME + '</a></li>';
+				var dom = '<li><a href="#" onclick="controller.setDatabase(\'{SEQUENCE}\', \'{MAPPING_NAME}\');">{MAPPING_NAME}</a></li>'.format(database);
 				$('#dropdown-database').find('ui').append(dom);
 			} //for i
 		});
@@ -63,7 +63,7 @@ Controller = function(){
 	this.view = new View();
 }; //INIT
 Controller.prototype = {
-	setDatabase: function(sequence){
+	setDatabase: function(sequence, mappingName){
 		serverAdapter.ajaxCall('/Database/' + sequence + '/', 'get', {}, function(resp){
 			if(resp.success != 1){
 				toast(resp.errmsg);

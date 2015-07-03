@@ -29,6 +29,9 @@
 <!-- js cols -->
 <script src="/resource/js/lib/js_cols.min.js"></script>
 
+<!-- string format -->
+<script src="/resource/js/lib/string.format.js"></script>
+
 <!-- code mirror -->
 <script src="http://codemirror.net/lib/codemirror.js"></script>
 <link href="http://codemirror.net/lib/codemirror.css" rel="stylesheet">
