@@ -36,7 +36,8 @@ NewScriptGenerator.prototype = {
 		if(this.bindingType != 'simple')
 			script += '{getScript_getBiggerConditionFromDb}\n'.format(this);
 		
-		script += this.getScript_queryAndWriteFile() + '\n';
+		script += '{getScript_queryAndWriteFile}\n'.format(this);
+		
 		if(this.bindingType != 'simple')
 			script += '{getScript_setBiggerConditionToSimpleRepo}\n'.format(this);
 	
@@ -108,7 +109,7 @@ NewScriptGenerator.prototype = {
 	getScript_getMaxQuery: function(){
 		var script = '';
 		if(this.bindingType === 'sequence')
-			script += '\t\t\tvar getMaxQuery = "select max(" + conditionColumn + ") from " + getTableName(originalTableName);\n';
+			script += '\t\t\tvar getMaxQuery = stringUtil.format("select max(%s) from %s", conditionColumn, getTableName(originalTableName));\n';
 		return script;
 	}, //getScript_getMaxQuery
 	
@@ -127,29 +128,26 @@ NewScriptGenerator.prototype = {
 	getScript_queryAndWriteFile: function(){
 		var script = '';
 		
-		if(this.bindngType === 'simple'){
-			script += '\t\t\tvar query = "select " + selectColumn + " from " + getTableName(originalTableName);\n';
+		if(this.bindingType == 'simple'){
+			script += '\t\t\tvar query = stringUtil.format("select %s from %s", selectColumn, getTableName(originalTableName));\n';
 		} else if(this.bindingType === 'sequence'){
-			script += '\t\t\tvar query = "select " + selectColumn + " from " + getTableName(originalTableName) + \n';
-			script += '\t\t\t\t\t" where " + conditionColumn + " > " + smallerCondition + \n';
-			script += '\t\t\t\t\t" and " + conditionColumn + " <= " + biggerCondition;\n';
+			script += '\t\t\tvar query = stringUtil.format("select %s from %s where %s > %s and %s <= %s", \n';
+			script += '\t\t\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
 		} else if(this.bindingType === 'date'){
-			script += '\t\t\tvar query = "select " + selectColumn + " from " + getTableName(originalTableName) + \n';
 			if(this.dbVendor === 'oracle' || this.dbVendor === 'db2' || this.dbVendor === 'tibero' || this.dbVendor === 'etc'){
-				script += '\t\t\t\t\t" where " + conditionColumn + " > to_date(\'" + smallerCondition + "\', \'YYYY-MM-DD HH24:MI:SS\') "\n';
-				script += '\t\t\t\t\t" and " + conditionColumn + " <= to_date(\'" + biggerCondition + "\', \'YYYY-MM-DD HH24:MI:SS\') "\n';
+				script += '\t\t\tvar query = stringUtil.format("select %s from %s where %s > to_date(\'%s\', \'YYYY-MM-DD HH24:MI:SS\') and %s <= to_date(\'%s\', \'YYYY-MM-DD HH24:MI:SS\')", \n';
+				script += '\t\t\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
 			} else if(this.dbVendor === 'mysql'){
-				script += '\t\t\t\t\t" where " + conditionColumn + " > str_to_date(\'" + smallerCondition + "\', \'%Y-%m-%d %H:%i:%s\') "\n';
-				script += '\t\t\t\t\t" and " + conditionColumn + " <= str_to_date(\'" + biggerCondition + "\', \'%Y-%m-%d %H:%i:%s\') "\n';
+				script += '\t\t\tvar query = stringUtil.format("select %s from %s where %s > str_to_date(\'%s\', \'%Y-%m-%d %H:%i:%s\') and %s <= str_to_date(\'%s\', \'%Y-%m-%d %H:%i:%s\')", \n';
+				script += '\t\t\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
 			} else if(this.dbVendor === 'mssql'){
-				script += '\t\t\t\t\t" where " + conditionColumn + " > \'" + smallerCondition + "\'"\n';
-				script += '\t\t\t\t\t" and " + conditionColumn + " <= \'" + biggerCondition + "\'";\n';
+				script += '\t\t\tvar query = stringUtil.format("select %s from %s where %s > \'%s\' and %s <= \'%s\'", \n';
+				script += '\t\t\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
 			} //if
 		} //if
 		
-		script += '\t\t\tvar outputFilename = outputPath + getTableName(originalTableName) + "_" + dateUtil.format(dateUtil.currentTImeMillis(), "yyyyMMddHH") + ".txt";\n';
-		script += '\t\t\tdbHandler.selectAndAppend(dbName, query, delimiter, outputFilename, charset);\n;';
-		script += '\n';
+		script += '\t\t\tvar outputFilename = outputPath + getTableName(originalTableName) + "_" + dateUtil.format(dateUtil.currentTimeMillis(), "yyyyMMddHH") + ".txt";\n';
+		script += '\t\t\tdbHandler.selectAndAppend(dbName, query, delimiter, outputFilename, charset);\n';
 		return script;
 	}, //getScript_queryAndWriteFile
 	

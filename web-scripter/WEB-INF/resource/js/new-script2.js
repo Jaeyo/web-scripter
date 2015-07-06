@@ -1,5 +1,6 @@
 Model = function(){
 	this.database = null;
+	this.bindingType = null;
 }; //INIT
 Model.prototype = {
 	loadDatabases: function(){
@@ -29,6 +30,7 @@ View = function(){
 View.prototype = {
 	init: function(){
 		this.codeMirror();
+		this.codeMirrorQueryMade();
 		var doms = $(".textarea-sample-code");
 		for(var i=0; i<doms.length; i++)
 			this.codeMirrorSampleCode(doms[i]);
@@ -61,7 +63,17 @@ View.prototype = {
 		var height = (dom.value.split('\n').length) * 25;
 		code.setSize(null, height);
 		code.setOption("theme", "base16-dark");
-	} //codeMirrorSampleCode
+	}, //codeMirrorSampleCode
+	codeMirrorQueryMade: function(){
+		this.queryEditor = CodeMirror.fromTextArea($('#textarea-query-made')[0], {
+			lineNumbers: true,
+			mode: 'text/x-sql',
+			readOnly: true
+		});
+		
+		this.queryEditor.setSize(null, 50);
+		this.queryEditor.setOption("theme", "base16-dark");
+	} //codeMirrorQueryMade
 }; //View
 
 Controller = function(){
@@ -75,7 +87,6 @@ Controller.prototype = {
 		$('#div-initial-step').css('background-color', '');
 		$('#div-select-database').show(300);
 		$('#div-select-database').css('background-color', 'silver');
-		this.loadDatabases();
 	}, //stepByStep
 	scriptDirectly: function(){
 		$('.step').hide(300);
@@ -96,24 +107,20 @@ Controller.prototype = {
 		
 		$('#dropdown-database').find('button').html(mappingName);
 		$('.step').css('background-color', '');
-		$('#div-table-name').css('background-color', 'silver');
-		$('#div-table-name').show(300);
-	}, //setDatabase
-	
-	//TODO IMME setDatabase에서 bindingType으로 바로 가게끔, bindingType을 위로 올렸음
-	
-	setTableName: function(){
-		$('.step').css('background-color', '');
 		$('#div-binding-type').css('background-color', 'silver');
 		$('#div-binding-type').show(300);
-	}, //setTableName
+	}, //setDatabase
 	setBindingType: function(bindingType){
 		$('.step').css('background-color', '');
+		this.model.bindingType = bindingType;
+		
 		switch(bindingType){
 		case 'simple': 
 			$('#div-sequence-column').hide(300);
 			$('#div-date-column').hide(300);
-			//TODO IMME
+			$('#div-make-query').css('background-color', 'silver');
+			$('#div-make-query').show(300);
+			this.makeQuery();
 			break; 
 		case 'date': 
 			$('#div-sequence-column').hide(300);
@@ -126,14 +133,112 @@ Controller.prototype = {
 			$('#div-sequence-column').show(300);
 			break; 
 		} //switch
-		//TODO IMME
 	}, //setBindingType
 	setDateColumn: function(){
-		//TODO IMME
+		$('.step').css('background-color', '');
+		$('#div-make-query').css('background-color', 'silver');
+		$('#div-make-query').show(300);
+		this.makeQuery();
 	}, //setDateColumn
 	setSequenceColumn: function(){
-		//TODO IMME
-	} //setSequenceColumn
+		$('.step').css('background-color', '');
+		$('#div-make-query').css('background-color', 'silver');
+		$('#div-make-query').show(300);
+		this.makeQuery();
+	}, //setSequenceColumn
+	makeQuery: function(){
+		var column = $('#input-select-column').val();
+		var table = $('#input-table-name').val();
+		var query = 'SELECT {} from {}'.format(column, table);
+		
+		switch(this.model.bindingType){
+		case 'date':
+			var conditionColumn = $('#input-date-column').val();
+			if(this.model.database.DRIVER.indexOf('mysql') >= 0){
+				query += ' WHERE {} > str_to_date([smallCondition]) AND {} <= str_to_date([bigCondition])'.format(conditionColumn, conditionColumn);
+			} else if(this.model.database.DRIVER.indexOf('sqlserver') >= 0){
+				query += ' WHERE {} > [smallCondition] AND {} <= [bigCondition]'.format(conditionColumn, conditionColumn);
+			} else {
+				query += ' WHERE {} > to_date(\'[smallCondition]\', \'YYYY-MM-DD HH24:MI:SS\') AND {} <= to_date(\'[bigCondition]\', \'YYYY-MM-DD HH24:MI:SS\')'.format(conditionColumn, conditionColumn);
+			} //if
+			
+			break;
+		case 'sequence':
+			var conditionColumn = $('#input-sequence-column').val();
+			query += ' WHERE {} > [smallCondition] AND {} <= [bigCondition]'.format(conditionColumn, conditionColumn);
+			break;
+		} //switch
+		
+		this.view.queryEditor.setValue(query);
+	}, //makeQuery
+	setQueryParams: function(){
+		$('.step').css('background-color', '');
+		$('#div-column-delimiter').css('background-color', 'silver');
+		$('#div-column-delimiter').show(300);
+		$('#div-expired-time-in-hour').css('background-color', 'silver');
+		$('#div-expired-time-in-hour').show(300);
+		$('#div-output-path').css('background-color', 'silver');
+		$('#div-output-path').show(300);
+		$('#div-charset').css('background-color', 'silver');
+		$('#div-charset').show(300);
+		$('#div-make-script').css('background-color', 'silver');
+		$('#div-make-script').show(300);
+	}, //setQueryParams
+	makeScript: function(){
+		var newScriptGenerator = new NewScriptGenerator(); //IMME
+		newScriptGenerator.dbName = this.model.database.MAPPING_NAME;
+		if(this.model.database.DRIVER.indexOf('Oracle') >= 0){
+			newScriptGenerator.dbVendor = 'oracle';
+		} else if(this.model.database.DRIVER.indexOf('mysql') >= 0){
+			newScriptGenerator.dbVendor = 'mysql';
+		} else if(this.model.database.DRIVER.indexOf('sqlserver') >= 0){
+			newScriptGenerator.dbVendor = 'mssql';
+		} else if(this.model.database.DRIVER.indexOf('DB2') >= 0){
+			newScriptGenerator.dbVendor = 'db2';
+		} else if(this.model.database.DRIVER.indexOf('tibero') >= 0){
+			newScriptGenerator.dbVendor = 'tibero';
+		} else {
+			newScriptGenerator.dbVendor = 'etc';
+		} //if
+		newScriptGenerator.selectColumn = $('#input-select-column').val();
+		newScriptGenerator.tableName = $('#input-table-name').val();
+		newScriptGenerator.bindingType = this.model.bindingType;
+		newScriptGenerator.dateColumn = $('#input-date-column').val();
+		newScriptGenerator.sequenceColumn = $('#input-sequence-column').val();
+		newScriptGenerator.period = $('#input-period').val();
+		newScriptGenerator.expiredTimeInHour = $('#input-expired-time-in-hour').val();
+		newScriptGenerator.delimiter = $('#input-column-delimiter').val();
+		newScriptGenerator.outputPath = $('#input-output-path').val();
+		newScriptGenerator.charset = $('#input-charset').val();
+	
+		$('.step').hide(300);
+		$('.step').css('background-color', '');
+		$('#div-initial-step').css('background-color', '');
+		$('#div-script').show(300);
+		$('#div-script').css('background-color', 'silver');
+		this.view.editor.setValue(newScriptGenerator.getScript());
+		$('#btn-save').show(300);
+	}, //makeScript
+	save: function(){
+		var scriptName = $("#input-script-name").val();
+		var script = this.view.editor.getValue();
+	
+		try{
+			precondition(scriptName != null && scriptName.trim().length != 0, "script name is empty");
+			precondition(script != null && script.trim().length != 0, "script is empty");
+		} catch(e){
+			toast(e.message);
+			return;
+		} //catch
+	
+		serverAdapter.ajaxCall('/Script/', 'post', {'scriptName': scriptName, 'script': script}, function(resp){
+			if(resp.success != 1){
+				toast(resp.errmsg);
+				return;
+			} //if
+			window.location.href = '/View/Scripts/';
+		});
+	} //save
 }; //Controller
 
 function toast(msg){

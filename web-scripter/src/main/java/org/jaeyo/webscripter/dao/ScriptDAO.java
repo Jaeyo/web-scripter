@@ -45,4 +45,9 @@ public class ScriptDAO {
 		
 		return result.getJSONObject(0);
 	} //loadScript
+	
+	public void removeScript(long sequence){
+		logger.info("sequence: {}", sequence);
+		ds.getJdbcTmpl().update("delete from script where sequence = ?", sequence);
+	} //removeScript
 } //class

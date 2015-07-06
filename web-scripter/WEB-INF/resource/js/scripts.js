@@ -21,19 +21,16 @@ View.prototype = {
 		dom += '<p style="font-size: 80%">this is test script 1</p>';
 		dom += '</div>';
 		dom += '<div class="col-xs-6">';
-		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.startScript(\'' + script.SEQUENCE + '\')"';
-		if(script.IS_RUNNING === true)
-			dom += ' disabled ';
-		dom += '>start</button>&nbsp;';
-		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.stopScript(\'' + script.SEQUENCE + '\')"';
-		if(script.IS_RUNNING === false)
-			dom += ' disabled ';
-		dom += '>stop</button>&nbsp;';
-		dom += '<button type="button" class="btn btn-sm btn-info" onclick="window.location.href=\'/View/EditScript/' + script.SEQUENCE + '/\'"';
-		if(script.IS_RUNNING === true)
-			dom += ' disabled ';
-		dom += '>script</button>&nbsp;';
-		dom += '<button type="button" class="btn btn-sm btn-info" onclick="window.location.href=\'/View/Statistics/' + script.SEQUENCE + '/\'">statistics</button>';
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.startScript(\'{}\')" {} >start</button>&nbsp;'
+			.format(script.SEQUENCE, script.IS_RUNNING === true ? 'disabled' : '');
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.stopScript(\'{}\')" {} >stop</button>&nbsp;'
+			.format(script.SEQUENCE, script.IS_RUNNING === false ? 'disabled' : '');
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="window.location.href=\'/View/EditScript/{}/\'" {} >script</button>&nbsp;'
+			.format(script.SEQUENCE, script.IS_RUNNING === true ? 'disabled' : '');
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="window.location.href=\'/View/Statistics/{}/\'" {} >statistics</button>&nbsp;'
+			.format(script.SEQUENCE);
+		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.removeScript(\'{}\')" {} >remove</button>&nbsp;'
+			.format(script.SEQUENCE, script.IS_RUNNING === true? 'disabled' : '');
 		dom += '</div>';
 		dom += '</div>';
 		dom += '<hr />';
@@ -84,7 +81,21 @@ Controller.prototype = {
 			
 			window.location.href='/View/Scripts/';
 		});
-	} //stopScript
+	}, //stopScript
+	removeScript: function(sequence){
+		bootbox.confirm('remove script', function(result){
+			if(result === true){
+				serverAdapter.ajaxCall('/Script/{}/'.format(sequence), 'delete', {}, function(resp){
+					if(resp.success != 1){
+						toast(resp.errms);
+						return;
+					} //if
+					
+					window.location.href = '/View/Scripts/';
+				});
+			} //if
+		});
+	} //removeScript
 }; //Controller
 
 function toast(msg){

@@ -134,6 +134,18 @@ public class ScriptController {
 		} //catch
 	} //stopScript
 	
+	@RequestMapping(value = "/Script/{sequence}", method = RequestMethod.DELETE)
+	public @ResponseBody String removeScript(@PathVariable("sequence") long sequence){
+		try{
+			scriptService.removeScript(sequence);
+			return new JSONObject().put("success", 1).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //removeScript
+	
 	@RequestMapping(value = "/Script/Statistics/{sequence}", method = RequestMethod.GET)
 	public @ResponseBody String getScriptStatistics(@PathVariable("sequence") long sequence){
 		try{

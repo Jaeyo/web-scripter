@@ -64,4 +64,9 @@ public class ScriptService {
 		logger.info("sequence: {}", sequence);
 		scriptExecutor.stop(sequence);
 	} //stopScript
+	
+	public void removeScript(long sequence){
+		logger.info("sequence: {}", sequence);
+		scriptDAO.removeScript(sequence);
+	} //removeScript
 } //class

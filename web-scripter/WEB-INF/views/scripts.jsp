@@ -23,6 +23,9 @@
 <!-- jquery tmpl -->
 <script src="/resource/js/lib/jquery.tmpl.min.js"></script>
 
+<!-- string format -->
+<script src="/resource/js/lib/string.format.js"></script>
+
 <!-- js cols -->
 <script src="/resource/js/lib/js_cols.min.js"></script>
 

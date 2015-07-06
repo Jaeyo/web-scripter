@@ -35,11 +35,14 @@
 <!-- code mirror -->
 <script src="http://codemirror.net/lib/codemirror.js"></script>
 <link href="http://codemirror.net/lib/codemirror.css" rel="stylesheet">
+
+<script src="https://codemirror.net/mode/sql/sql.js"></script>
+<script src="http://codemirror.net/mode/javascript/javascript.js"></script>
+
 <script src="https://codemirror.net/addon/hint/show-hint.js"></script>
 <link href="https://codemirror.net/addon/hint/show-hint.css" rel="stylesheet">
 <script src="http://codemirror.net/addon/hint/javascript-hint.js"></script>
-<script src="http://codemirror.net/addon/hint/anyword-hint.js"></script>
-<script src="http://codemirror.net/mode/javascript/javascript.js"></script>
+
 <link href="http://codemirror.net/theme/base16-dark.css" rel="stylesheet">
 
 <!-- common css -->
@@ -51,6 +54,16 @@
 	<jsp:include page="inc/header.jsp" flush="false"/>
 	
 	<div class="container">
+		<div class="row">
+			<div class="col-xs-4"><label class="pull-right">script name</label></div>
+			<div class="col-xs-4">
+				<div style="margin-bottom: 20px;"><input id="input-script-name" type="text" class="input form-control" /></div>
+			</div>
+			<div class="col-xs-4">
+				<button id="btn-save" type="button" class="btn btn-primary pull-right" style="display: none;"onclick="controller.save();">save</button>
+			</div>
+		</div>
+		
 		<div class="row">
 			<div class="col-xs-7">
 				<div class="row" id="div-initial-step" style="padding: 10px;">
@@ -97,22 +110,6 @@
 					<div class="col-xs-3">
 						<button type="button" class="btn btn-default center" onclick="controller.setBindingType('sequence');">sequence</button>
 					</div>
-				</div>	
-				
-				<div class="row step" id="div-table-name" style="display: none; padding: 10px">
-					<div class="row">
-						<div class="col-xs-3">
-							<label>table name</label>
-						</div>
-						<div class="col-xs-9">
-							<input type="text" id="input-table-name" class="input form-control" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-12">
-							<button type="button" class="btn btn-default pull-right" onclick="controller.setTableName();">next</button>
-						</div>
-					</div>
 				</div>
 				
 				<div class="row step" id="div-date-column" style="display: none; padding: 10px">
@@ -121,7 +118,7 @@
 							<label>date column</label>
 						</div>
 						<div class="col-xs-9">
-							<input type="text" id="input-date-column" class="input form-control" />
+							<input type="text" id="input-date-column" class="input form-control" onkeyup="controller.makeQuery();" />
 						</div>
 					</div>
 					<div class="row">
@@ -137,7 +134,7 @@
 							<label>sequence column</label>
 						</div>
 						<div class="col-xs-9">
-							<input type="text" id="input-date-column" class="input form-control" />
+							<input type="text" id="input-sequence-column" class="input form-control" onkeyup="controller.makeQuery();" />
 						</div>
 					</div>
 					<div class="row">
@@ -147,9 +144,79 @@
 					</div>
 				</div>
 				
-				<!-- TODO IMME -->
+				<div class="row step" id="div-make-query" style="display: none; padding: 10px;">
+					<div class="row">
+						<div class="col-xs-6">
+							<input type="text" id="input-select-column" class="input form-control" placeholder="select column" onkeyup="controller.makeQuery();" />
+						</div>
+						<div class="col-xs-6">
+							<input type="text" id="input-table-name" class="input form-control" placeholder="table name" onkeyup="controller.makeQuery();" />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<textarea id="textarea-query-made"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<button type="button" class="btn btn-default pull-right" onclick="controller.setQueryParams()">next</button>
+						</div>
+					</div>
+				</div>
+	
+				<div class="row step" id="div-column-delimiter" style="display: none; padding: 10px;">
+					<div class="col-xs-3">
+						<label>column delimiter</label>
+					</div>
+					<div class="col-xs-9">
+						<input type="text" id="input-column-delimiter" class="input form-control" value="|" />
+					</div>
+				</div>
+				
+				<div class="row step" id="div-column-delimiter" style="display: none; padding: 10px;">
+					<div class="col-xs-3">
+						<label>period</label>
+					</div>
+					<div class="col-xs-9">
+						<input type="text" id="input-period" class="input form-control" value="60" />
+					</div>
+				</div>
+				
+				<div class="row step" id="div-expired-time-in-hour" style="display: none; padding: 10px;">
+					<div class="col-xs-3">
+						<label>expired time in hour</label>
+					</div>
+					<div class="col-xs-9">
+						<input type="text" id="input-expired-time-in-hour" class="input form-control" />
+					</div>
+				</div>
+				
+				<div class="row step" id="div-output-path" style="display: none; padding: 10px;">
+					<div class="col-xs-3">
+						<label>output path</label>
+					</div>
+					<div class="col-xs-9">
+						<input type="text" id="input-output-path" class="input form-control" value="/data/outputpath/" />
+					</div>
+				</div>
+				
+				<div class="row step" id="div-charset" style="display: none; padding: 10px;">
+					<div class="col-xs-3">
+						<label>output path</label>
+					</div>
+					<div class="col-xs-9">
+						<input type="text" id="input-charset" class="input form-control" value="utf-8" />
+					</div>
+				</div>
 				
 				<hr />
+				
+				<div class="row step" id="div-make-script" style="display: none; padding: 10px;">
+					<div class="col-xs-12">
+						<button type="button" class="btn btn-primary" onclick="controller.makeScript();">make script</button>
+					</div>
+				</div>
 			</div>
 			
 			<div class="col-xs-5" style="overflow: scroll; height: 700px; padding-left: 30px">
