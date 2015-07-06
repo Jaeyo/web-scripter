@@ -27,12 +27,12 @@ public class ScriptService {
 	@Inject
 	private FileWriteStatisticsDAO fileWriteStatisticsDAO;
 	
-	public void save(String scriptName, String script){
-		scriptDAO.save(scriptName, script);
+	public void save(String scriptName, String script, String memo){
+		scriptDAO.save(scriptName, script, memo);
 	} //save
 	
-	public void edit(long sequence, String scriptName, String script){
-		scriptDAO.edit(sequence, scriptName, script);
+	public void edit(long sequence, String scriptName, String script, String memo){
+		scriptDAO.edit(sequence, scriptName, script, memo);
 	} //edit
 	
 	public JSONArray loadScripts(){

@@ -18,17 +18,17 @@ public class ScriptDAO {
 	@Inject
 	private DerbyDataSource ds;
 	
-	public void save(String scriptName, String script){
+	public void save(String scriptName, String script, String memo){
 		logger.info("scriptName: {}", scriptName);
-		ds.getJdbcTmpl().update("insert into script (sequence, script_name, script, regdate) "
-				+ "values(next value for main_seq, ?, ?, ?)", scriptName, script, new Date());
+		ds.getJdbcTmpl().update("insert into script (sequence, script_name, script, memo, regdate) "
+				+ "values(next value for main_seq, ?, ?, ?, ?)", scriptName, script, memo, new Date());
 	} //save
 	
-	public void edit(long sequence, String scriptName, String script){
+	public void edit(long sequence, String scriptName, String script, String memo){
 		logger.info("sequence: {}, scriptName: {}", sequence, scriptName);
-		ds.getJdbcTmpl().update("update script set script_name = ?, script = ?, regdate = ? "
+		ds.getJdbcTmpl().update("update script set script_name = ?, script = ?, regdate = ?, memo = ? "
 				+ "where sequence = ?",
-				scriptName, script, new Date(), sequence);
+				scriptName, script, new Date(), memo, sequence);
 	} //edit
 	
 	public JSONArray loadScripts(){

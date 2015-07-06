@@ -60,9 +60,10 @@ public class ScriptController {
 	@RequestMapping(value = "/Script/", method = RequestMethod.POST)
 	public @ResponseBody String postScript(
 			@RequestParam(value = "scriptName", required = true) String scriptName,
-			@RequestParam(value = "script", required = true) String script){
+			@RequestParam(value = "script", required = true) String script,
+			@RequestParam(value = "memo", required = false) String memo){
 		try{
-			scriptService.save(scriptName, script);
+			scriptService.save(scriptName, script, memo);
 			return new JSONObject().put("success", 1).toString();
 		} catch(Exception e){
 			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
@@ -75,9 +76,10 @@ public class ScriptController {
 	public @ResponseBody String putScript(
 			@PathVariable("sequence") long sequence,
 			@RequestParam(value = "scriptName", required = true) String scriptName,
-			@RequestParam(value = "script", required = true) String script){
+			@RequestParam(value = "script", required = true) String script,
+			@RequestParam(value = "memo", required = false) String memo){
 		try{
-			scriptService.edit(sequence, scriptName, script);
+			scriptService.edit(sequence, scriptName, script, memo);
 			return new JSONObject().put("success", 1).toString();
 		} catch(Exception e){
 			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());

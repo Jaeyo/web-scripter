@@ -57,6 +57,7 @@ public class DerbySchemaCreator {
 					+ "sequence integer not null primary key, "
 					+ "script_name varchar(100) not null unique, "
 					+ "script long varchar, "
+					+ "memo long varchar, "
 					+ "regdate timestamp not null )");
 		
 		if(existingTableNames.contains("FILEWRITE_STATISTICS") == false)

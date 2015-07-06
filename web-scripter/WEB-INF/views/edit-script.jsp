@@ -49,9 +49,17 @@
 	
 	<div class="container">
 		<div class="row">
-			<div class="col-xs-4"></div>
 			<div class="col-xs-4">
-				<input id="input-script-name" type="text" class="input form-control" />
+				<div><label>script name</label></div>
+				<div>
+					<input id="input-script-name" type="text" class="input form-control" />
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div><label>memo</label></div>
+				<div>
+					<textarea id="textarea-memo" class="form-control"></textarea>
+				</div>
 			</div>
 			<div class="col-xs-4">
 				<button type="button" class="btn btn-primary pull-right" onclick="controller.saveScript();">save</button>

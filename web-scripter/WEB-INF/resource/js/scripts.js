@@ -17,8 +17,8 @@ View.prototype = {
 		var dom = '';
 		dom += '<div class="row">';
 		dom += '<div class="col-xs-6">';
-		dom += '<h4>' + script.SCRIPT_NAME + '</h4>';
-		dom += '<p style="font-size: 80%">this is test script 1</p>';
+		dom += '<h4>{}</h4>'.format(script.SCRIPT_NAME);
+		dom += '<p style="font-size: 80%">{}</p>'.format(script.MEMO);
 		dom += '</div>';
 		dom += '<div class="col-xs-6">';
 		dom += '<button type="button" class="btn btn-sm btn-info" onclick="controller.startScript(\'{}\')" {} >start</button>&nbsp;'
