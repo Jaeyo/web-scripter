@@ -19,6 +19,7 @@ import org.jaeyo.webscripter.script.bindings.OutputFileDeleteTask;
 import org.jaeyo.webscripter.script.bindings.RuntimeUtil;
 import org.jaeyo.webscripter.script.bindings.Scheduler;
 import org.jaeyo.webscripter.script.bindings.SimpleRepo;
+import org.jaeyo.webscripter.script.bindings.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -51,6 +52,7 @@ public class ScriptExecutor {
 					bindings.put("runtimeUtil", new RuntimeUtil());
 					bindings.put("outputFileDeleteTask", new OutputFileDeleteTask()); 
 					bindings.put("fileReader", new FileReader());
+					bindings.put("stringUtil", new StringUtil());
 					ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
 					scriptEngine.eval(script, bindings);
 				} catch(Exception e){

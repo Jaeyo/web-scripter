@@ -18,7 +18,5 @@ public class App {
 		JettyServer jetty = new JettyServer();
 		jetty.start();
 		jetty.join();
-		
-		//TODO jquery 이용한 dynamic dom creation으로 레거시 코드 치환
 	} //main
 } //class
