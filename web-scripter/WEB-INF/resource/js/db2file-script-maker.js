@@ -1,12 +1,10 @@
-NewScriptGenerator = function(){
+Db2FileScriptMaker= function(){
 	this.id = new Date().getTime();
 }; //INIT
-NewScriptGenerator.prototype = {
+Db2FileScriptMaker.prototype = {
 	getScript: function(){
 		var script = '';
 		script += 'var id = "{id}";\n\n'.format(this);
-		
-		script += '{getScript_getTableNameFunction}\n\n'.format(this);
 		
 		script += '//common\n';
 		script += 'var period = {period} * 1000;\n'.format(this);
@@ -17,18 +15,13 @@ NewScriptGenerator.prototype = {
 		
 		script += '\n';
 		script += 'var delimiter = "{delimiter}";\n'.format(this);
-		
 		script += '{getScript_commonVariable}\n'.format(this);
-		script += '//-----------------------------------------------------------------\n';
+	
+		script += 'var main = function(){\n';
+		script += '\tlogger.info("task started");\n\n';
 		
-		script += 'logger.info("script started");\n';
 		if(this.bindingType != 'simple')
 			script += '{getScript_getSmallerConditionFromSimpleRepo}\n'.format(this);
-		
-		script += 'scheduler.schedule(period, new java.lang.Runnable(){\n';
-		script += '\trun: function(){\n';
-		script += '\t\ttry {\n';
-		script += '\t\t\tlogger.info("task started");\n\n';
 		
 		if(this.bindingType === 'sequence')
 			script += '{getScript_getMaxQuery}\n'.format(this);
@@ -41,7 +34,18 @@ NewScriptGenerator.prototype = {
 		if(this.bindingType != 'simple')
 			script += '{getScript_setBiggerConditionToSimpleRepo}\n'.format(this);
 	
-		script += '\t\t\tlogger.info("task finished");\n'.format(this);
+		script += '\tlogger.info("task finished");\n'.format(this);
+		script += '} //main\n';
+		
+		script += '//-----------------------------------------------------------------\n';
+		script += '{getScript_getTableNameFunction}\n\n'.format(this);
+		
+		script += 'logger.info("script started");\n';
+		
+		script += 'scheduler.schedule(period, new java.lang.Runnable(){\n';
+		script += '\trun: function(){\n';
+		script += '\t\ttry {\n';
+		script += '\t\t\tmain();\n';
 		script += '\t\t} catch(e){ \n';
 		script += '\t\t\tlogger.error(e);\n';
 		script += '\t\t} //catch\n';
@@ -92,15 +96,13 @@ NewScriptGenerator.prototype = {
 	getScript_getSmallerConditionFromSimpleRepo: function(){
 		var script = '';
 		if(this.bindingType === 'sequence'){
-			script += 'var smallerCondition = simpleRepo.load(id);\n';
-			script += 'if(smallerCondition === null)\n';
-			script += '\tsmallerCondition = dateUtil.format(0, "yyyy-MM-dd HH:mm:ss");\n'
-			script += '\n';
+			script += '\tvar smallerCondition = simpleRepo.load(id);\n';
+			script += '\tif(smallerCondition === null)\n';
+			script += '\t\tsmallerCondition = dateUtil.format(0, "yyyy-MM-dd HH:mm:ss");\n'
 		} else if(this.bindingType === 'date'){
-			script += 'var smallerCondition = simpleRepo.load(id);\n';
-			script += 'if(smallerCondition === null)\n';
-			script += '\tsmallerCondition = 0;\n';
-			script += '\n';
+			script += '\tvar smallerCondition = simpleRepo.load(id);\n';
+			script += '\tif(smallerCondition === null)\n';
+			script += '\t\tsmallerCondition = 0;\n';
 		} //if
 		
 		return script;
@@ -109,18 +111,18 @@ NewScriptGenerator.prototype = {
 	getScript_getMaxQuery: function(){
 		var script = '';
 		if(this.bindingType === 'sequence')
-			script += '\t\t\tvar getMaxQuery = stringUtil.format("select max(%s) from %s", conditionColumn, getTableName(originalTableName));\n';
+			script += '\tvar getMaxQuery = stringUtil.format("select max(%s) from %s", conditionColumn, getTableName(originalTableName));\n';
 		return script;
 	}, //getScript_getMaxQuery
 	
 	getScript_getBiggerConditionFromDb: function(){
 		var script = '';
 		if(this.bindingType ==='sequence'){
-			script += '\t\t\tvar biggerCondition = dateUtil.format(dateUtil.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss");\n';
+			script += '\tvar biggerCondition = dateUtil.format(dateUtil.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss");\n';
 		} else if(this.bindingType === 'date'){
-			script += '\t\t\tvar biggerCondition = dbHandler.selectQuery(dbName, getMaxQuery);\n';
-			script += '\t\t\tif(biggerCondition === null)\n';
-			script += '\t\t\tbiggerCondition = "0";\n';
+			script += '\tvar biggerCondition = dbHandler.selectQuery(dbName, getMaxQuery);\n';
+			script += '\tif(biggerCondition === null)\n';
+			script += '\t\tbiggerCondition = "0";\n';
 		} //if
 		return script;
 	}, //getScript_getBiggerConditionFromDb
@@ -129,34 +131,34 @@ NewScriptGenerator.prototype = {
 		var script = '';
 		
 		if(this.bindingType == 'simple'){
-			script += '\t\t\tvar query = stringUtil.format("select %s from %s", selectColumn, getTableName(originalTableName));\n';
+			script += '\tvar query = stringUtil.format("select %s from %s", selectColumn, getTableName(originalTableName));\n';
 		} else if(this.bindingType === 'sequence'){
-			script += '\t\t\tvar query = stringUtil.format("select %s from %s where %s > %s and %s <= %s", \n';
-			script += '\t\t\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
+			script += '\tvar query = stringUtil.format("select %s from %s where %s > %s and %s <= %s", \n';
+			script += '\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
 		} else if(this.bindingType === 'date'){
 			if(this.dbVendor === 'oracle' || this.dbVendor === 'db2' || this.dbVendor === 'tibero' || this.dbVendor === 'etc'){
-				script += '\t\t\tvar query = stringUtil.format("select %s from %s where %s > to_date(\'%s\', \'YYYY-MM-DD HH24:MI:SS\') and %s <= to_date(\'%s\', \'YYYY-MM-DD HH24:MI:SS\')", \n';
-				script += '\t\t\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
+				script += '\tvar query = stringUtil.format("select %s from %s where %s > to_date(\'%s\', \'YYYY-MM-DD HH24:MI:SS\') and %s <= to_date(\'%s\', \'YYYY-MM-DD HH24:MI:SS\')", \n';
+				script += '\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
 			} else if(this.dbVendor === 'mysql'){
-				script += '\t\t\tvar query = stringUtil.format("select %s from %s where %s > str_to_date(\'%s\', \'%Y-%m-%d %H:%i:%s\') and %s <= str_to_date(\'%s\', \'%Y-%m-%d %H:%i:%s\')", \n';
-				script += '\t\t\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
+				script += '\tvar query = stringUtil.format("select %s from %s where %s > str_to_date(\'%s\', \'%Y-%m-%d %H:%i:%s\') and %s <= str_to_date(\'%s\', \'%Y-%m-%d %H:%i:%s\')", \n';
+				script += '\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
 			} else if(this.dbVendor === 'mssql'){
-				script += '\t\t\tvar query = stringUtil.format("select %s from %s where %s > \'%s\' and %s <= \'%s\'", \n';
-				script += '\t\t\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
+				script += '\tvar query = stringUtil.format("select %s from %s where %s > \'%s\' and %s <= \'%s\'", \n';
+				script += '\t\t\tselectColumn, getTableName(originalTableName), conditionColumn, smallerCondition, conditionColumn, biggerCondition);\n';
 			} //if
 		} //if
 		
-		script += '\t\t\tvar outputFilename = outputPath + getTableName(originalTableName) + "_" + dateUtil.format(dateUtil.currentTimeMillis(), "yyyyMMddHH") + ".txt";\n';
-		script += '\t\t\tdbHandler.selectAndAppend(dbName, query, delimiter, outputFilename, charset);\n';
+		script += '\tvar outputFilename = outputPath + getTableName(originalTableName) + "_" + dateUtil.format(dateUtil.currentTimeMillis(), "yyyyMMddHH") + ".txt";\n';
+		script += '\tdbHandler.selectAndAppend(dbName, query, delimiter, outputFilename, charset);\n';
 		return script;
 	}, //getScript_queryAndWriteFile
 	
 	getScript_setBiggerConditionToSimpleRepo: function(){
 		var script = '';
 		if(this.bindingType != 'simple'){
-			script += '\t\t\tsmallerCondition = biggerCondition;\n';
-			script += '\t\t\tsimpleRepo.store(id, biggerCondition);\n\n';
+			script += '\tsmallerCondition = biggerCondition;\n';
+			script += '\tsimpleRepo.store(id, biggerCondition);\n';
 		} //if
 		return script;
 	} //getScript_setBiggerConditionToSimpleRepo
-}; //NewScriptGenerator
+}; //Db2FileScriptMaker

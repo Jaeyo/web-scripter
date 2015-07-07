@@ -186,36 +186,36 @@ Controller.prototype = {
 		$('#div-make-script').show(300);
 	}, //setQueryParams
 	makeScript: function(){
-		var newScriptGenerator = new NewScriptGenerator(); //IMME
-		newScriptGenerator.dbName = this.model.database.MAPPING_NAME;
+		var db2fileScriptMaker = new Db2FileScriptMaker();
+		db2fileScriptMaker.dbName = this.model.database.MAPPING_NAME;
 		if(this.model.database.DRIVER.indexOf('Oracle') >= 0){
-			newScriptGenerator.dbVendor = 'oracle';
+			db2fileScriptMaker.dbVendor = 'oracle';
 		} else if(this.model.database.DRIVER.indexOf('mysql') >= 0){
-			newScriptGenerator.dbVendor = 'mysql';
+			db2fileScriptMaker.dbVendor = 'mysql';
 		} else if(this.model.database.DRIVER.indexOf('sqlserver') >= 0){
-			newScriptGenerator.dbVendor = 'mssql';
+			db2fileScriptMaker.dbVendor = 'mssql';
 		} else if(this.model.database.DRIVER.indexOf('DB2') >= 0){
-			newScriptGenerator.dbVendor = 'db2';
+			db2fileScriptMaker.dbVendor = 'db2';
 		} else if(this.model.database.DRIVER.indexOf('tibero') >= 0){
-			newScriptGenerator.dbVendor = 'tibero';
+			db2fileScriptMaker.dbVendor = 'tibero';
 		} else {
-			newScriptGenerator.dbVendor = 'etc';
+			db2fileScriptMaker.dbVendor = 'etc';
 		} //if
-		newScriptGenerator.selectColumn = $('#input-select-column').val();
-		newScriptGenerator.tableName = $('#input-table-name').val();
-		newScriptGenerator.bindingType = this.model.bindingType;
-		newScriptGenerator.dateColumn = $('#input-date-column').val();
-		newScriptGenerator.sequenceColumn = $('#input-sequence-column').val();
-		newScriptGenerator.period = $('#input-period').val();
-		newScriptGenerator.expiredTimeInHour = $('#input-expired-time-in-hour').val();
-		newScriptGenerator.delimiter = $('#input-column-delimiter').val();
-		newScriptGenerator.outputPath = $('#input-output-path').val();
-		newScriptGenerator.charset = $('#input-charset').val();
+		db2fileScriptMaker.selectColumn = $('#input-select-column').val();
+		db2fileScriptMaker.tableName = $('#input-table-name').val();
+		db2fileScriptMaker.bindingType = this.model.bindingType;
+		db2fileScriptMaker.dateColumn = $('#input-date-column').val();
+		db2fileScriptMaker.sequenceColumn = $('#input-sequence-column').val();
+		db2fileScriptMaker.period = $('#input-period').val();
+		db2fileScriptMaker.expiredTimeInHour = $('#input-expired-time-in-hour').val();
+		db2fileScriptMaker.delimiter = $('#input-column-delimiter').val();
+		db2fileScriptMaker.outputPath = $('#input-output-path').val();
+		db2fileScriptMaker.charset = $('#input-charset').val();
 	
 		$('.step').hide(300);
 		$('.step').css('background-color', '');
 		$('#div-initial-step').css('background-color', '');
-		this.view.editor.setValue(newScriptGenerator.getScript());
+		this.view.editor.setValue(db2fileScriptMaker.getScript());
 		$('#div-script').css('background-color', 'silver');
 		$('#div-script').show(300);
 	}, //makeScript

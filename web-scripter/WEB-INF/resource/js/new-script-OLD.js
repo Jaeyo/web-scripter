@@ -11,7 +11,7 @@ Model.prototype = {
 }; //Model
 
 View = function(){
-	this.newScriptGenerator = new NewScriptGenerator();
+	this.db2fileScriptMaker= new Db2FileScriptMaker();
 }; //INIT
 View.prototype = {
 	init: function(){
@@ -96,20 +96,20 @@ Controller.prototype = {
 		this.refreshScript();
 	}, //setBindingType
 	refreshScript: function(){
-		this.view.newScriptGenerator.dbName = this.model.database.MAPPING_NAME;
-		this.view.newScriptGenerator.dbVendor = this.model.database.VENDOR;
-		this.view.newScriptGenerator.selectColumn = $('#text-select-column').val();
-		this.view.newScriptGenerator.tableName = $('#text-table-name').val();
-		this.view.newScriptGenerator.bindingType = this.model.bindingType;
-		this.view.newScriptGenerator.dateColumn = $('#text-date-column').val();
-		this.view.newScriptGenerator.sequenceColumn = $('#text-sequence-column').val();
-		this.view.newScriptGenerator.period = $('#text-period').val();
-		this.view.newScriptGenerator.expiredTimeInHour = $('#text-expired-time-in-hour').val();
-		this.view.newScriptGenerator.delimiter = $('#text-column-delimiter').val();
-		this.view.newScriptGenerator.outputPath = $('#text-output-path').val();
-		this.view.newScriptGenerator.charset = $('#text-charset').val();
+		this.view.db2fileScriptMaker.dbName = this.model.database.MAPPING_NAME;
+		this.view.db2fileScriptMaker.dbVendor = this.model.database.VENDOR;
+		this.view.db2fileScriptMaker.selectColumn = $('#text-select-column').val();
+		this.view.db2fileScriptMaker.tableName = $('#text-table-name').val();
+		this.view.db2fileScriptMaker.bindingType = this.model.bindingType;
+		this.view.db2fileScriptMaker.dateColumn = $('#text-date-column').val();
+		this.view.db2fileScriptMaker.sequenceColumn = $('#text-sequence-column').val();
+		this.view.db2fileScriptMaker.period = $('#text-period').val();
+		this.view.db2fileScriptMaker.expiredTimeInHour = $('#text-expired-time-in-hour').val();
+		this.view.db2fileScriptMaker.delimiter = $('#text-column-delimiter').val();
+		this.view.db2fileScriptMaker.outputPath = $('#text-output-path').val();
+		this.view.db2fileScriptMaker.charset = $('#text-charset').val();
 		
-		this.view.editor.setValue(this.view.newScriptGenerator.getScript());
+		this.view.editor.setValue(this.view.db2fileScriptMaker.getScript());
 	}, //refreshScript
 	save: function(){
 		var scriptName = $("#input-script-name").val();

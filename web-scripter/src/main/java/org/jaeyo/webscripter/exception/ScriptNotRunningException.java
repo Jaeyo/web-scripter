@@ -6,10 +6,6 @@ public class ScriptNotRunningException extends Exception {
 		super();
 	}
 
-	public ScriptNotRunningException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
 	public ScriptNotRunningException(String message, Throwable cause) {
 		super(message, cause);
 	}

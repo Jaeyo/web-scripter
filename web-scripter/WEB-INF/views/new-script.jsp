@@ -677,8 +677,8 @@ var result = stringUtil.stringAt("aaa,bbb,ccc,ddd", ",", 2); // ccc 반환
 	<!-- server adpater js -->
 	<script src="/resource/js/server-adapter.js"></script>
 
-	<!-- new-script-generator js -->
-	<script src="/resource/js/new-script-generator.js"></script>
+	<!-- db2file-script-maker js -->
+	<script src="/resource/js/db2file-script-maker.js"></script>
 
 	<!-- scripts js -->
 	<script src="/resource/js/new-script.js"></script>

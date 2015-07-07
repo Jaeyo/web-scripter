@@ -6,10 +6,6 @@ public class AlreadyStartedException extends Exception {
 		super();
 	}
 
-	public AlreadyStartedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
-
 	public AlreadyStartedException(String message, Throwable cause) {
 		super(message, cause);
 	}
@@ -21,5 +17,5 @@ public class AlreadyStartedException extends Exception {
 	public AlreadyStartedException(Throwable cause) {
 		super(cause);
 	}
-
+	
 }

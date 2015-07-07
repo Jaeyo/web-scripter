@@ -46,11 +46,6 @@ public class SingleConnectionDataSource implements DataSource{
 	}
 
 	@Override
-	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-		return null;
-	}
-
-	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
 		return null;
 	}
@@ -58,5 +53,10 @@ public class SingleConnectionDataSource implements DataSource{
 	@Override
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
 		return false;
+	}
+
+	@Override
+	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		return null;
 	}
 } //class
