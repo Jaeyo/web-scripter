@@ -53,6 +53,7 @@ Controller.prototype = {
 			var script = resp.script;
 			controller.model.sequence = script.SEQUENCE;
 			$("#input-script-name").val(script.SCRIPT_NAME);
+			$("#textarea-memo").val(script.MEMO);
 			controller.view.editor.setValue(script.SCRIPT);
 		});
 	}, //loadScripts

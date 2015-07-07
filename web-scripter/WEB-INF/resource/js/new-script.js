@@ -221,7 +221,7 @@ Controller.prototype = {
 	}, //makeScript
 	save: function(){
 		var scriptName = $("#input-script-name").val();
-		var memo = $("textarea-memo").val();
+		var memo = $("#textarea-memo").val();
 		var script = this.view.editor.getValue();
 	
 		try{

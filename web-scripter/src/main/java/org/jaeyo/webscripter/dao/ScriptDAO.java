@@ -33,12 +33,12 @@ public class ScriptDAO {
 	
 	public JSONArray loadScripts(){
 		logger.info("");
-		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate from script");
+		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate, memo from script");
 	} //loadScripts
 	
 	public JSONObject loadScript(long sequence) throws NotFoundException{
 		logger.info("sequence: {}", sequence);
-		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate from script where sequence = ?", sequence);
+		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate, memo from script where sequence = ?", sequence);
 		
 		if(result == null || result.length() == 0)
 			throw new NotFoundException("script not found : " + sequence);
