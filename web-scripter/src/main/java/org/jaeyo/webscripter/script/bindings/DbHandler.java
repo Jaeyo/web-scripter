@@ -149,6 +149,30 @@ public class DbHandler {
 		return selectQuery(dbName, query, " ");
 	} // selectQuery 
 
+	public DbRowIterator selectQueryIterator(String dbName, String query) {
+		logger.info("query : {}", query);
+
+		JSONObject dbProps = databaseService.loadDatabase(dbName);
+		if (dbProps == null) {
+			logger.error("dbName {} not exists", dbName);
+			System.exit(-1);
+		} // if
+
+		Connection conn = null;
+		Statement stmt=null;
+		ResultSet rs=null;
+		try {
+			conn = getConnection(dbProps);
+			stmt=conn.createStatement();
+			rs=stmt.executeQuery(query);
+	
+			return new DbRowIterator(conn, rs, stmt);
+		} catch (Exception e) {
+			logger.error("", e);
+			return null;
+		} //finally
+	} // selectQuery
+	
 	public String selectQuery(String dbName, String query, String delimiter) {
 		logger.info("select query : {}", query);
 
@@ -272,4 +296,39 @@ public class DbHandler {
 		long scriptSequence = Long.parseLong(Thread.currentThread().getName().replace("ScriptThread-", ""));
 		fileWriteStatistics.incrementCount(scriptSequence);
 	} //incrementStatisticskj
+	
+	public class DbRowIterator {
+		private Connection conn;
+		private ResultSet rs;
+		private Statement stmt;
+
+		public DbRowIterator(Connection conn, ResultSet rs, Statement stmt) {
+			this.conn = conn;
+			this.rs = rs;
+			this.stmt = stmt;
+		} //INIT
+		
+		public String[] next() {
+			try {
+				if(rs.next() == false)
+					return null;
+				
+				ResultSetMetaData meta = rs.getMetaData();
+				int colCount = meta.getColumnCount();
+				String[] row = new String[colCount];
+				for (int i = 1; i <= colCount; i++)
+					row[i-1] = rs.getString(i);
+				return row;
+			} catch (SQLException e) {
+				logger.error(String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage()), e);
+				return null;
+	 		} //catch
+		} //next
+
+		public void close(){
+			try { this.rs.close(); } catch (SQLException e) {}
+			try { this.conn.close(); } catch (SQLException e) {}
+			try { this.stmt.close(); } catch (SQLException e) {}
+		} //close
+	} //class
 } // class
