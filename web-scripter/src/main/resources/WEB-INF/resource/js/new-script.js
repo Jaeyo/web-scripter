@@ -30,11 +30,9 @@ View = function(){
 }; //INIT
 View.prototype = {
 	init: function(){
+		this.loadScriptDoc();
 		this.codeMirror();
 		this.codeMirrorQueryMade();
-		var doms = $(".textarea-sample-code");
-		for(var i=0; i<doms.length; i++)
-			this.codeMirrorSampleCode(doms[i]);
 	}, //INIT
 	codeMirror: function(){
 		this.editor = CodeMirror.fromTextArea($("#textarea-script")[0], {
@@ -74,7 +72,51 @@ View.prototype = {
 		
 		this.queryEditor.setSize(null, 50);
 		this.queryEditor.setOption("theme", "base16-dark");
-	} //codeMirrorQueryMade
+	}, //codeMirrorQueryMade
+	loadScriptDoc: function(){
+		serverAdapter.ajaxCall('/Script/Doc/', 'get', {}, function(resp){
+			if(resp.success != 1){
+				toast(resp.errmsg);
+				return;
+			} //if
+			
+			var scriptDoc = resp.scriptDoc;
+			var scriptDocDOM = '';
+			for(var i=0; i<scriptDoc.length; i++){ //for class
+				var className = scriptDoc[i].class;
+				scriptDocDOM += '<h3>{}</h3>\n'.format(className);
+				
+				var methods = scriptDoc[i].methods;
+				for(var ii=0; ii<methods.length; ii++){ //for method
+					var methodTitle = methods[ii].title;
+					var descs = methods[ii].descs;
+					var returnDesc = methods[ii].returnDesc;
+					var example = methods[ii].example;
+					
+					scriptDocDOM += '<h4>{}</h4>\n'.format(methodTitle);
+					scriptDocDOM += '<ul>\n';
+					for(var iii=0; iii<descs.length; iii++) //for descs
+						scriptDocDOM += '<li>{}</li>\n'.format(descs[iii]);
+					if(returnDesc != null)
+						scriptDocDOM += '<li><b>Returns {}</b></li>\n'.format(returnDesc);
+					if(example != null){
+						scriptDocDOM += '<li><b>Example</b></li>\n';
+						scriptDocDOM += '</ul>\n';
+						scriptDocDOM += '<textarea class="textarea-sample-code">\n';
+						scriptDocDOM += example + '\n';
+						scriptDocDOM += '</textarea>\n';
+					} //if
+				} //for ii
+			} //for i
+			
+			console.log(scriptDocDOM); //DEBUG
+			$("#div-script-doc").empty().append(scriptDocDOM);
+			
+			var sampleCodeDoms = $('.textarea-sample-code');
+			for(var i=0; i<sampleCodeDoms.length; i++)
+				controller.view.codeMirrorSampleCode(sampleCodeDoms[i]);
+		});
+	} //loadScriptDoc
 }; //View
 
 Controller = function(){

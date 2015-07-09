@@ -1,9 +1,12 @@
 package org.jaeyo.webscripter.service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.jaeyo.webscripter.dao.FileWriteStatisticsDAO;
 import org.jaeyo.webscripter.dao.ScriptDAO;
 import org.jaeyo.webscripter.exception.AlreadyStartedException;
@@ -69,4 +72,10 @@ public class ScriptService {
 		logger.info("sequence: {}", sequence);
 		scriptDAO.removeScript(sequence);
 	} //removeScript
+	
+	public JSONArray loadDoc() throws IOException{
+		InputStream docInput = this.getClass().getClassLoader().getResourceAsStream("spdbreader-doc.json");
+		String doc = IOUtils.toString(docInput, "utf8");
+		return new JSONArray(doc);
+	} //loadDoc
 } //class

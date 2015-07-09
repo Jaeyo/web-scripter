@@ -35,11 +35,6 @@ public class ScriptController {
 		return new ModelAndView("new-script");
 	} //newScript
 	
-	@RequestMapping(value = "/View/NewScript2/", method = RequestMethod.GET)
-	public ModelAndView viewNewScript2(){
-		return new ModelAndView("new-script2");
-	} //newScript
-	
 	@RequestMapping(value = "/View/EditScript/{sequence}/", method = RequestMethod.GET)
 	public ModelAndView viewEditScript(@PathVariable("sequence") long sequence){
 		ModelAndView mv = new ModelAndView("edit-script");
@@ -100,7 +95,7 @@ public class ScriptController {
 		} //catch
 	} //getScripts
 	
-	@RequestMapping(value = "/Script/{sequence}", method = RequestMethod.GET)
+	@RequestMapping(value = "/Script/{sequence}/", method = RequestMethod.GET)
 	public @ResponseBody String getScript(@PathVariable("sequence") long sequence){
 		try{
 			JSONObject script = scriptService.loadScript(sequence);
@@ -112,7 +107,7 @@ public class ScriptController {
 		} //catch
 	} //getScript
 	
-	@RequestMapping(value = "/Script/Start/{sequence}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/Script/Start/{sequence}/", method = RequestMethod.PUT)
 	public @ResponseBody String startScript(@PathVariable("sequence") long sequence){
 		try{
 			scriptService.startScript(sequence);
@@ -124,7 +119,7 @@ public class ScriptController {
 		} //catch
 	} //startScript
 	
-	@RequestMapping(value = "/Script/Stop/{sequence}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/Script/Stop/{sequence}/", method = RequestMethod.PUT)
 	public @ResponseBody String stopScript(@PathVariable("sequence") long sequence){
 		try{
 			scriptService.stopScript(sequence);
@@ -136,7 +131,7 @@ public class ScriptController {
 		} //catch
 	} //stopScript
 	
-	@RequestMapping(value = "/Script/{sequence}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/Script/{sequence}/", method = RequestMethod.DELETE)
 	public @ResponseBody String removeScript(@PathVariable("sequence") long sequence){
 		try{
 			scriptService.removeScript(sequence);
@@ -148,7 +143,7 @@ public class ScriptController {
 		} //catch
 	} //removeScript
 	
-	@RequestMapping(value = "/Script/Statistics/{sequence}", method = RequestMethod.GET)
+	@RequestMapping(value = "/Script/Statistics/{sequence}/", method = RequestMethod.GET)
 	public @ResponseBody String getScriptStatistics(@PathVariable("sequence") long sequence){
 		try{
 			JSONArray statistics = fileWriteStatisticsService.getScriptStatistics(sequence);
@@ -160,4 +155,16 @@ public class ScriptController {
 			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
 		} //catch
 	} //getScriptStatistics
+	
+	@RequestMapping(value = "/Script/Doc/", method = RequestMethod.GET)
+	public @ResponseBody String getScriptDoc(){
+		try{
+			JSONArray scriptDoc = scriptService.loadDoc();
+			return new JSONObject().put("success", 1).put("scriptDoc", scriptDoc).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //getScriptDoc
 } //class
