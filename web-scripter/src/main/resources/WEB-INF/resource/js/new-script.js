@@ -106,6 +106,7 @@ View.prototype = {
 						scriptDocDOM += example + '\n';
 						scriptDocDOM += '</textarea>\n';
 					} //if
+					scriptDocDOM += '<hr />\n';
 				} //for ii
 			} //for i
 			

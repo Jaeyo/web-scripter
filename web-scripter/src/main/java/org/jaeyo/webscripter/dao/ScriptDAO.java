@@ -33,17 +33,21 @@ public class ScriptDAO {
 	
 	public JSONArray loadScripts(){
 		logger.info("");
-		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate, memo from script");
+//		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate, memo from script");
+		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, regdate, memo from script");
 	} //loadScripts
 	
 	public JSONObject loadScript(long sequence) throws NotFoundException{
 		logger.info("sequence: {}", sequence);
-		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate, memo from script where sequence = ?", sequence);
+		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, regdate, memo from script where sequence = ?", sequence);
 		
 		if(result == null || result.length() == 0)
 			throw new NotFoundException("script not found : " + sequence);
 		
-		return result.getJSONObject(0);
+		JSONObject row = result.getJSONObject(0);
+		String script = ds.getJdbcTmpl().queryForObject("select script from script where sequence = ?", new Object[]{sequence}, String.class);
+		row.put("SCRIPT", script);
+		return row;
 	} //loadScript
 	
 	public void removeScript(long sequence){

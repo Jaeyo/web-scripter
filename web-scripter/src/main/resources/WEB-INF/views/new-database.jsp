@@ -51,6 +51,8 @@
 		<div class="row">
 			<div class="col-xs-6">
 				<hr />
+				<div class="circle pull-left"></div>
+				<div><label>database vendor</label></div>
 				<div id="dropdown-database-vendor" class="dropdown" style="margin-bottom: 30px;">
 					<button class="btn btn-default dropdown-toggle" id="dropdownDbVendor" type="button" 
 					data-toggle="dropdown" aria-haspopup="true" aria-expaned="true">select database vendor <span class="caret"></span></button>
@@ -64,18 +66,22 @@
 					</ul>
 				</div>
 				
+				<div class="circle pull-left"></div>
 				<div><label>database ip</label></div>
 				<div style="margin-bottom: 13px;"><input id="input-database-ip" type="text" class="input-sm form-control" onkeyup="controller.refreshJdbcView();" /></div>
 				
 				<div><label>database port</label></div>
 				<div style="margin-bottom: 13px;"><input id="input-database-port" type="text" class="input-sm form-control" onkeyup="controller.refreshJdbcView();" /></div>
 				
+				<div class="circle pull-left"></div>
 				<div><label>database SID</label></div>
 				<div style="margin-bottom: 13px;"><input id="input-database-sid" type="text" class="input-sm form-control" onkeyup="controller.refreshJdbcView();" /></div>
 				
+				<div class="circle pull-left"></div>
 				<div><label>database username</label></div>
 				<div style="margin-bottom: 13px;"><input id="input-database-username" type="text" class="input-sm form-control" onkeyup="controller.refreshJdbcView();" /></div>
 				
+				<div class="circle pull-left"></div>
 				<div><label>database password</label></div>
 				<div style="margin-bottom: 13px;"><input id="input-database-password" type="password" class="input-sm form-control" onkeyup="controller.refreshJdbcView();" /></div>
 			</div>

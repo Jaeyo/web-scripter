@@ -110,6 +110,12 @@
                 "descs": ["task에 담긴 로직을 delay 만큼의 시간 이후에 period 주기에 따라 반복하여 실행한다. Delay와 period는 밀리초를 기준으로 지정되어야 한다."],
                 "title": "void schedule(long delay, long period, Runnable task)",
                 "example": "\tscheduler.schedule(3*1000, 5*1000, new java.lang.Runable(){\n\t\trun:function(){\n\t\t\tlogger.info(\u201ctest log\u201d);\n\t\t}\n\t});\n// => 3초후부터 5초마다 주기적으로 로그를 남긴다."
+            },
+            {
+            	"title": "void scheduleAtFixedTime(String[] hhMMs, Runnable task)",
+            	"descs": ["task에 담긴 로직을 24시간 주기로 정해진 시간(hhMMs)에 실행한다.", "hhMMs는 시간+분으로 구성된 4자리 문자열의 배열이다."],
+            	"example": "var hhmms = [];\nhhmms.push('0100');\nhhmms.push('1200');\nhhmms.push('1800');\nscheduler.scheduleAtFixedTime(hhmms, new java.lang.Runnable(){\n\trun:function(){\n\t\tlogger.info('test log');\n\t}\n});\n// => 매일 1시, 12시, 18시에 한번씩 로그를 남긴다."
+            	
             }
         ]
     },
@@ -256,3 +262,4 @@
         }]
     }
 ]
+

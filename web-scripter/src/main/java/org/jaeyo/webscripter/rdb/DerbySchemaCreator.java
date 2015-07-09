@@ -56,7 +56,7 @@ public class DerbySchemaCreator {
 			jdbcTmpl.execute("create table script ( "
 					+ "sequence integer not null primary key, "
 					+ "script_name varchar(100) not null unique, "
-					+ "script long varchar, "
+					+ "script clob, "
 					+ "memo long varchar, "
 					+ "regdate timestamp not null )");
 		
