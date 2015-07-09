@@ -14,7 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -78,14 +77,24 @@ public class DatabaseDAO {
 	public JSONArray query(String driver, String connUrl, String username, String password, String query) throws SQLException, ClassNotFoundException{
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(connUrl, username, password);
-		JsonJdbcTemplate jdbcTmpl = new JsonJdbcTemplate(new SingleConnectionDataSource(conn));
-		return jdbcTmpl.queryForJsonArray(query);
+		try{
+			JsonJdbcTemplate jdbcTmpl = new JsonJdbcTemplate(new SingleConnectionDataSource(conn));
+			return jdbcTmpl.queryForJsonArray(query);
+		} finally{
+			if(conn != null)
+				conn.close();
+		} //finally
 	} //query
 	
 	public void execute(String driver, String connUrl, String username, String password, String query) throws SQLException, ClassNotFoundException{
 		Class.forName(driver);
 		Connection conn = DriverManager.getConnection(connUrl, username, password);
-		JsonJdbcTemplate jdbcTmpl = new JsonJdbcTemplate(new SingleConnectionDataSource(conn));
-		jdbcTmpl.execute(query);
+		try{
+			JsonJdbcTemplate jdbcTmpl = new JsonJdbcTemplate(new SingleConnectionDataSource(conn));
+			jdbcTmpl.execute(query);
+		} finally{
+			if(conn != null)
+				conn.close();
+		} //finally
 	} //execute
 } //class
