@@ -11,10 +11,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 
+import org.jaeyo.webscripter.common.Crypto;
 import org.jaeyo.webscripter.common.SpringBeans;
 import org.jaeyo.webscripter.outputfiledelete.OutputFileLastModified;
 import org.jaeyo.webscripter.service.DatabaseService;
+import org.jaeyo.webscripter.service.EmbedDbService;
 import org.jaeyo.webscripter.statistics.FileWriteStatistics;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -155,7 +158,7 @@ public class DbHandler {
 		JSONObject dbProps = databaseService.loadDatabase(dbName);
 		if (dbProps == null) {
 			logger.error("dbName {} not exists", dbName);
-			System.exit(-1);
+			return null;
 		} // if
 
 		Connection conn = null;

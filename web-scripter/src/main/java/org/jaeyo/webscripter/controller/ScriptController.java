@@ -35,6 +35,11 @@ public class ScriptController {
 		return new ModelAndView("new-script");
 	} //newScript
 	
+	@RequestMapping(value = "/View/NewScriptOld/", method = RequestMethod.GET)
+	public ModelAndView viewNewScriptOld(){
+		return new ModelAndView("new-script-OLD");
+	} //newScript
+	
 	@RequestMapping(value = "/View/EditScript/{sequence}/", method = RequestMethod.GET)
 	public ModelAndView viewEditScript(@PathVariable("sequence") long sequence){
 		ModelAndView mv = new ModelAndView("edit-script");

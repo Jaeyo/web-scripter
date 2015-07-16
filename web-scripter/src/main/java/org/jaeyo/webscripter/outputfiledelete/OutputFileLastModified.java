@@ -20,6 +20,7 @@ public class OutputFileLastModified {
 
 	private Map<String, Long> lastModifiedTimes = new HashMap<String, Long>();
 	private Lock lastModifiedTimesLock=new ReentrantLock();
+	private long lastPrintLoggerTime = 0;
 
 	public static OutputFileLastModified getInstance() {
 		synchronized (OutputFileLastModified.class) {
@@ -36,7 +37,10 @@ public class OutputFileLastModified {
 		lastModifiedTimesLock.lock();
 
 		try{
-			logger.info("{} modified", filenameWithFullPath);
+			if((System.currentTimeMillis() - lastPrintLoggerTime) > 30*1000){
+				lastPrintLoggerTime = System.currentTimeMillis();
+				logger.info("{} modified", filenameWithFullPath);
+			} //if
 			lastModifiedTimes.put(filenameWithFullPath, modifiedTime);
 
 			if(lastModifiedTimes.size()>=LAST_MODIFIED_TIMES_MAX_SIZE){

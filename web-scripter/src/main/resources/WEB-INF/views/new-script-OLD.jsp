@@ -202,10 +202,10 @@
 	<script src="/resource/js/server-adapter.js"></script>
 
 	<!-- new-script-generator js -->
-	<script src="/resource/js/new-script-generator.js"></script>
+	<script src="/resource/js/db2file-script-maker.js"></script>
 
 	<!-- scripts js -->
-	<script src="/resource/js/new-script.js"></script>
+	<script src="/resource/js/new-script-OLD.js"></script>
 	
 </body>
 </html>
