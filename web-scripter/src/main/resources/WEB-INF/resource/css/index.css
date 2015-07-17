@@ -1,0 +1,12 @@
+.running {
+	background-color: green;
+	width: 10px;
+	height: 10px;
+}
+.script-select {
+	cursor: pointer;
+	padding: 15px;
+}
+.script-select:hover {
+	background-color: rgb(31, 37, 48);
+}

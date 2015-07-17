@@ -26,13 +26,8 @@ public class MainController {
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView main(){
-		return new ModelAndView("scripts");
+		return new ModelAndView("index");
 	} //main
-	
-	@RequestMapping(value = "/View/Configuration/", method = RequestMethod.GET)
-	public ModelAndView configuration(){
-		return new ModelAndView("configuration");
-	} //configuration
 	
 	
 	
