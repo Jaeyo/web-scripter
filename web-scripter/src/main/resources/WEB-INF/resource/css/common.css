@@ -55,3 +55,9 @@ html, body{
 	padding-bottom: 30px;
 	margin: 4px;
 }
+.vertical-center {
+	min-height: 100%;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+}

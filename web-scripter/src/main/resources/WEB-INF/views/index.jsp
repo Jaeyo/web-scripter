@@ -34,12 +34,6 @@
 <!-- index css -->
 <link href="/resource/css/index.css" rel="stylesheet">
 
-<style>
-.test:hover{
-background-color: orange;
-}
-</style>
-
 </head>
 
 <body class="bg-blue-black">
