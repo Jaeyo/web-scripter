@@ -18,6 +18,14 @@ public class ScriptDAO {
 	@Inject
 	private DerbyDataSource ds;
 	
+	public JSONArray selectScriptInfo(){
+		logger.info("");
+//		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate, memo from script");
+		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, regdate, memo from script");
+	} //selectScriptInfo
+	
+	//-------------------------------------------------------------------------------------------------------------------
+	
 	public void save(String scriptName, String script, String memo){
 		logger.info("scriptName: {}", scriptName);
 		ds.getJdbcTmpl().update("insert into script (sequence, script_name, script, memo, regdate) "
@@ -30,12 +38,6 @@ public class ScriptDAO {
 				+ "where sequence = ?",
 				scriptName, script, new Date(), memo, sequence);
 	} //edit
-	
-	public JSONArray loadScripts(){
-		logger.info("");
-//		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate, memo from script");
-		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, regdate, memo from script");
-	} //loadScripts
 	
 	public JSONObject loadScript(long sequence) throws NotFoundException{
 		logger.info("sequence: {}", sequence);

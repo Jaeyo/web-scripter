@@ -23,6 +23,17 @@ public class DatabaseDAO {
 	@Inject
 	private DerbyDataSource ds;
 	
+	public JSONArray selectDatabases(){
+		logger.info("");
+		return ds.getJdbcTmpl().queryForJsonArray("select sequence, mapping_name, memo, driver, connection_url, username, password, regdate from database");
+	} //loadDatabases
+	
+	//--------------------------------------------------------------------------------------------------------------------------------------------
+	
+	
+	
+	
+	
 	public void save(String dbMappingName, String memo, String jdbcDriver, String jdbcConnUrl, String jdbcUsername, String jdbcPassword){
 		logger.info("dbMappingName: {}, jdbcDriver: {}, jdbcConnUrl: {}, jdbcUsername: {}, jdbcPassword: {}", dbMappingName, jdbcDriver, jdbcConnUrl, jdbcUsername, jdbcPassword);
 		ds.getJdbcTmpl().update("insert into database (sequence, mapping_name, memo, driver, connection_url, username, password, regdate) "
@@ -48,11 +59,6 @@ public class DatabaseDAO {
 		return 1 == ds.getJdbcTmpl().queryForObject("select count(*) from database where mapping_name = ? and sequence <> ?", 
 				new String[]{ dbMappingName, excludeSequence+"" }, Integer.class);
 	} //isMappingNameExists
-	
-	public JSONArray loadDatabases(){
-		logger.info("");
-		return ds.getJdbcTmpl().queryForJsonArray("select sequence, mapping_name, memo, driver, connection_url, username, password, regdate from database");
-	} //loadDatabases
 	
 	public JSONObject loadDatabase(long sequence){
 		logger.info("sequence: {}", sequence);

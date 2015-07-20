@@ -23,6 +23,25 @@ public class DatabaseController {
 	@Inject
 	private DatabaseService databaseService;
 	
+	@RequestMapping(value = "/Databases/", method = RequestMethod.GET)
+	public @ResponseBody String getDatabases(){
+		try{
+			JSONArray databases = databaseService.loadDatabases();
+			return new JSONObject().put("success", 1).put("databases", databases).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //getDatabases
+	
+	//----------------------------------------------------------------------------------------
+	
+	
+	
+	
+	
+	
 	@RequestMapping(value = "/View/Databases/", method = RequestMethod.GET)
 	public ModelAndView viewDatabases(){
 		return new ModelAndView("databases");
@@ -94,18 +113,6 @@ public class DatabaseController {
 			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
 		} //catch
 	} //postDatabase
-	
-	@RequestMapping(value = "/Databases/", method = RequestMethod.GET)
-	public @ResponseBody String getDatabases(){
-		try{
-			JSONArray databases = databaseService.loadDatabases();
-			return new JSONObject().put("success", 1).put("databases", databases).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //getDatabases
 	
 	@RequestMapping(value = "/Database/{sequence}/", method = RequestMethod.GET)
 	public @ResponseBody String getDatabase(@PathVariable("sequence") long sequence){

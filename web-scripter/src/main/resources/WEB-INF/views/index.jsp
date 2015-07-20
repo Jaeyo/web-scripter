@@ -50,29 +50,32 @@ background-color: orange;
 				<div class="card">
 					<h4>control panel</h4>
 					<hr />
-					<div>
-						<div style="padding: 10px;">
-							<div class="test"> <!-- TODO IMME -->
-								<input type="checkbox">
-								<span style="display: inline-block; width: 10px; height: 10px; background-color: green;"></span>
-								script 1
-							</div>
-						</div>
-						<!-- TODD IMME -->
+					<div id="div-script-info">
 					</div>
 					
 					<div>
 						<span>&nbsp;</span>
-						<button type="button" class="btn btn-default btn-sm pull-right">select all</button>
+						<button type="button" class="btn btn-default btn-sm pull-right" onclick="controller.selectAllScripts();">select all</button>
 					</div>
 				</div>
 			</div>
 			<div class="col-md-6">
 				<div class="card">
-					test912
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="card">
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="card">
 				</div>
 			</div>
 		</div>
 	</div>
+	
+<script src="/resource/js/index.js"></script>
 </body>
 </html>

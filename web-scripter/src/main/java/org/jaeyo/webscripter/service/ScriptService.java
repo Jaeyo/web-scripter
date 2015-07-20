@@ -30,16 +30,8 @@ public class ScriptService {
 	@Inject
 	private FileWriteStatisticsDAO fileWriteStatisticsDAO;
 	
-	public void save(String scriptName, String script, String memo){
-		scriptDAO.save(scriptName, script, memo);
-	} //save
-	
-	public void edit(long sequence, String scriptName, String script, String memo){
-		scriptDAO.edit(sequence, scriptName, script, memo);
-	} //edit
-	
-	public JSONArray loadScripts(){
-		JSONArray scripts = scriptDAO.loadScripts();
+	public JSONArray getScriptInfo(){
+		JSONArray scripts = scriptDAO.selectScriptInfo();
 		Set<Long> runningScriptSequences = scriptExecutor.getRunningScripts();
 		for (int i = 0; i < scripts.length(); i++) {
 			JSONObject scriptJson = scripts.getJSONObject(i);
@@ -52,6 +44,16 @@ public class ScriptService {
 		
 		return scripts;
 	} //loadScripts
+	
+	//---------------------------------------------------------------------------------------
+	
+	public void save(String scriptName, String script, String memo){
+		scriptDAO.save(scriptName, script, memo);
+	} //save
+	
+	public void edit(long sequence, String scriptName, String script, String memo){
+		scriptDAO.edit(sequence, scriptName, script, memo);
+	} //edit
 	
 	public JSONObject loadScript(long sequence) throws NotFoundException{
 		return scriptDAO.loadScript(sequence);

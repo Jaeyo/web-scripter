@@ -25,6 +25,20 @@ public class ScriptController {
 	@Inject
 	private FileWriteStatisticsService fileWriteStatisticsService;
 	
+	@RequestMapping(value = "/ScriptInfo/", method = RequestMethod.GET)
+	public @ResponseBody String getScriptInfo(){
+		try{
+			JSONArray scripts = scriptService.getScriptInfo();
+			return new JSONObject().put("success", 1).put("scriptInfos", scripts).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //getScripts
+	
+	//------------------------------------------------------------------------------------
+	
 	@RequestMapping(value = "/View/Scripts/", method = RequestMethod.GET)
 	public ModelAndView viewScripts(){
 		return new ModelAndView("scripts");
@@ -87,18 +101,6 @@ public class ScriptController {
 			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
 		} //catch
 	} //postScript
-	
-	@RequestMapping(value = "/Scripts/", method = RequestMethod.GET)
-	public @ResponseBody String getScripts(){
-		try{
-			JSONArray scripts = scriptService.loadScripts();
-			return new JSONObject().put("success", 1).put("scripts", scripts).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //getScripts
 	
 	@RequestMapping(value = "/Script/{sequence}/", method = RequestMethod.GET)
 	public @ResponseBody String getScript(@PathVariable("sequence") long sequence){

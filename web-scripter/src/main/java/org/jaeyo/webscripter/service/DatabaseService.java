@@ -18,6 +18,17 @@ public class DatabaseService {
 	@Inject
 	private DatabaseDAO databaseDAO;
 	
+	public JSONArray loadDatabases(){
+		return databaseDAO.selectDatabases();
+	} //loadDatabases
+	
+	//------------------------------------------------------------------------------------------------
+	
+	
+	
+	
+	
+	
 	public void save(String dbMappingName, String memo, String jdbcDriver, String jdbcConnUrl, 
 			String jdbcUsername, String jdbcPassword) throws DuplicateException{
 		boolean isDbMappingNameExists = databaseDAO.isMappingNameExists(dbMappingName);
@@ -35,10 +46,6 @@ public class DatabaseService {
 		
 		databaseDAO.update(sequence, dbMappingName, memo, jdbcDriver, jdbcConnUrl, jdbcUsername, jdbcPassword);
 	} //update
-	
-	public JSONArray loadDatabases(){
-		return databaseDAO.loadDatabases();
-	} //loadDatabases
 	
 	public JSONObject loadDatabase(long sequence){
 		return databaseDAO.loadDatabase(sequence);
