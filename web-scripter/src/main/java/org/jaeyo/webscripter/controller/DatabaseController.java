@@ -35,22 +35,33 @@ public class DatabaseController {
 		} //catch
 	} //getDatabases
 	
+	@RequestMapping(value = "/Database/ConnectTest/{sequence}/", method = RequestMethod.GET)
+	public @ResponseBody String connectTest(@PathVariable("sequence") long sequence){
+		try{
+			
+			JSONArray databases = databaseService.loadDatabases();
+			return new JSONObject().put("success", 1).put("databases", databases).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //connectTest
+	
 	//----------------------------------------------------------------------------------------
 	
 	
 	
 	
-	
+	@RequestMapping(value = "/View/NewDatabase/", method = RequestMethod.GET)
+	public ModelAndView viewNewDatabases(){
+		return new ModelAndView("new-database");
+	} //viewNewDatabases
 	
 	@RequestMapping(value = "/View/Databases/", method = RequestMethod.GET)
 	public ModelAndView viewDatabases(){
 		return new ModelAndView("databases");
 	} //databases
-	
-	@RequestMapping(value = "/View/NewDatabase/", method = RequestMethod.GET)
-	public ModelAndView viewNewDatabases(){
-		return new ModelAndView("new-database");
-	} //viewNewDatabases
 	
 	@RequestMapping(value = "/View/EditDatabase/{sequence}/", method = RequestMethod.GET)
 	public ModelAndView viewEditDatabase(@PathVariable("sequence") long sequence){

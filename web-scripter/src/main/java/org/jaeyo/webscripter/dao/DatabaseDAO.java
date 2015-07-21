@@ -28,6 +28,14 @@ public class DatabaseDAO {
 		return ds.getJdbcTmpl().queryForJsonArray("select sequence, mapping_name, memo, driver, connection_url, username, password, regdate from database");
 	} //loadDatabases
 	
+	public JSONObject selectDatabase(long sequence){
+		logger.info("sequence: {}", sequence);
+		JSONArray rows = ds.getJdbcTmpl().queryForJsonArray("select sequence, mapping_name, memo, driver, connection_url, username, password, regdate "
+				+ "from database "
+				+ "where sequence = ?", sequence);
+		return rows.getJSONObject(0);
+	} //loadDatabase	
+	
 	//--------------------------------------------------------------------------------------------------------------------------------------------
 	
 	
@@ -59,14 +67,6 @@ public class DatabaseDAO {
 		return 1 == ds.getJdbcTmpl().queryForObject("select count(*) from database where mapping_name = ? and sequence <> ?", 
 				new String[]{ dbMappingName, excludeSequence+"" }, Integer.class);
 	} //isMappingNameExists
-	
-	public JSONObject loadDatabase(long sequence){
-		logger.info("sequence: {}", sequence);
-		JSONArray rows = ds.getJdbcTmpl().queryForJsonArray("select sequence, mapping_name, memo, driver, connection_url, username, password, regdate "
-				+ "from database "
-				+ "where sequence = ?", sequence);
-		return rows.getJSONObject(0);
-	} //loadDatabase
 	
 	public JSONObject loadDatabase(String mappingName){
 		logger.info("mappingName: {}", mappingName);

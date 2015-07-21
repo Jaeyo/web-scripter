@@ -29,6 +29,13 @@ public class MainController {
 		return new ModelAndView("index");
 	} //main
 	
+	@RequestMapping(value = "/View/NewDb2File/", method = RequestMethod.GET)
+	public ModelAndView newDb2File(){
+		return new ModelAndView("new-db2file");
+	} //newDb2File
+	
+	
+	
 	
 	
 	@RequestMapping(value = "/Script/Run/", method = RequestMethod.POST)

@@ -22,6 +22,10 @@ public class DatabaseService {
 		return databaseDAO.selectDatabases();
 	} //loadDatabases
 	
+	public boolean connectTest(long sequence){
+		TODO IMME
+	} //connectTest
+	
 	//------------------------------------------------------------------------------------------------
 	
 	
@@ -48,7 +52,7 @@ public class DatabaseService {
 	} //update
 	
 	public JSONObject loadDatabase(long sequence){
-		return databaseDAO.loadDatabase(sequence);
+		return databaseDAO.selectDatabase(sequence);
 	} //loadDatabase
 	
 	public JSONObject loadDatabase(String mappingName){
@@ -76,7 +80,7 @@ public class DatabaseService {
 		while(query.endsWith(";"))
 			query = query.substring(0, query.length()-1);
 		
-		JSONObject dbProps = databaseDAO.loadDatabase(sequence);
+		JSONObject dbProps = databaseDAO.selectDatabase(sequence);
 		String driver = dbProps.getString("DRIVER");
 		String username = dbProps.getString("USERNAME");
 		String password = dbProps.getString("PASSWORD");

@@ -37,12 +37,16 @@ public class ScriptController {
 		} //catch
 	} //getScripts
 	
+	
+	
+	
+	
+	//------------------------------------------------------------------------------------
+	
 	@RequestMapping(value = "/View/NewScript/", method = RequestMethod.GET)
 	public ModelAndView viewNewScript(){
 		return new ModelAndView("new-script");
 	} //newScript
-	
-	//------------------------------------------------------------------------------------
 	
 	@RequestMapping(value = "/View/Scripts/", method = RequestMethod.GET)
 	public ModelAndView viewScripts(){
