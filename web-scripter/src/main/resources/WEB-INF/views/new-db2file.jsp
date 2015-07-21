@@ -31,6 +31,8 @@
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">
 
+<link href="/resource/css/loading.css" rel="stylesheet">
+
 </head>
 
 <body class="bg-blue-black">
@@ -38,8 +40,9 @@
 	<div class="main-container">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="card">
+				<div id="card-input-database" class="card">
 					<h4>input database</h4>
+					<hr />
 					<div style="margin-bottom: 15px;">
 						<div class="pull-left" style="width: 150px;">database vendor</div>
 						<label class="radio-inline"><input type="radio" name="dbVendor" value="oracle" onclick="controller.selectDbVendor('oracle');">oracle</label>
@@ -69,15 +72,36 @@
 					</div>
 					<div style="margin-bottom: 15px;">
 						<div class="pull-left" style="width: 150px;">jdbc username</div>
-						<input type="text" class="input-text" style="width: 400px;" />
+						<input id="text-jdbc-username" type="text" class="input-text" style="width: 400px;" />
 					</div>
 					<div style="margin-bottom: 15px;">
 						<div class="pull-left" style="width: 150px;">jdbc password</div>
-						<input type="password" class="input-text" style="width: 400px;" />
+						<input id="text-jdbc-password" type="password" class="input-text" style="width: 400px;" />
 					</div>
+					<button type="button" class="btn btn-primary" onclick="controller.openCard('card-input-database', 'card-set-query')">next</button>
 					<hr />
+				</div>
+				
+				<div id="card-set-query" class="card" style="display: none;">
+					<h4>make query</h4>
+					<hr />
+					<div class="row">
+						<div class="col-md-4">
+							<input type="text" class="form-control" placeholder="search table" onkeyup="controller.searchTable(this.value);" />
+							<div id="div-tables" style="width: 100%; max-height: 200px; overflow-y: scroll; padding: 10px; margin-top: 5px;">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<input type="text" class="form-control" placeholder="search column" onkeyup="controller.searchColumn(this.value);" />
+							<div id="div-columns" style="width: 100%; max-height: 200px; overflow-y: scroll; padding: 10px; margin-top: 5px;">
+							<button type="button" class="btn btn-default btn-xs">select all columns (*)</button>
+						</div>
+						<div class="col-md-4">
+							<!-- TODO IMME -->
+						</div>
+					</div>
 					
-					
+					<hr />
 				</div>
 			</div>
 		</div>

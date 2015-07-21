@@ -27,6 +27,12 @@ Model = function(){
 		}
 	}; //dbVendorTmpl
 	this.dbVendor = 'etc';
+	this.jdbc = {
+		driver: null,
+		connUrl: null,
+		username: null,
+		password: null
+	};
 }; //INIT
 Model.prototype = {
 }; //Model
@@ -58,9 +64,87 @@ Controller.prototype = {
 		};
 		connUrl = connUrl.format(connUrlParams);
 		$('#text-jdbc-conn-url').val(connUrl);
-	} //autoCompleteJdbcInfo
+	}, //autoCompleteJdbcInfo
+	openCard: function(fromCardId, toCardId){
+		switch(fromCardId){
+		case 'card-input-database':
+			var driver = $('#text-jdbc-driver').val();
+			var connUrl = $('#text-jdbc-conn-url').val();
+			var username = $('#text-jdbc-username').val();
+			var password = $('#text-jdbc-password').val();
+			
+			try{
+				precondition(driver != null && driver.trim().length > 0, 'invalid driver');
+				precondition(connUrl != null && connUrl.trim().length > 0, 'invalid connection url');
+				precondition(username != null && username.trim().length > 0, 'invalid username');
+				precondition(password != null && password.trim().length > 0, 'invalid password');
+			} catch(errmsg){
+				bootbox.alert(errmsg);
+				return;
+			} //catch
+			
+			this.model.jdbc.driver = driver;
+			this.model.jdbc.connUrl = connUrl;
+			this.model.jdbc.username = username;
+			this.model.jdbc.password = password;
+			break;
+		} //switch
+			
+		$('.card').hide(300);
+		$('#' + toCardId).show(300);
+		
+		switch(toCardId){
+		case 'card-set-query':
+			this.loadTables();
+			break;
+		} //switch
+	}, //openCard
+	loadTables: function(){
+		bootbox.dialog({
+			message: '<p style="text-align: center">loading...</p><div class="loading"></div>',
+			closeButton: false
+		});
+		
+		$.getJSON('/Tables/', this.model.jdbc).done(function(resp){
+			bootbox.hideAll();
+			if(resp.success != 1){
+				bootbox.alert(resp.errmsg);
+				return;
+			} //if
+			
+			if(resp.tables.length == 0){
+				bootbox.alert('no tables exists');
+				return;
+			} //if
+			
+			var tablesRoot = $('#div-tables').empty();
+			for(var i=0; i<resp.tables.length; i++){
+				tablesRoot.append('<div style="margin: 3px;">');
+				tablesRoot.append('<button type="button" class="btn btn-default btn-sm" onclick="controller.loadColumns(\'{}\');">{}</button>'.format(resp.tables[i], resp.tables[i]));
+				tablesRoot.append('</div>');
+			} //for i
+		});
+	}, //loadTables
+	loadColumns: function(tableName){
+		//TODO IMME
+	}, //loadColumns
+	searchTable: function(keyword){
+		keyword = keyword.toLowerCase();
+		$('#div-tables').children('button').each(function(){
+			var btn = $(this);
+			if(btn.text().toLowerCase().indexOf(keyword) < 0)
+				btn.hide();
+			else
+				btn.show();
+		});
+	} //searchTable
 }; //Controller
 
 $(function(){
 	controller = new Controller();
 });
+
+function precondition(expression, msg){
+	if(expression == false)
+		throw msg;
+} //precondition

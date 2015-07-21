@@ -23,6 +23,57 @@ public class DatabaseController {
 	@Inject
 	private DatabaseService databaseService;
 	
+	@RequestMapping(value = "/Tables/", method = RequestMethod.GET)
+	public @ResponseBody String getTables(
+			@RequestParam(value="driver", required=true) String driver,
+			@RequestParam(value="connurl", required=true) String connurl,
+			@RequestParam(value="username", required=true) String username,
+			@RequestParam(value="password", required=true) String password){
+		try{
+			JSONObject jdbcParams = new JSONObject();
+			jdbcParams.put("driver", driver);
+			jdbcParams.put("connurl", connurl);
+			jdbcParams.put("username", username);
+			jdbcParams.put("password", password);
+			
+			JSONArray tables = databaseService.getTables(jdbcParams);
+			return new JSONObject().put("success", 1).put("tables", tables).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //getTables
+	
+	@RequestMapping(value = "/Columns/{tableName}/", method = RequestMethod.GET)
+	public @ResponseBody String getColumns(
+			@RequestParam(value="driver", required=true) String driver,
+			@RequestParam(value="connurl", required=true) String connurl,
+			@RequestParam(value="username", required=true) String username,
+			@RequestParam(value="password", required=true) String password,
+			@PathVariable("tableName") String tableName){
+		try{
+			JSONObject jdbcParams = new JSONObject();
+			jdbcParams.put("driver", driver);
+			jdbcParams.put("connurl", connurl);
+			jdbcParams.put("username", username);
+			jdbcParams.put("password", password);
+			
+			JSONArray tables = databaseService.getTables(jdbcParams);
+			return new JSONObject().put("success", 1).put("tables", tables).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //getTables
+	
+	
+	
+	
+	//----------------------------------------------------------------------------------------
+	
+	
 	@RequestMapping(value = "/Databases/", method = RequestMethod.GET)
 	public @ResponseBody String getDatabases(){
 		try{
@@ -34,6 +85,7 @@ public class DatabaseController {
 			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
 		} //catch
 	} //getDatabases
+	
 	
 	@RequestMapping(value = "/Database/ConnectTest/{sequence}/", method = RequestMethod.GET)
 	public @ResponseBody String connectTest(@PathVariable("sequence") long sequence){
@@ -48,7 +100,6 @@ public class DatabaseController {
 		} //catch
 	} //connectTest
 	
-	//----------------------------------------------------------------------------------------
 	
 	
 	
