@@ -5,10 +5,10 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 
 import javax.inject.Inject;
 
+import org.jaeyo.webscripter.common.Function;
 import org.jaeyo.webscripter.dao.DatabaseDAO;
 import org.jaeyo.webscripter.exception.DuplicateException;
 import org.json.JSONArray;
@@ -72,73 +72,44 @@ public class DatabaseService {
 			conn = DriverManager.getConnection(jdbcParams.getString("connurl"), jdbcParams.getString("username"), jdbcParams.getString("password"));
 			DatabaseMetaData meta = conn.getMetaData();
 			
-			rs = meta.getColumns(null, jdbcParams.getString("username"), tableName, null);
-			JSONArray result = new JSONArray();
-			while(rs.next()){
-				String columnName = rs.getString(4);
-				int dataTypeCode = rs.getInt(5);
-				String columnType = null;
-				switch(dataTypeCode){
-				case Types.BIT: columnType = "bit"; break;
-				case Types.TINYINT: columnType = "tinyint"; break;
-				case Types.SMALLINT: columnType = "smallint"; break;
-				case Types.INTEGER: columnType = "integer"; break;
-				case Types.BIGINT: columnType = "bigint"; break;
-				case Types.FLOAT: columnType = "float"; break;
-				case Types.REAL: columnType = "real"; break;
-				case Types.DOUBLE: columnType = "double"; break;
-				case Types.NUMERIC: columnType = "numeric"; break;
-				case Types.DECIMAL: columnType = "decimal"; break;
-				case Types.CHAR: columnType = "char"; break;
-				case Types.VARCHAR: columnType = "varchar"; break;
-				case Types.LONGVARCHAR: columnType = "longvarchar"; break;
-				case Types.DATE: columnType = "date"; break;
-				case Types.TIME : columnType = "time"; break;
-				case Types.TIMESTAMP: columnType = "timestamp"; break;
-				case Types.BINARY: columnType = "binary"; break;
-				case Types.VARBINARY: columnType = "varbinary"; break;
-				case Types.LONGVARBINARY: columnType = "longvarbinary"; break;
-				case Types.NULL: columnType = "null"; break;
-				case Types.OTHER: columnType = "other"; break;
-				case Types.JAVA_OBJECT: columnType = "java_object"; break;
-				case Types.DISTINCT: columnType = "distinct"; break;
-				case Types.STRUCT: columnType = "struct"; break;
-				case Types.ARRAY: columnType = "array"; break;
-				case Types.BLOB: columnType = "blob"; break;
-				case Types.CLOB: columnType = "clob"; break;
-				case Types.REF: columnType = "ref"; break;
-				case Types.DATALINK: columnType = "datalink"; break;
-				case Types.BOOLEAN: columnType = "boolean"; break;
-				case Types.ROWID: columnType = "rowid"; break;
-				case Types.NCHAR: columnType = "nchar"; break;
-				case Types.NVARCHAR: columnType = "nvarchar"; break;
-				case Types.LONGNVARCHAR: columnType = "longnvarchar"; break;
-				case Types.NCLOB: columnType = "nclob"; break;
-				case Types.SQLXML: columnType = "sqlxml"; break;
-				default: columnType = "unknown";
-				} //switch
-				JSONObject columnInfo = new JSONObject();
-				columnInfo.put("columnName", columnName);
-				columnInfo.put("columnType", columnType);
-				result.put(columnInfo);
-			} //while
+			Function handleResultSetFunction = new Function() {
+				@Override
+				public Object execute(Object... args) {
+					try{
+						ResultSet rs = (ResultSet) args[0];
+						JSONArray result = new JSONArray();
+						while(rs.next()){
+							JSONObject columnInfo = new JSONObject();
+							columnInfo.put("columnName", rs.getString(4));
+							columnInfo.put("columnType", JdbcUtil.convertDataTypeCode2String(rs.getInt(5)));
+							result.put(columnInfo);
+						} //while
+						return result;
+					} catch(Exception e){
+						logger.error(String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage()), e);
+						return null;
+					} //catch
+				} //execute
+			};
 			
-			if(result.length() != 0) TODO IMME 저 기나긴 switch문을 inline method 로 빼고 rs를 총 3번 돌리면서 호출해야 함
+			JSONArray result = null;
+			
+			rs = meta.getColumns(null, jdbcParams.getString("username"), tableName, null);
+			result = (JSONArray) handleResultSetFunction.execute(rs);
+			
+			if(result.length() != 0) 
 				return result;
 			
 			rs.close();
 			rs = meta.getTables(null, jdbcParams.getString("username").toLowerCase(), "%", new String[]{ "TABLE" });
-			while(rs.next())
-				result.put(rs.getString(3));
+			result = (JSONArray) handleResultSetFunction.execute(rs);
 	
 			if(result.length() != 0)
 				return result;
 			
 			rs.close();
 			rs = meta.getTables(null, jdbcParams.getString("username").toUpperCase(), "%", new String[]{ "TABLE" });
-			while(rs.next())
-				result.put(rs.getString(3));
-			
+			result = (JSONArray) handleResultSetFunction.execute(rs);
 			return result;
 		} finally{
 			if(conn != null)
@@ -147,7 +118,7 @@ public class DatabaseService {
 				rs.close();
 		} //finally
 	} //getColumns
-
+	
 
 	//------------------------------------------------------------------------------------------------
 
