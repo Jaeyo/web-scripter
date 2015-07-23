@@ -27,7 +27,7 @@
 
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">
-
+<link href="/resource/css/new-db2file.css" rel="stylesheet">
 <link href="/resource/css/loading.css" rel="stylesheet">
 
 </head>
@@ -35,13 +35,27 @@
 <body class="bg-blue-black">
 	<jsp:include page="inc/left-nav.jsp" flush="false"/>
 	<div class="main-container">
+		<div class="center-y">
+			<div class="center-x">
+				<div id="card-input-database">
+					<h4>input database</h4>
+					<hr />
+					<div>
+					<!-- TODO IMME -->
+					</div>
+				</div>
+			</div>
+		</div>
+	
+	
+	<!-- remove below -->
 		<div class="row">
 			<div class="col-md-12">
 				<div id="card-input-database" class="card">
 					<h4>input database</h4>
 					<hr />
-					<div style="margin-bottom: 15px;">
-						<div class="pull-left" style="width: 150px;">database vendor</div>
+					<div>
+						<div class="pull-left">database vendor</div>
 						<label class="radio-inline"><input type="radio" name="dbVendor" value="oracle" onclick="controller.selectDbVendor('oracle');">oracle</label>
 						<label class="radio-inline"><input type="radio" name="dbVendor" value="mysql" onclick="controller.selectDbVendor('mysql');">mysql</label>
 						<label class="radio-inline"><input type="radio" name="dbVendor" value="mssql" onclick="controller.selectDbVendor('mssql');">mssql</label>
@@ -49,31 +63,31 @@
 						<label class="radio-inline"><input type="radio" name="dbVendor" value="tibero" onclick="controller.selectDbVendor('tibero');">tibero</label>
 						<label class="radio-inline"><input type="radio" name="dbVendor" value="etc" onclick="controller.selectDbVendor('etc');" checked="checked">etc</label>
 					</div>
-					<div style="margin-bottom: 15px;">
-						<div class="pull-left" style="width: 150px;">database address</div>
-						<input id="text-database-ip" type="text" class="input-text" placeholder="ip" style="width: 317px;" onkeyup="controller.autoCompleteJdbcInfo();" />
-						<input id="text-database-port" type="text" class="input-text" placeholder="port" style="width: 80px; margin-right: 10px;" onkeyup="controller.autoCompleteJdbcInfo();" />
+					<div>
+						<div class="pull-left">database address</div>
+						<input id="text-database-ip" type="text" class="input-text" placeholder="ip" onkeyup="controller.autoCompleteJdbcInfo();" />
+						<input id="text-database-port" type="text" class="input-text" placeholder="port" onkeyup="controller.autoCompleteJdbcInfo();" />
 						<button type="button" class="btn btn-default btn-sm">connect test</button>
 					</div>
-					<div style="margin-bottom: 15px;">
-						<div class="pull-left" style="width: 150px;">database(sid)</div>
-						<input id="text-database-sid" type="text" class="input-text" style="width: 400px;" onkeyup="controller.autoCompleteJdbcInfo();" />
+					<div>
+						<div class="pull-left">database(sid)</div>
+						<input id="text-database-sid" type="text" class="input-text" onkeyup="controller.autoCompleteJdbcInfo();" />
 					</div>
-					<div style="margin-bottom: 15px;">
-						<div class="pull-left" style="width: 150px;">jdbc driver</div>
-						<input id="text-jdbc-driver" type="text" class="input-text" style="width: 400px;" />
+					<div>
+						<div class="pull-left">jdbc driver</div>
+						<input id="text-jdbc-driver" type="text" class="input-text" />
 					</div>
-					<div style="margin-bottom: 15px;">
-						<div class="pull-left" style="width: 150px;">jdbc connection url</div>
-						<input id="text-jdbc-conn-url" type="text" class="input-text" style="width: 400px;" />
+					<div>
+						<div class="pull-left">jdbc connection url</div>
+						<input id="text-jdbc-conn-url" type="text" class="input-text" />
 					</div>
-					<div style="margin-bottom: 15px;">
-						<div class="pull-left" style="width: 150px;">jdbc username</div>
-						<input id="text-jdbc-username" type="text" class="input-text" style="width: 400px;" />
+					<div>
+						<div class="pull-left">jdbc username</div>
+						<input id="text-jdbc-username" type="text" class="input-text" />
 					</div>
-					<div style="margin-bottom: 15px;">
-						<div class="pull-left" style="width: 150px;">jdbc password</div>
-						<input id="text-jdbc-password" type="password" class="input-text" style="width: 400px;" />
+					<div>
+						<div class="pull-left">jdbc password</div>
+						<input id="text-jdbc-password" type="password" class="input-text" />
 					</div>
 					<button type="button" class="btn btn-primary" onclick="controller.openCard('card-input-database', 'card-set-query')">next</button>
 					<hr />
@@ -85,12 +99,12 @@
 					<div class="row">
 						<div class="col-md-4">
 							<input type="text" class="form-control" placeholder="search table" onkeyup="controller.searchTable(this.value);" />
-							<div id="div-tables" style="width: 100%; max-height: 200px; overflow-y: scroll; padding: 10px; margin-top: 5px;">
+							<div id="div-tables">
 							</div>
 						</div>
 						<div class="col-md-4">
 							<input type="text" class="form-control" placeholder="search column" onkeyup="controller.searchColumn(this.value);" />
-							<div id="div-columns" style="width: 100%; max-height: 200px; overflow-y: scroll; padding: 10px; margin-top: 5px;">
+							<div id="div-columns">
 							</div>
 							<button type="button" class="btn btn-default btn-xs">select all columns (*)</button>
 						</div>
@@ -118,6 +132,13 @@
 									</div>
 									<div class="radio">
 										<label><input type="radio" name="query-condition" value="sequence-condition" />sequence condition</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<input type="text" class="form-control" placeholder="search condition column" />
+									<div id="div-condition-columns">
 									</div>
 								</div>
 							</div>

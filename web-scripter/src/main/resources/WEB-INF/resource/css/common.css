@@ -60,11 +60,16 @@ html, body{
 	padding: 15px;
 	padding-bottom: 30px;
 }
-.vertical-center {
+.center-y {
 	min-height: 100%;
 	min-height: 100vh;
 	display: flex;
 	align-items: center;
+}
+.center-x {
+	text-align: center;
+	min-width: 100%;
+	min-width: 100vh;
 }
 .input-text {
 	padding: 4px 8px;
