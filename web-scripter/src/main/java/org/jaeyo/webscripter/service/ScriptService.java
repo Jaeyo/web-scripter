@@ -47,37 +47,37 @@ public class ScriptService {
 	
 	//---------------------------------------------------------------------------------------
 	
-	public void save(String scriptName, String script, String memo){
-		scriptDAO.save(scriptName, script, memo);
-	} //save
-	
-	public void edit(long sequence, String scriptName, String script, String memo){
-		scriptDAO.edit(sequence, scriptName, script, memo);
-	} //edit
-	
-	public JSONObject loadScript(long sequence) throws NotFoundException{
-		return scriptDAO.loadScript(sequence);
-	} //loadScript
-	
-	public void startScript(long sequence) throws AlreadyStartedException, JSONException, NotFoundException {
-		logger.info("sequence: {}", sequence);
-		String script = loadScript(sequence).getString("SCRIPT");
-		scriptExecutor.execute(sequence, script);
-	} //startScript
-	
-	public void stopScript(long sequence) throws ScriptNotRunningException{
-		logger.info("sequence: {}", sequence);
-		scriptExecutor.stop(sequence);
-	} //stopScript
-	
-	public void removeScript(long sequence){
-		logger.info("sequence: {}", sequence);
-		scriptDAO.removeScript(sequence);
-	} //removeScript
-	
-	public JSONArray loadDoc() throws IOException{
-		InputStream docInput = this.getClass().getClassLoader().getResourceAsStream("spdbreader-doc.json");
-		String doc = IOUtils.toString(docInput, "utf8");
-		return new JSONArray(doc);
-	} //loadDoc
+//	public void save(String scriptName, String script, String memo){
+//		scriptDAO.save(scriptName, script, memo);
+//	} //save
+//	
+//	public void edit(long sequence, String scriptName, String script, String memo){
+//		scriptDAO.edit(sequence, scriptName, script, memo);
+//	} //edit
+//	
+//	public JSONObject loadScript(long sequence) throws NotFoundException{
+//		return scriptDAO.loadScript(sequence);
+//	} //loadScript
+//	
+//	public void startScript(long sequence) throws AlreadyStartedException, JSONException, NotFoundException {
+//		logger.info("sequence: {}", sequence);
+//		String script = loadScript(sequence).getString("SCRIPT");
+//		scriptExecutor.execute(sequence, script);
+//	} //startScript
+//	
+//	public void stopScript(long sequence) throws ScriptNotRunningException{
+//		logger.info("sequence: {}", sequence);
+//		scriptExecutor.stop(sequence);
+//	} //stopScript
+//	
+//	public void removeScript(long sequence){
+//		logger.info("sequence: {}", sequence);
+//		scriptDAO.removeScript(sequence);
+//	} //removeScript
+//	
+//	public JSONArray loadDoc() throws IOException{
+//		InputStream docInput = this.getClass().getClassLoader().getResourceAsStream("spdbreader-doc.json");
+//		String doc = IOUtils.toString(docInput, "utf8");
+//		return new JSONArray(doc);
+//	} //loadDoc
 } //class

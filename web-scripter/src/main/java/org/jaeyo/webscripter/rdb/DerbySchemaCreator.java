@@ -41,16 +41,16 @@ public class DerbySchemaCreator {
 			} //processRow
 		});	
 		
-		if(existingTableNames.contains("DATABASE") == false)
-			jdbcTmpl.execute("create table database ( "
-					+ "sequence integer not null primary key, "
-					+ "mapping_name varchar(100) not null unique, "
-					+ "memo varchar(300) , "
-					+ "driver varchar(100) not null, "
-					+ "connection_url varchar(100) not null, "
-					+ "username varchar(100) not null, "
-					+ "password varchar(100) not null, "
-					+ "regdate timestamp not null )");
+//		if(existingTableNames.contains("DATABASE") == false)
+//			jdbcTmpl.execute("create table database ( "
+//					+ "sequence integer not null primary key, "
+//					+ "mapping_name varchar(100) not null unique, "
+//					+ "memo varchar(300) , "
+//					+ "driver varchar(100) not null, "
+//					+ "connection_url varchar(100) not null, "
+//					+ "username varchar(100) not null, "
+//					+ "password varchar(100) not null, "
+//					+ "regdate timestamp not null )");
 		
 		if(existingTableNames.contains("SCRIPT") == false)
 			jdbcTmpl.execute("create table script ( "

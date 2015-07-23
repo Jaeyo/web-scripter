@@ -1,4 +1,4 @@
-package org.jaeyo.webscripter.service;
+package org.jaeyo.webscripter.common;
 
 import java.sql.Types;
 

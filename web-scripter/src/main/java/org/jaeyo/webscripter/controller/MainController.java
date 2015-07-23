@@ -38,19 +38,19 @@ public class MainController {
 	
 	
 	
-	@RequestMapping(value = "/Script/Run/", method = RequestMethod.POST)
-	public @ResponseBody String runScript(
-			@RequestParam(value = "script", required = true) String script){
-		try{
-			Bindings bindings = new SimpleBindings();
-			bindings.put("logger", logger);
-			ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
-			scriptEngine.eval(script, bindings);
-			return new JSONObject().put("success", 1).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //addNewTask
+//	@RequestMapping(value = "/Script/Run/", method = RequestMethod.POST)
+//	public @ResponseBody String runScript(
+//			@RequestParam(value = "script", required = true) String script){
+//		try{
+//			Bindings bindings = new SimpleBindings();
+//			bindings.put("logger", logger);
+//			ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+//			scriptEngine.eval(script, bindings);
+//			return new JSONObject().put("success", 1).toString();
+//		} catch(Exception e){
+//			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+//			logger.error(msg, e);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} //catch
+//	} //addNewTask
 } //class

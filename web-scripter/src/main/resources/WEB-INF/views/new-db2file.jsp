@@ -25,9 +25,6 @@
 <!-- js cols -->
 <script src="/resource/js/lib/js_cols.min.js"></script>
 
-<!-- ajax call js -->
-<script src="/resource/js/lib/ajax-call.js"></script>
-
 <!-- common css -->
 <link href="/resource/css/common.css" rel="stylesheet">
 
@@ -94,14 +91,43 @@
 						<div class="col-md-4">
 							<input type="text" class="form-control" placeholder="search column" onkeyup="controller.searchColumn(this.value);" />
 							<div id="div-columns" style="width: 100%; max-height: 200px; overflow-y: scroll; padding: 10px; margin-top: 5px;">
+							</div>
 							<button type="button" class="btn btn-default btn-xs">select all columns (*)</button>
 						</div>
 						<div class="col-md-4">
-							<!-- TODO IMME -->
+							<textarea id="textarea-query" class="form-control" rows="4" readonly></textarea>
+							<hr />
+							
+							<div class="row" style="margin-bottom: 30px;">
+								<div class="col-md-12">
+									<div class="pull-right">
+										<label style="margin-right: 3px;">sample data rows</label>
+										<input type="text" id="text-sample-data-row-count" class="input-text" style="width: 50px; margin-right: 3px;"/>
+										<button type="button" class="btn btn-sm btn-info" onclick="controller.querySampleData();">get sample data</button>
+									</div>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<div class="radio">
+										<label><input type="radio" name="query-condition" value="no-condition" checked />no condition</label>
+									</div>
+									<div class="radio">
+										<label><input type="radio" name="query-condition" value="date-condition" />date condition</label>
+									</div>
+									<div class="radio">
+										<label><input type="radio" name="query-condition" value="sequence-condition" />sequence condition</label>
+									</div>
+								</div>
+							</div>
+							<!-- TODO IMME search area -->
 						</div>
 					</div>
 					
 					<hr />
+					<button type="button" class="btn btn-primary" onclick="controller.openCard('card-set-query', 'next')">next</button>
+					<div>&nbsp;</div>
 				</div>
 			</div>
 		</div>

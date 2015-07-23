@@ -26,13 +26,13 @@ public class DatabaseController {
 	@RequestMapping(value = "/Tables/", method = RequestMethod.GET)
 	public @ResponseBody String getTables(
 			@RequestParam(value="driver", required=true) String driver,
-			@RequestParam(value="connurl", required=true) String connurl,
+			@RequestParam(value="connUrl", required=true) String connurl,
 			@RequestParam(value="username", required=true) String username,
 			@RequestParam(value="password", required=true) String password){
 		try{
 			JSONObject jdbcParams = new JSONObject();
 			jdbcParams.put("driver", driver);
-			jdbcParams.put("connurl", connurl);
+			jdbcParams.put("connUrl", connurl);
 			jdbcParams.put("username", username);
 			jdbcParams.put("password", password);
 			
@@ -48,25 +48,49 @@ public class DatabaseController {
 	@RequestMapping(value = "/Columns/{tableName}/", method = RequestMethod.GET)
 	public @ResponseBody String getColumns(
 			@RequestParam(value="driver", required=true) String driver,
-			@RequestParam(value="connurl", required=true) String connurl,
+			@RequestParam(value="connUrl", required=true) String connurl,
 			@RequestParam(value="username", required=true) String username,
 			@RequestParam(value="password", required=true) String password,
 			@PathVariable("tableName") String tableName){
 		try{
 			JSONObject jdbcParams = new JSONObject();
 			jdbcParams.put("driver", driver);
-			jdbcParams.put("connurl", connurl);
+			jdbcParams.put("connUrl", connurl);
 			jdbcParams.put("username", username);
 			jdbcParams.put("password", password);
 			
-			JSONArray tables = databaseService.getTables(jdbcParams);
-			return new JSONObject().put("success", 1).put("tables", tables).toString();
+			JSONArray tables = databaseService.getColumns(jdbcParams, tableName);
+			return new JSONObject().put("success", 1).put("columns", tables).toString();
 		} catch(Exception e){
 			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
 			logger.error(msg, e);
 			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
 		} //catch
-	} //getTables
+	} //getColumns
+	
+	@RequestMapping(value = "/QuerySampleData/", method = RequestMethod.GET)
+	public @ResponseBody String querySampleData(
+			@RequestParam(value="driver", required=true) String driver,
+			@RequestParam(value="connUrl", required=true) String connurl,
+			@RequestParam(value="username", required=true) String username,
+			@RequestParam(value="password", required=true) String password,
+			@RequestParam(value="query", required=true) String query,
+			@RequestParam(value="rowCount", required=true) int rowCount){
+		try{
+			JSONObject jdbcParams = new JSONObject();
+			jdbcParams.put("driver", driver);
+			jdbcParams.put("connUrl", connurl);
+			jdbcParams.put("username", username);
+			jdbcParams.put("password", password);
+			
+			JSONArray sampleData = databaseService.querySampleData(jdbcParams, query, rowCount);
+			return new JSONObject().put("success", 1).put("sampleData", sampleData).toString();
+		} catch(Exception e){
+			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+			logger.error(msg, e);
+			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+		} //catch
+	} //querySampleData
 	
 	
 	
@@ -74,143 +98,139 @@ public class DatabaseController {
 	//----------------------------------------------------------------------------------------
 	
 	
-	@RequestMapping(value = "/Databases/", method = RequestMethod.GET)
-	public @ResponseBody String getDatabases(){
-		try{
-			JSONArray databases = databaseService.loadDatabases();
-			return new JSONObject().put("success", 1).put("databases", databases).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //getDatabases
-	
-	
-	@RequestMapping(value = "/Database/ConnectTest/{sequence}/", method = RequestMethod.GET)
-	public @ResponseBody String connectTest(@PathVariable("sequence") long sequence){
-		try{
-			
-			JSONArray databases = databaseService.loadDatabases();
-			return new JSONObject().put("success", 1).put("databases", databases).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //connectTest
-	
-	
-	
-	
-	
-	@RequestMapping(value = "/View/NewDatabase/", method = RequestMethod.GET)
-	public ModelAndView viewNewDatabases(){
-		return new ModelAndView("new-database");
-	} //viewNewDatabases
-	
-	@RequestMapping(value = "/View/Databases/", method = RequestMethod.GET)
-	public ModelAndView viewDatabases(){
-		return new ModelAndView("databases");
-	} //databases
-	
-	@RequestMapping(value = "/View/EditDatabase/{sequence}/", method = RequestMethod.GET)
-	public ModelAndView viewEditDatabase(@PathVariable("sequence") long sequence){
-		ModelAndView mv = new ModelAndView("edit-database");
-		mv.addObject("sequence", sequence);
-		return mv;
-	} //viewEditdatabase
-	
-	@RequestMapping(value = "/View/Database/Query/{sequence}/", method = RequestMethod.GET)
-	public ModelAndView viewDatabaseQuery(@PathVariable("sequence") long sequence){
-		ModelAndView mv = new ModelAndView("database-query");
-		mv.addObject("sequence", sequence);
-		return mv;
-	} //viewEditdatabase
-	
-	
-	
-	
-	@RequestMapping(value = "/Database/", method = RequestMethod.POST)
-	public @ResponseBody String postDatabase(
-			@RequestParam(value = "dbMappingName", required = true) String dbMappingName,
-			@RequestParam(value = "memo", required = true) String memo,
-			@RequestParam(value = "jdbcDriver", required = true) String jdbcDriver,
-			@RequestParam(value = "jdbcConnUrl", required = true) String jdbcConnUrl,
-			@RequestParam(value = "jdbcUsername", required = true) String jdbcUsername,
-			@RequestParam(value = "jdbcPassword", required = true) String jdbcPassword){
-		try{
-			databaseService.save(dbMappingName, memo, jdbcDriver, jdbcConnUrl, jdbcUsername, jdbcPassword);
-			return new JSONObject().put("success", 1).toString();
-		} catch(DuplicateException e){
-			String msg = e.getMessage();
-			logger.warn(msg);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //postDatabase
-	
-	@RequestMapping(value = "/Database/", method = RequestMethod.PUT)
-	public @ResponseBody String putDatabase(
-			@RequestParam(value = "sequence", required = true) long sequence,
-			@RequestParam(value = "dbMappingName", required = true) String dbMappingName,
-			@RequestParam(value = "memo", required = true) String memo,
-			@RequestParam(value = "jdbcDriver", required = true) String jdbcDriver,
-			@RequestParam(value = "jdbcConnUrl", required = true) String jdbcConnUrl,
-			@RequestParam(value = "jdbcUsername", required = true) String jdbcUsername,
-			@RequestParam(value = "jdbcPassword", required = true) String jdbcPassword){
-		try{
-			databaseService.update(sequence, dbMappingName, memo, jdbcDriver, jdbcConnUrl, jdbcUsername, jdbcPassword);
-			return new JSONObject().put("success", 1).toString();
-		} catch(DuplicateException e){
-			String msg = e.getMessage();
-			logger.warn(msg);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //postDatabase
-	
-	@RequestMapping(value = "/Database/{sequence}/", method = RequestMethod.GET)
-	public @ResponseBody String getDatabase(@PathVariable("sequence") long sequence){
-		try{
-			JSONObject database = databaseService.loadDatabase(sequence);
-			return new JSONObject().put("success", 1).put("database", database).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //postDatabase
-	
-	@RequestMapping(value = "/Database/{sequence}/", method = RequestMethod.DELETE)
-	public @ResponseBody String deleteDatabase(@PathVariable("sequence") long sequence){
-		try{
-			databaseService.removeDatabase(sequence);
-			return new JSONObject().put("success", 1).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //postDatabase
-	
-	@RequestMapping(value = "/Database/Query/{sequence}/", method = RequestMethod.GET)
-	public @ResponseBody String deleteDatabase(
-			@PathVariable("sequence") long sequence,
-			@RequestParam(value = "query", required = true) String query){
-		try{
-			JSONArray queryResult = databaseService.runQuery(sequence, query);
-			return new JSONObject().put("success", 1).put("result", queryResult).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //postDatabase
+//	@RequestMapping(value = "/Databases/", method = RequestMethod.GET)
+//	public @ResponseBody String getDatabases(){
+//		try{
+//			JSONArray databases = databaseService.loadDatabases();
+//			return new JSONObject().put("success", 1).put("databases", databases).toString();
+//		} catch(Exception e){
+//			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+//			logger.error(msg, e);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} //catch
+//	} //getDatabases
+//	
+//	
+//	@RequestMapping(value = "/Database/ConnectTest/{sequence}/", method = RequestMethod.GET)
+//	public @ResponseBody String connectTest(@PathVariable("sequence") long sequence){
+//		try{
+//			
+//			JSONArray databases = databaseService.loadDatabases();
+//			return new JSONObject().put("success", 1).put("databases", databases).toString();
+//		} catch(Exception e){
+//			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+//			logger.error(msg, e);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} //catch
+//	} //connectTest
+//	
+//	@RequestMapping(value = "/View/NewDatabase/", method = RequestMethod.GET)
+//	public ModelAndView viewNewDatabases(){
+//		return new ModelAndView("new-database");
+//	} //viewNewDatabases
+//	
+//	@RequestMapping(value = "/View/Databases/", method = RequestMethod.GET)
+//	public ModelAndView viewDatabases(){
+//		return new ModelAndView("databases");
+//	} //databases
+//	
+//	@RequestMapping(value = "/View/EditDatabase/{sequence}/", method = RequestMethod.GET)
+//	public ModelAndView viewEditDatabase(@PathVariable("sequence") long sequence){
+//		ModelAndView mv = new ModelAndView("edit-database");
+//		mv.addObject("sequence", sequence);
+//		return mv;
+//	} //viewEditdatabase
+//	
+//	@RequestMapping(value = "/View/Database/Query/{sequence}/", method = RequestMethod.GET)
+//	public ModelAndView viewDatabaseQuery(@PathVariable("sequence") long sequence){
+//		ModelAndView mv = new ModelAndView("database-query");
+//		mv.addObject("sequence", sequence);
+//		return mv;
+//	} //viewEditdatabase
+//	
+//	
+//	
+//	
+//	@RequestMapping(value = "/Database/", method = RequestMethod.POST)
+//	public @ResponseBody String postDatabase(
+//			@RequestParam(value = "dbMappingName", required = true) String dbMappingName,
+//			@RequestParam(value = "memo", required = true) String memo,
+//			@RequestParam(value = "jdbcDriver", required = true) String jdbcDriver,
+//			@RequestParam(value = "jdbcConnUrl", required = true) String jdbcConnUrl,
+//			@RequestParam(value = "jdbcUsername", required = true) String jdbcUsername,
+//			@RequestParam(value = "jdbcPassword", required = true) String jdbcPassword){
+//		try{
+//			databaseService.save(dbMappingName, memo, jdbcDriver, jdbcConnUrl, jdbcUsername, jdbcPassword);
+//			return new JSONObject().put("success", 1).toString();
+//		} catch(DuplicateException e){
+//			String msg = e.getMessage();
+//			logger.warn(msg);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} catch(Exception e){
+//			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+//			logger.error(msg, e);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} //catch
+//	} //postDatabase
+//	
+//	@RequestMapping(value = "/Database/", method = RequestMethod.PUT)
+//	public @ResponseBody String putDatabase(
+//			@RequestParam(value = "sequence", required = true) long sequence,
+//			@RequestParam(value = "dbMappingName", required = true) String dbMappingName,
+//			@RequestParam(value = "memo", required = true) String memo,
+//			@RequestParam(value = "jdbcDriver", required = true) String jdbcDriver,
+//			@RequestParam(value = "jdbcConnUrl", required = true) String jdbcConnUrl,
+//			@RequestParam(value = "jdbcUsername", required = true) String jdbcUsername,
+//			@RequestParam(value = "jdbcPassword", required = true) String jdbcPassword){
+//		try{
+//			databaseService.update(sequence, dbMappingName, memo, jdbcDriver, jdbcConnUrl, jdbcUsername, jdbcPassword);
+//			return new JSONObject().put("success", 1).toString();
+//		} catch(DuplicateException e){
+//			String msg = e.getMessage();
+//			logger.warn(msg);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} catch(Exception e){
+//			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+//			logger.error(msg, e);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} //catch
+//	} //postDatabase
+//	
+//	@RequestMapping(value = "/Database/{sequence}/", method = RequestMethod.GET)
+//	public @ResponseBody String getDatabase(@PathVariable("sequence") long sequence){
+//		try{
+//			JSONObject database = databaseService.loadDatabase(sequence);
+//			return new JSONObject().put("success", 1).put("database", database).toString();
+//		} catch(Exception e){
+//			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+//			logger.error(msg, e);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} //catch
+//	} //postDatabase
+//	
+//	@RequestMapping(value = "/Database/{sequence}/", method = RequestMethod.DELETE)
+//	public @ResponseBody String deleteDatabase(@PathVariable("sequence") long sequence){
+//		try{
+//			databaseService.removeDatabase(sequence);
+//			return new JSONObject().put("success", 1).toString();
+//		} catch(Exception e){
+//			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+//			logger.error(msg, e);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} //catch
+//	} //postDatabase
+//	
+//	@RequestMapping(value = "/Database/Query/{sequence}/", method = RequestMethod.GET)
+//	public @ResponseBody String deleteDatabase(
+//			@PathVariable("sequence") long sequence,
+//			@RequestParam(value = "query", required = true) String query){
+//		try{
+//			JSONArray queryResult = databaseService.runQuery(sequence, query);
+//			return new JSONObject().put("success", 1).put("result", queryResult).toString();
+//		} catch(Exception e){
+//			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+//			logger.error(msg, e);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} //catch
+//	} //postDatabase
 } //class

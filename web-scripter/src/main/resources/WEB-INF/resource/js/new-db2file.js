@@ -33,6 +33,7 @@ Model = function(){
 		username: null,
 		password: null
 	};
+	this.tableName = null;
 }; //INIT
 Model.prototype = {
 }; //Model
@@ -40,6 +41,32 @@ Model.prototype = {
 View = function(){
 }; //INIT
 View.prototype = {
+	showLoadingDialog: function(){
+		bootbox.dialog({
+			message: '<p style="text-align: center">loading...</p><div class="loading"></div>',
+			closeButton: false
+		});
+	}, //showLoadingDialog
+	getTableBtns: function(table){
+		var dom = '';
+		dom += '<div style="margin: 3px;">';
+		dom += 		'<label class="btn btn-default btn-xs" onclick="controller.model.tableName=\'{}\'; controller.loadColumns();">'.format(table);
+		dom += 			'<input type="radio" name="tables" style="margin-right: 3px">';
+		dom += 			table;
+		dom += 		'</label>';
+		dom += '</div>';
+		return dom;
+	}, //getTableBtns
+	getColumnBtns: function(columnObj){
+		var dom = '';
+		dom += '<div style="margin: 3px;">';
+		dom += 		'<label class="btn btn-default btn-xs" onclick="controller.refreshQuery();">';
+		dom += 			'<input type="checkbox" style="margin-right: 3px">';
+		dom += 			'{} ({})'.format(columnObj.columnName, columnObj.columnType);
+		dom += 		'</label>';
+		dom += '</div>';
+		return dom;
+	} //getColumnBtns
 }; //View
 
 Controller = function(){
@@ -88,6 +115,17 @@ Controller.prototype = {
 			this.model.jdbc.username = username;
 			this.model.jdbc.password = password;
 			break;
+		case 'card-set-query':
+			var condition = $('input[name="query-condition"]:checked').val();
+			switch(condition){
+			case 'no-condition':
+				break;
+			case 'date-condition':
+			case 'sequence-condition':
+				//TODO IMME
+				break;
+			} //switch
+			break;
 		} //switch
 			
 		$('.card').hide(300);
@@ -100,12 +138,10 @@ Controller.prototype = {
 		} //switch
 	}, //openCard
 	loadTables: function(){
-		bootbox.dialog({
-			message: '<p style="text-align: center">loading...</p><div class="loading"></div>',
-			closeButton: false
-		});
-		
-		$.getJSON('/Tables/', this.model.jdbc).done(function(resp){
+		this.view.showLoadingDialog();
+		$.getJSON('/Tables/', this.model.jdbc) .fail(function(e){
+			bootbox.alert(JSON.stringify(e));
+		}).done(function(resp){
 			bootbox.hideAll();
 			if(resp.success != 1){
 				bootbox.alert(resp.errmsg);
@@ -118,26 +154,103 @@ Controller.prototype = {
 			} //if
 			
 			var tablesRoot = $('#div-tables').empty();
-			for(var i=0; i<resp.tables.length; i++){
-				tablesRoot.append('<div style="margin: 3px;">');
-				tablesRoot.append('<button type="button" class="btn btn-default btn-sm" onclick="controller.loadColumns(\'{}\');">{}</button>'.format(resp.tables[i], resp.tables[i]));
-				tablesRoot.append('</div>');
-			} //for i
+			for(var i=0; i<resp.tables.length; i++)
+				tablesRoot.append(controller.view.getTableBtns(resp.tables[i]));
 		});
 	}, //loadTables
-	loadColumns: function(tableName){
-		//TODO IMME
+	loadColumns: function(){
+		this.view.showLoadingDialog();
+		$.getJSON('/Columns/{}/'.format(this.model.tableName), this.model.jdbc).fail(function(e){
+			bootbox.alert(JSON.stringify(e));
+		}).done(function(resp){
+			bootbox.hideAll();
+			if(resp.success != 1){
+				bootbox.alert(resp.errmsg);
+				return;
+			} //if
+			
+			if(resp.columns.length == 0){
+				bootbox.alert('no columns exists');
+				return;
+			} //if
+			
+			var columnsRoot = $('#div-columns').empty();
+			for(var i=0; i<resp.columns.length; i++)
+				columnsRoot.append(controller.view.getColumnBtns(resp.columns[i]));
+		});
 	}, //loadColumns
 	searchTable: function(keyword){
 		keyword = keyword.toLowerCase();
-		$('#div-tables').children('button').each(function(){
+		$('#div-tables').find('label.btn').each(function(){
 			var btn = $(this);
 			if(btn.text().toLowerCase().indexOf(keyword) < 0)
 				btn.hide();
 			else
 				btn.show();
 		});
-	} //searchTable
+		this.refreshQuery();
+	}, //searchTable
+	searchColumn: function(keyword){
+		keyword = keyword.toLowerCase();
+		$('#div-columns').find('label.btn').each(function(){
+			var btn = $(this);
+			if(btn.text().toLowerCase().indexOf(keyword) < 0)
+				btn.hide();
+			else
+				btn.show();
+		});
+		this.refreshQuery();
+	}, //searchColumn
+	refreshQuery: function(){
+		var table = null;
+		var columns = [];
+		
+		$('#div-tables').find('label.btn').each(function(){
+			var btn = $(this);
+			if(btn.find('input[type="radio"]').prop('checked') == false)
+				return;
+			
+			table = btn.text().trim();
+		});
+	
+		$('#div-columns').find('label.btn').each(function(){
+			var btn = $(this);
+			if(btn.find('input[type="checkbox"]').prop('checked') == true){
+				var column = btn.text().split(' ')[0].trim();
+				columns.push(column);
+			} //if
+		});
+	
+		var query = 'SELECT {} from {}'.format(columns.toString(), table);
+		$('#textarea-query').val(query);
+	}, //refreshQuery
+	querySampleData: function(){
+		var query = $('#textarea-query').val();
+		var rowCount = parseInt($('#text-sample-data-row-count').val());
+		if(isNaN(rowCount)){
+			bootbox.alert("invalid row count");
+			return;
+		} //if
+		
+		$.getJSON('/QuerySampleData/', {
+			driver: controller.model.jdbc.driver,
+			connUrl: controller.model.jdbc.connUrl,
+			username: controller.model.jdbc.username,
+			password: controller.model.jdbc.password,
+			query: query,
+			rowCount: rowCount
+		}).done(function(resp){
+			if(resp.success != 1){
+				bootbox.alert(resp.errmsg);
+				return;
+			} //if
+			
+			bootbox.dialog({
+				title: 'sample data',
+				message: '<textarea class="form-control" rows="8">{}</textarea>'.format(JSON.stringify(resp.sampleData, null, 2))
+			});
+		});
+	} //querySampleData
 }; //Controller
 
 $(function(){
