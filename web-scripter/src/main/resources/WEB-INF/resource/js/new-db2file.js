@@ -34,6 +34,10 @@ Model = function(){
 		password: null
 	};
 	this.tableName = null;
+	this.condition = {
+		type: null,
+		column: null
+	};
 }; //INIT
 Model.prototype = {
 }; //Model
@@ -47,26 +51,18 @@ View.prototype = {
 			closeButton: false
 		});
 	}, //showLoadingDialog
-	getTableBtns: function(table){
+	getColumnCheckBox: function(column){
 		var dom = '';
-		dom += '<div style="margin: 3px;">';
-		dom += 		'<label class="btn btn-default btn-xs" onclick="controller.model.tableName=\'{}\'; controller.loadColumns();">'.format(table);
-		dom += 			'<input type="radio" name="tables" style="margin-right: 3px">';
-		dom += 			table;
-		dom += 		'</label>';
-		dom += '</div>';
-		return dom;
-	}, //getTableBtns
-	getColumnBtns: function(columnObj){
+		dom += '<label>'
+		dom += 		'<input type="checkbox" value="{}" />{}'.format(column, column);
+		dom += '</label>'
+	}, //getColumnCheckBox
+	getColumnRadioBox: function(column){
 		var dom = '';
-		dom += '<div style="margin: 3px;">';
-		dom += 		'<label class="btn btn-default btn-xs" onclick="controller.refreshQuery();">';
-		dom += 			'<input type="checkbox" style="margin-right: 3px">';
-		dom += 			'{} ({})'.format(columnObj.columnName, columnObj.columnType);
-		dom += 		'</label>';
-		dom += '</div>';
-		return dom;
-	} //getColumnBtns
+		dom += '<label>'
+		dom += 		'<input type="radio" name="condition-column" value="{}" />{}'.format(column, column);
+		dom += '</label>'
+	} //getColumnRadioBox
 }; //View
 
 Controller = function(){
@@ -76,29 +72,33 @@ Controller = function(){
 Controller.prototype = {
 	selectDbVendor: function(dbVendor){
 		this.model.dbVendor = dbVendor;
-		$('#text-database-port').val(this.model.dbVendorTmpl[dbVendor].port);
+		$('#card-input-database #text-database-port').val(this.model.dbVendorTmpl[dbVendor].port);
 		this.autoCompleteJdbcInfo();
 	}, //selectDbVendor
 	autoCompleteJdbcInfo: function(){
 		if(this.model.dbVendor == 'etc')
 			return;
-		$('#text-jdbc-driver').val(this.model.dbVendorTmpl[this.model.dbVendor].driver);
+		$('#card-input-database #text-jdbc-driver').val(this.model.dbVendorTmpl[this.model.dbVendor].driver);
 		var connUrl = this.model.dbVendorTmpl[this.model.dbVendor].connUrl;
 		var connUrlParams = {
-			ip: $('#text-database-ip').val(),
-			port: $('#text-database-port').val(),
-			database: $('#text-database-sid').val()
+			ip: $('#card-input-database #text-database-ip').val(),
+			port: $('#card-input-database #text-database-port').val(),
+			database: $('#card-input-database #text-database-sid').val()
 		};
 		connUrl = connUrl.format(connUrlParams);
-		$('#text-jdbc-conn-url').val(connUrl);
+		$('#card-input-database #text-jdbc-conn-url').val(connUrl);
 	}, //autoCompleteJdbcInfo
+	openPrevCard: function(toCardId){
+		$('.card').hide(300);
+		$('#' + toCardId).show(300);
+	},
 	openCard: function(fromCardId, toCardId){
 		switch(fromCardId){
 		case 'card-input-database':
-			var driver = $('#text-jdbc-driver').val();
-			var connUrl = $('#text-jdbc-conn-url').val();
-			var username = $('#text-jdbc-username').val();
-			var password = $('#text-jdbc-password').val();
+			var driver = $('#card-input-database #text-jdbc-driver').val();
+			var connUrl = $('#card-input-database #text-jdbc-conn-url').val();
+			var username = $('#card-input-database #text-jdbc-username').val();
+			var password = $('#card-input-database #text-jdbc-password').val();
 			
 			try{
 				precondition(driver != null && driver.trim().length > 0, 'invalid driver');
@@ -115,16 +115,24 @@ Controller.prototype = {
 			this.model.jdbc.username = username;
 			this.model.jdbc.password = password;
 			break;
-		case 'card-set-query':
-			var condition = $('input[name="query-condition"]:checked').val();
-			switch(condition){
-			case 'no-condition':
-				break;
-			case 'date-condition':
-			case 'sequence-condition':
-				//TODO IMME
-				break;
-			} //switch
+		case 'card-set-table-for-query':
+			this.model.tableName = $('#card-set-table-for-query #dropdown-table').attr('value');
+			break;
+		case 'card-set-binding-type':
+			this.model.condition.type = $('#card-set-bindng-type input[type="radio"][name="condition"]:checked').val();
+			this.model.condition.column = null;
+			if(this.model.condition.type == 'date-condition'){
+				this.model.condition.column = $('#card-set-bindng-type #columns-for-date-condition input[type="radio"][name="condition-column"]:checked').val();
+			} else if(this.model.condition.type == 'seq-condition'){
+				this.model.condition.column = $('#card-set-bindng-type #columns-for-sequence-condition input[type="radio"][name="condition-column"]:checked').val();
+			} //if
+			
+			if(this.model.condition.type != 'no-condition'){
+				if(this.model.condition.column == null || this.model.condition.column.trim().length == 0){
+					bootbox.alert('invalid condition column');
+					return;
+				} //if
+			} //if
 			break;
 		} //switch
 			
@@ -132,8 +140,26 @@ Controller.prototype = {
 		$('#' + toCardId).show(300);
 		
 		switch(toCardId){
-		case 'card-set-query':
+		case 'card-set-table-for-query':
 			this.loadTables();
+			break;
+		case 'card-set-column-for-query':
+			this.loadColumns(function(columns){
+				var columnsRoot = $('#div-columns').empty();
+				for(var i=0; i<columns.length; i++)
+					columnsRoot.append(controller.view.getColumnCheckBox(columns[i]));
+			});
+			break;
+		case 'card-set-binding-type':
+			this.loadColumns(function(columns){
+				var columnsRoot4Date = $('#card-set-binding-type #columns-for-date-condition');
+				var columnsRoot4Sequence = $('#card-set-binding-type #columns-for-sequence-condition');
+				for(var i=0; i<columns.length; i++){
+					var dom = controller.view.getColumnRadioBox(columns[i]);
+					columnsRoot4Date.append(dom);
+					columnsRoot4Sequence.append(dom);
+				} //for i
+			});
 			break;
 		} //switch
 	}, //openCard
@@ -153,12 +179,10 @@ Controller.prototype = {
 				return;
 			} //if
 			
-			var tablesRoot = $('#div-tables').empty();
-			for(var i=0; i<resp.tables.length; i++)
-				tablesRoot.append(controller.view.getTableBtns(resp.tables[i]));
+			searchDropdown.newSearchDropdown('dropdown-table', null, resp.tables);
 		});
 	}, //loadTables
-	loadColumns: function(){
+	loadColumns: function(callback){
 		this.view.showLoadingDialog();
 		$.getJSON('/Columns/{}/'.format(this.model.tableName), this.model.jdbc).fail(function(e){
 			bootbox.alert(JSON.stringify(e));
@@ -174,83 +198,66 @@ Controller.prototype = {
 				return;
 			} //if
 			
-			var columnsRoot = $('#div-columns').empty();
-			for(var i=0; i<resp.columns.length; i++)
-				columnsRoot.append(controller.view.getColumnBtns(resp.columns[i]));
+			callback(resp.columns);
 		});
 	}, //loadColumns
-	searchTable: function(keyword){
-		keyword = keyword.toLowerCase();
-		$('#div-tables').find('label.btn').each(function(){
-			var btn = $(this);
-			if(btn.text().toLowerCase().indexOf(keyword) < 0)
-				btn.hide();
-			else
-				btn.show();
-		});
-		this.refreshQuery();
-	}, //searchTable
-	searchColumn: function(keyword){
-		keyword = keyword.toLowerCase();
-		$('#div-columns').find('label.btn').each(function(){
-			var btn = $(this);
-			if(btn.text().toLowerCase().indexOf(keyword) < 0)
-				btn.hide();
-			else
-				btn.show();
-		});
-		this.refreshQuery();
-	}, //searchColumn
-	refreshQuery: function(){
-		var table = null;
-		var columns = [];
-		
-		$('#div-tables').find('label.btn').each(function(){
-			var btn = $(this);
-			if(btn.find('input[type="radio"]').prop('checked') == false)
-				return;
-			
-			table = btn.text().trim();
-		});
-	
-		$('#div-columns').find('label.btn').each(function(){
-			var btn = $(this);
-			if(btn.find('input[type="checkbox"]').prop('checked') == true){
-				var column = btn.text().split(' ')[0].trim();
-				columns.push(column);
-			} //if
-		});
-	
-		var query = 'SELECT {} from {}'.format(columns.toString(), table);
-		$('#textarea-query').val(query);
-	}, //refreshQuery
 	querySampleData: function(){
-		var query = $('#textarea-query').val();
-		var rowCount = parseInt($('#text-sample-data-row-count').val());
-		if(isNaN(rowCount)){
-			bootbox.alert("invalid row count");
+		var columns = [];
+		$('#card-set-column-for-query #div-columns input[type="checkbox"]:checked').each(function(index, value){
+			columns.push(value);
+		});
+		if(columns.length == 0){
+			bootbox.alert("no columns selected");
 			return;
 		} //if
 		
-		$.getJSON('/QuerySampleData/', {
-			driver: controller.model.jdbc.driver,
-			connUrl: controller.model.jdbc.connUrl,
-			username: controller.model.jdbc.username,
-			password: controller.model.jdbc.password,
-			query: query,
-			rowCount: rowCount
-		}).done(function(resp){
-			if(resp.success != 1){
-				bootbox.alert(resp.errmsg);
+		var query = 'SELECT {} FROM {}'.format(columns.toString(), controller.model.tableName);
+		
+		bootbox.prompt('QUERY: {}<br />how many rows?'.format(query), function(result){
+			if(result == null)
+				return;
+			var rowCount = parseInt(result);
+			if(isNaN(rowCount)){
+				bootbox.alert('invalid row count');
 				return;
 			} //if
 			
-			bootbox.dialog({
-				title: 'sample data',
-				message: '<textarea class="form-control" rows="8">{}</textarea>'.format(JSON.stringify(resp.sampleData, null, 2))
+			$.getJSON('/QuerySampleData/', {
+				driver: controller.model.jdbc.driver,
+				connUrl: controller.model.jdbc.connUrl,
+				username: controller.model.jdbc.username,
+				password: controller.model.jdbc.password,
+				query: query,
+				rowCount: rowCount
+			}).done(function(resp){
+				if(resp.success != 1){
+					bootbox.alert(resp.errmsg);
+					return;
+				} //if
+				
+				bootbox.dialog({
+					title: 'sample data',
+					message: '<textarea class="form-control" rows="8">{}</textarea>'.format(JSON.stringify(resp.sampleData, null, 2))
+				});
 			});
 		});
-	} //querySampleData
+	}, //querySampleData
+	setConditionType: function(condition){
+		switch(condition){
+		case 'no-condition':
+			$('#card-set-binding-type #columns-for-date-condition').hide(100);
+			$('#card-set-binding-type #columns-for-sequence-condition').hide(100);
+			break;
+		case 'date-condition':
+			$('#card-set-binding-type #columns-for-date-condition').show(100);
+			$('#card-set-binding-type #columns-for-sequence-condition').hide(100);
+			break;
+		case 'sequence-condition':
+			$('#card-set-binding-type #columns-for-date-condition').hide(100);
+			$('#card-set-binding-type #columns-for-sequence-condition').show(100);
+			break;
+		} //switch
+	} //setConditionType
 }; //Controller
 
 $(function(){
