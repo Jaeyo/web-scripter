@@ -33,12 +33,22 @@
 <!-- search dropdown -->
 <script src="/resource/js/lib/searchable-dropdown.js"></script>
 
+<!-- code mirror -->
+<script src="http://codemirror.net/lib/codemirror.js"></script>
+<link href="http://codemirror.net/lib/codemirror.css" rel="stylesheet">
+<script src="https://codemirror.net/addon/hint/show-hint.js"></script>
+<link href="https://codemirror.net/addon/hint/show-hint.css" rel="stylesheet">
+<script src="http://codemirror.net/addon/hint/javascript-hint.js"></script>
+<script src="http://codemirror.net/addon/hint/anyword-hint.js"></script>
+<script src="http://codemirror.net/mode/javascript/javascript.js"></script>
+<link href="http://codemirror.net/theme/base16-dark.css" rel="stylesheet">
+
 </head>
 
 <body class="bg-blue-black">
 	<jsp:include page="inc/left-nav.jsp" flush="false"/>
 	<div class="main-container" style="min-height: 100%">
-		<div id="card-input-database" class="center-xy card">
+			<div id="card-input-database" class="center-xy card">
 			<div>
 				<h4>input database</h4>
 			</div>
@@ -46,12 +56,12 @@
 			<div>
 				<div class="left-label">database vendor</div>
 				<div class="right-value">
-					<label><input type="radio" name="dbVendor" value="oracle" onclick="controller.selectDbVendor('oracle');">oracle</label>
-					<label><input type="radio" name="dbVendor" value="mysql" onclick="controller.selectDbVendor('mysql');">mysql</label>
-					<label><input type="radio" name="dbVendor" value="mssql" onclick="controller.selectDbVendor('mssql');">mssql</label>
-					<label><input type="radio" name="dbVendor" value="db2" onclick="controller.selectDbVendor('db2');">db2</label>
-					<label><input type="radio" name="dbVendor" value="tibero" onclick="controller.selectDbVendor('tibero');">tibero</label>
-					<label><input type="radio" name="dbVendor" value="etc" onclick="controller.selectDbVendor('etc');" checked="checked">etc</label>
+					<label><input type="radio" name="dbVendor" value="oracle" onclick="controller.selectDbVendor('oracle');" />oracle</label>
+					<label><input type="radio" name="dbVendor" value="mysql" onclick="controller.selectDbVendor('mysql');" />mysql</label>
+					<label><input type="radio" name="dbVendor" value="mssql" onclick="controller.selectDbVendor('mssql');" />mssql</label>
+					<label><input type="radio" name="dbVendor" value="db2" onclick="controller.selectDbVendor('db2');" />db2</label>
+					<label><input type="radio" name="dbVendor" value="tibero" onclick="controller.selectDbVendor('tibero');" />tibero</label>
+					<label><input type="radio" name="dbVendor" value="etc" onclick="controller.selectDbVendor('etc');" checked />etc</label>
 				</div>
 			</div>
 			<div>
@@ -142,90 +152,61 @@
 			<hr />
 			
 			<div>
-				<label><input type="radio" name="condition" value="no-condition" checked onclick="controller.setConditionType(this.value);"/>no condition</label>
+				<label><input type="radio" name="condition" value="no-condition" checked onclick="controller.setConditionType(this.value);" checked/>no condition</label>
 			</div>
 			<div>
-				<label><input type="radio" name="condition" value="date-condition" onclick="controller.setConditionType(this.value);"/>date condition</label>
+				<label><input type="radio" name="condition" value="date-condition" onclick="controller.setConditionType(this.value);" />date condition</label>
 			</div>
-			<div id="columns-for-date-condition"></div>
+			<div id="columns-for-date-condition" style="display: none;"></div>
 			<div>
-				<label><input type="radio" name="condition" value="sequence-condition" onclick="controller.setConditionType(this.value);"/>sequence condition</label>
+				<label><input type="radio" name="condition" value="sequence-condition" onclick="controller.setConditionType(this.value);" />sequence condition</label>
 			</div>
-			<div id="columns-for-sequence-condition"></div>
+			<div id="columns-for-sequence-condition" style="display: none;"></div>
 			
 			<hr />
 			<div>
 				<button type="button" class="btn btn-primary btn-sm pull-left" onclick="controller.openPrevCard('card-set-column-for-query');">prev</button>
-				<button type="button" class="btn btn-primary btn-sm pull-right" onclick="controller.openCard('card-set-binding-type, null);">next</button>	
+				<button type="button" class="btn btn-primary btn-sm pull-right" onclick="controller.openCard('card-set-binding-type', 'card-etc-parameter');">next</button>	
 			</div>
 		</div>
 		<!-- end of card of id: card-set-binding-type -->
-		
-	
-	<!-- 
-		<div class="row">
-			<div class="col-md-12">
-				
-				
-				<div id="card-set-query" class="card" style="display: none;">
-					<h4>make query</h4>
-					<hr />
-					<div class="row">
-						<div class="col-md-4">
-							<input type="text" class="form-control" placeholder="search table" onkeyup="controller.searchTable(this.value);" />
-							<div id="div-tables">
-							</div>
-						</div>
-						<div class="col-md-4">
-							<input type="text" class="form-control" placeholder="search column" onkeyup="controller.searchColumn(this.value);" />
-							<div id="div-columns">
-							</div>
-							<button type="button" class="btn btn-default btn-xs">select all columns (*)</button>
-						</div>
-						<div class="col-md-4">
-							<textarea id="textarea-query" class="form-control" rows="4" readonly></textarea>
-							<hr />
-							
-							<div class="row" style="margin-bottom: 30px;">
-								<div class="col-md-12">
-									<div class="pull-right">
-										<label style="margin-right: 3px;">sample data rows</label>
-										<input type="text" id="text-sample-data-row-count" class="input-text" style="width: 50px; margin-right: 3px;"/>
-										<button type="button" class="btn btn-sm btn-info" onclick="controller.querySampleData();">get sample data</button>
-									</div>
-								</div>
-							</div>
-							
-							<div class="row">
-								<div class="col-md-12">
-									<div class="radio">
-										<label><input type="radio" name="query-condition" value="no-condition" checked />no condition</label>
-									</div>
-									<div class="radio">
-										<label><input type="radio" name="query-condition" value="date-condition" />date condition</label>
-									</div>
-									<div class="radio">
-										<label><input type="radio" name="query-condition" value="sequence-condition" />sequence condition</label>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-12">
-									<input type="text" class="form-control" placeholder="search condition column" />
-									<div id="div-condition-columns">
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					
-					<hr />
-					<button type="button" class="btn btn-primary" onclick="controller.openCard('card-set-query', 'next')">next</button>
-					<div>&nbsp;</div>
+
+		<div id="card-etc-parameter" class="center-xy card" style="display: none;">
+			<h4>etc parameter</h4>
+			<hr />
+			<div>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon">period</span>
+					<input id="text-period" type="text" class="form-control" value="60*1000" />
+				</div>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon">delimiter</span>
+					<input id="text-delimiter" type="text" class="form-control" value="|" />
+				</div>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon">output path</span>
+					<input id="text-output-path" type="text" class="form-control" />
+				</div>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon">charset</span>
+					<input id="text-charset" type="text" class="form-control" value="utf-8" />
 				</div>
 			</div>
+			<hr />
+			<div>
+				<button type="button" class="btn btn-primary btn-sm pull-left" onclick="controller.openPrevCard('card-set-binding-type');">prev</button>
+				<button type="button" class="btn btn-primary btn-sm pull-right" onclick="controller.openCard('card-etc-parameter', 'card-script');">next</button>	
+			</div>
 		</div>
-		-->
+		<!-- end of card of id: card-etc-parameter -->
+
+		<div id="card-script" class="center-xy card" style="display: none">
+			<h4>script</h4>
+			<hr />
+			<textarea id="textarea-script" rows=30></textarea>
+		</div>
+		<!-- end of card of id: card-script -->
+
 	</div>
 	
 <script src="/resource/js/new-db2file.js"></script>

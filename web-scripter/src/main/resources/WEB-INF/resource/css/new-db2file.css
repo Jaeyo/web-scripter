@@ -74,3 +74,27 @@
 #card-set-binding-type label input[type="radio"]{
 	margin-right: 3px;
 }
+#card-set-binding-type #columns-for-date-condition {
+	padding-left: 15px;
+	display: none;
+	max-height: 200px;
+	overflow-y: auto;
+}
+#card-set-binding-type #columns-for-sequence-condition {
+	padding-left: 15px;
+	display: none;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+/* ------------------------------------------------- */
+
+#card-etc-parameter {
+	width: 400px;
+	padding: 20px;
+	background-color: rgb(49, 63, 77);
+}
+#card-etc-parameter .input-group .input-group-addon {
+	min-width: 80px;
+	max-width: 80px;
+}

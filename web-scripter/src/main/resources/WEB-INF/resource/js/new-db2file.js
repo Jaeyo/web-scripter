@@ -38,6 +38,12 @@ Model = function(){
 		type: null,
 		column: null
 	};
+	this.etcParameter = {
+		period: null,
+		delimiter: null,
+		outputPath: null,
+		charset: null
+	};
 }; //INIT
 Model.prototype = {
 }; //Model
@@ -45,23 +51,54 @@ Model.prototype = {
 View = function(){
 }; //INIT
 View.prototype = {
+	codeMirror: function(dom){
+		this.editor = CodeMirror.fromTextArea(dom, {
+			lineNumbers: true,
+			extraKeys: {"Ctrl-Space": "autocomplete", 
+				"Ctrl-Enter": function(){ controller.saveScript(); },
+				"Ctrl-s": function(){ controller.saveScript(); }
+			},
+			mode: {name: "javascript", globalVars: true}
+		});
+		
+		this.editor.setSize(null, 800);
+		this.editor.setOption("theme", "base16-dark");
+		
+		var originalHint = CodeMirror.hint.javascript;
+		CodeMirror.hint.javascript = function(cm){
+			var inner = originalHint(cm) || {from: cm.getCursor(), to: cm.getCursor(), list: []};
+			var customAutoComplete = controller.model.customAutoComplete;
+			for(var i=0; i<customAutoComplete.length; i++)
+				inner.list.push(customAutoComplete[i]);
+			return inner;
+		};
+	}, //codeMirror
+	
 	showLoadingDialog: function(){
 		bootbox.dialog({
 			message: '<p style="text-align: center">loading...</p><div class="loading"></div>',
 			closeButton: false
 		});
 	}, //showLoadingDialog
+	
 	getColumnCheckBox: function(column){
 		var dom = '';
-		dom += '<label>'
-		dom += 		'<input type="checkbox" value="{}" />{}'.format(column, column);
-		dom += '</label>'
+		dom += '<div>';
+		dom += 		'<label>';
+		dom += 			'<input type="checkbox" value="{columnName}" />{columnName} ({columnType})'.format(column, column);
+		dom += 		'</label>';
+		dom += '</div>';
+		return dom;
 	}, //getColumnCheckBox
+	
 	getColumnRadioBox: function(column){
 		var dom = '';
-		dom += '<label>'
-		dom += 		'<input type="radio" name="condition-column" value="{}" />{}'.format(column, column);
-		dom += '</label>'
+		dom += '<div>';
+		dom += 		'<label>';
+		dom += 			'<input type="radio" name="condition-column" value="{columnName}" />{columnName} ({columnType})'.format(column, column);
+		dom += 		'</label>';
+		dom += '</div>';
+		return dom;
 	} //getColumnRadioBox
 }; //View
 
@@ -75,6 +112,7 @@ Controller.prototype = {
 		$('#card-input-database #text-database-port').val(this.model.dbVendorTmpl[dbVendor].port);
 		this.autoCompleteJdbcInfo();
 	}, //selectDbVendor
+	
 	autoCompleteJdbcInfo: function(){
 		if(this.model.dbVendor == 'etc')
 			return;
@@ -88,10 +126,12 @@ Controller.prototype = {
 		connUrl = connUrl.format(connUrlParams);
 		$('#card-input-database #text-jdbc-conn-url').val(connUrl);
 	}, //autoCompleteJdbcInfo
+	
 	openPrevCard: function(toCardId){
 		$('.card').hide(300);
 		$('#' + toCardId).show(300);
 	},
+	
 	openCard: function(fromCardId, toCardId){
 		switch(fromCardId){
 		case 'card-input-database':
@@ -119,20 +159,33 @@ Controller.prototype = {
 			this.model.tableName = $('#card-set-table-for-query #dropdown-table').attr('value');
 			break;
 		case 'card-set-binding-type':
-			this.model.condition.type = $('#card-set-bindng-type input[type="radio"][name="condition"]:checked').val();
+			this.model.condition.type = $('#card-set-binding-type input[type="radio"][name="condition"]:checked').val();
 			this.model.condition.column = null;
 			if(this.model.condition.type == 'date-condition'){
-				this.model.condition.column = $('#card-set-bindng-type #columns-for-date-condition input[type="radio"][name="condition-column"]:checked').val();
-			} else if(this.model.condition.type == 'seq-condition'){
-				this.model.condition.column = $('#card-set-bindng-type #columns-for-sequence-condition input[type="radio"][name="condition-column"]:checked').val();
+				this.model.condition.column = $('#card-set-binding-type #columns-for-date-condition input[type="radio"][name="condition-column"]:checked').val();
+			} else if(this.model.condition.type == 'sequence-condition'){
+				this.model.condition.column = $('#card-set-binding-type #columns-for-sequence-condition input[type="radio"][name="condition-column"]:checked').val();
 			} //if
 			
-			if(this.model.condition.type != 'no-condition'){
+			if(this.model.condition.type !== 'no-condition'){
 				if(this.model.condition.column == null || this.model.condition.column.trim().length == 0){
 					bootbox.alert('invalid condition column');
 					return;
 				} //if
 			} //if
+			break;
+		case 'card-etc-parameter':
+			this.model.etcParameter.period = $('#card-etc-parameter #text-period').val();
+			this.model.etcParameter.delimiter = $('#card-etc-parameter #text-delimiter').val();
+			this.model.etcParameter.outputPath = $('#card-etc-parameter #text-output-path').val();
+			this.model.etcParameter.charset = $('#card-etc-parameter #text-charset').val();
+
+			try{
+				eval(this.model.etcParameter.period);
+			} catch(e){
+				bootbox.alert('invalid period value');
+				return;
+			} //catch
 			break;
 		} //switch
 			
@@ -152,8 +205,8 @@ Controller.prototype = {
 			break;
 		case 'card-set-binding-type':
 			this.loadColumns(function(columns){
-				var columnsRoot4Date = $('#card-set-binding-type #columns-for-date-condition');
-				var columnsRoot4Sequence = $('#card-set-binding-type #columns-for-sequence-condition');
+				var columnsRoot4Date = $('#card-set-binding-type #columns-for-date-condition').empty();
+				var columnsRoot4Sequence = $('#card-set-binding-type #columns-for-sequence-condition').empty();
 				for(var i=0; i<columns.length; i++){
 					var dom = controller.view.getColumnRadioBox(columns[i]);
 					columnsRoot4Date.append(dom);
@@ -161,8 +214,15 @@ Controller.prototype = {
 				} //for i
 			});
 			break;
+		case 'card-etc-parameter':
+			break;
+		case 'card-script':
+			var scriptMaker = new Db2FileScriptMaker();
+			//TODO IMME
+			break;
 		} //switch
 	}, //openCard
+	
 	loadTables: function(){
 		this.view.showLoadingDialog();
 		$.getJSON('/Tables/', this.model.jdbc) .fail(function(e){
@@ -182,6 +242,7 @@ Controller.prototype = {
 			searchDropdown.newSearchDropdown('dropdown-table', null, resp.tables);
 		});
 	}, //loadTables
+	
 	loadColumns: function(callback){
 		this.view.showLoadingDialog();
 		$.getJSON('/Columns/{}/'.format(this.model.tableName), this.model.jdbc).fail(function(e){
@@ -201,10 +262,11 @@ Controller.prototype = {
 			callback(resp.columns);
 		});
 	}, //loadColumns
+	
 	querySampleData: function(){
 		var columns = [];
 		$('#card-set-column-for-query #div-columns input[type="checkbox"]:checked').each(function(index, value){
-			columns.push(value);
+			columns.push(value.value);
 		});
 		if(columns.length == 0){
 			bootbox.alert("no columns selected");
@@ -242,19 +304,20 @@ Controller.prototype = {
 			});
 		});
 	}, //querySampleData
+	
 	setConditionType: function(condition){
 		switch(condition){
 		case 'no-condition':
-			$('#card-set-binding-type #columns-for-date-condition').hide(100);
-			$('#card-set-binding-type #columns-for-sequence-condition').hide(100);
+			$('#card-set-binding-type #columns-for-date-condition').hide(300);
+			$('#card-set-binding-type #columns-for-sequence-condition').hide(300);
 			break;
 		case 'date-condition':
-			$('#card-set-binding-type #columns-for-date-condition').show(100);
-			$('#card-set-binding-type #columns-for-sequence-condition').hide(100);
+			$('#card-set-binding-type #columns-for-date-condition').show(300);
+			$('#card-set-binding-type #columns-for-sequence-condition').hide(300);
 			break;
 		case 'sequence-condition':
-			$('#card-set-binding-type #columns-for-date-condition').hide(100);
-			$('#card-set-binding-type #columns-for-sequence-condition').show(100);
+			$('#card-set-binding-type #columns-for-date-condition').hide(300);
+			$('#card-set-binding-type #columns-for-sequence-condition').show(300);
 			break;
 		} //switch
 	} //setConditionType
@@ -262,6 +325,15 @@ Controller.prototype = {
 
 $(function(){
 	controller = new Controller();
+	
+	//DEBUG
+	$('#card-input-database input[type="radio"][name="dbVendor"][value="oracle"]').click();
+	$('#card-input-database #text-database-ip').val('192.168.10.101');
+	$('#card-input-database #text-database-sid').val('spiderx');
+	controller.autoCompleteJdbcInfo();
+	$('#card-input-database #text-jdbc-username').val('admin');
+	$('#card-input-database #text-jdbc-password').val('admin');
+	//DEBUG
 });
 
 function precondition(expression, msg){

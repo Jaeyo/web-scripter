@@ -23,6 +23,7 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<button type="button" class="btn btn-default form-control nav-menu-button" onclick="window.location.href='/View/NewScript/';">new script</button>
+				<button type="button" class="btn btn-default form-control nav-menu-button" onclick="window.location.href='/View/NewDb2File/';">new db2file script</button>
 				<button type="button" class="btn btn-default form-control nav-menu-button">new database</button>
 			</div>
 		</div>
