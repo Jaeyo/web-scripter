@@ -43,12 +43,15 @@
 <script src="http://codemirror.net/mode/javascript/javascript.js"></script>
 <link href="http://codemirror.net/theme/base16-dark.css" rel="stylesheet">
 
+<!-- db2file script maker -->
+<script src="/resource/js/db2file-script-maker.js"></script>
+
 </head>
 
 <body class="bg-blue-black">
 	<jsp:include page="inc/left-nav.jsp" flush="false"/>
 	<div class="main-container" style="min-height: 100%">
-			<div id="card-input-database" class="center-xy card">
+		<div id="card-input-database" class="center-xy card">
 			<div>
 				<h4>input database</h4>
 			</div>
@@ -200,7 +203,7 @@
 		</div>
 		<!-- end of card of id: card-etc-parameter -->
 
-		<div id="card-script" class="center-xy card" style="display: none">
+		<div id="card-script" class="center-xy card" style="display: none;">
 			<h4>script</h4>
 			<hr />
 			<textarea id="textarea-script" rows=30></textarea>

@@ -14,6 +14,16 @@ public class DateUtil{
 		return new SimpleDateFormat(format).format(new Date(date));
 	} //format
 	
+	public String formatTableName(String tableName){
+		Date currentTime = new Date(System.currentTimeMillis());
+		tableName = tableName.replace("$yyyy", new SimpleDateFormat("yyyy").format(currentTime));
+		tableName = tableName.replace("$mm", new SimpleDateFormat("MM").format(currentTime));
+		tableName = tableName.replace("$dd", new SimpleDateFormat("dd").format(currentTime));
+		tableName = tableName.replace("$hh", new SimpleDateFormat("HH").format(currentTime));
+		tableName = tableName.replace("$mi", new SimpleDateFormat("mm").format(currentTime));
+		return tableName;
+	} //formatTableName
+	
 	public long parse(String dateStr, String format){
 		try {
 			return new SimpleDateFormat(format).parse(dateStr).getTime();

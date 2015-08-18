@@ -98,3 +98,12 @@
 	min-width: 80px;
 	max-width: 80px;
 }
+
+/* ------------------------------------------------- */
+
+#card-script {
+	width: 800px;
+	max-height: 100%;
+	padding: 20px;
+	background-color: rgb(49, 63, 77);
+}

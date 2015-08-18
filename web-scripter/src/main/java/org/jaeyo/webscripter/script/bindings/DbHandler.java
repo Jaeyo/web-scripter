@@ -11,79 +11,212 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 
-import org.jaeyo.webscripter.common.Crypto;
 import org.jaeyo.webscripter.common.SpringBeans;
 import org.jaeyo.webscripter.outputfiledelete.OutputFileLastModified;
 import org.jaeyo.webscripter.service.DatabaseService;
-import org.jaeyo.webscripter.service.EmbedDbService;
 import org.jaeyo.webscripter.statistics.FileWriteStatistics;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Function;
+import com.sun.xml.internal.bind.v2.TODO;
 
 public class DbHandler {
 	private static final Logger logger = LoggerFactory.getLogger(DbHandler.class);
 	private DatabaseService databaseService = SpringBeans.getBean(DatabaseService.class);
 	private FileWriteStatistics fileWriteStatistics = SpringBeans.getBean(FileWriteStatistics.class);
 
-	public void executeQuery(String dbName, String query){
-		logger.info("execute query : {}", query);
+	/**
+	 * @param args: {
+	 * 		database: {
+	 * 			driver: (string)(required)
+	 * 			connUrl: (string)(required)
+	 * 			username: (string)(required)(encrypted)
+	 * 			password: (string)(required)(encrypted)
+	 * 		},
+	 * 		query: (string)(required)
+	 * }
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
+	 */
+	public void update(Map<String, Object> args) throws SQLException, ClassNotFoundException{
+		Map<String, Object> database = (Map<String, Object>) args.get("database");
+		String query = (String) args.get("query");
 		
-		JSONObject dbProps = databaseService.loadDatabase(dbName);
-		if (dbProps == null) {
-			logger.error("dbName {} not exists", dbName);
-			System.exit(-1);
-		} // if
-		
-		Connection conn = null;
-		try {
-			conn = getConnection(dbProps);
-			excuteUpdate(conn, query);
-		} catch (ClassNotFoundException e) {
-			logger.error("", e);
-		} catch (SQLException e) {
-			logger.error("", e);
-		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					logger.error("", e);
-				} // catch
-			} // if
-		} // finally
-	} //executeQuery
-	
-	public void executeBatch(String dbName, String[] queries){
-		logger.info("execute batch, count : {}\nfirst[0] : {}\nlast[{}] : {}", queries.length, queries[0], queries.length-1, queries[queries.length-1]);
-		
-		JSONObject dbProps = databaseService.loadDatabase(dbName);
-		if (dbProps == null) {
-			logger.error("dbName {} not exists", dbName);
-			System.exit(-1);
-		} // if
+		logger.info("query: {}", query);
 		
 		Connection conn = null;
-		try {
-			conn = getConnection(dbProps);
-			excuteUpdate(conn, queries);
-		} catch (ClassNotFoundException e) {
-			logger.error("", e);
-		} catch (SQLException e) {
-			logger.error("", e);
+		Statement stmt = null;
+		try{
+			conn = getConnection(database);
+			conn.setAutoCommit(true);
+			stmt = conn.createStatement();
+			stmt.executeUpdate(query);
 		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					logger.error("", e);
-				} // catch
-			} // if
-		} // finally
-	} //executeQuery
+			close(conn, stmt, null);
+		} //finally
+	} //query
 	
+	/**
+	 * @param args: {
+	 * 		database: {
+	 * 			driver: (string)(required)
+	 * 			connUrl: (string)(required)
+	 * 			username: (string)(required)(encrypted)
+	 * 			password: (string)(required)(encrypted)
+	 * 		},
+	 * 		queries: (array of string)(required)
+	 * }
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
+	 */
+	public void batch(Map<String, Object> args) throws SQLException {
+		Map<String, Object> database = (Map<String, Object>) args.get("database");
+		List<String> queries = (List<String>) args.get("queries");
+		
+		logger.info("queries count: {}", queries.size());
+		if(queries.size() != 0)
+		
+		Connection conn = null;
+		Statement stmt = null;
+		try{
+			conn.setAutoCommit(true);
+			stmt = conn.createStatement();
+			for(String query : queries)
+				stmt.addBatch(query);
+			stmt.executeBatch();
+		} finally {
+			close(conn, stmt, null);
+		} //finally
+	} //batch
+	
+	private void query(Connection conn, String query, Function<ResultSet, Void> callback) throws SQLException{
+		Statement stmt=null;
+		ResultSet rs=null;
+		try {
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query);
+			
+			while(rs.next())
+				callback.apply(rs);
+		} finally {
+			close(conn, stmt, rs);
+		} //finally
+	} //query
+	
+	/**
+	 * @param args: {
+	 * 		database: {
+	 * 			driver: (string)(required)
+	 * 			connUrl: (string)(required)
+	 * 			username: (string)(required)(encrypted)
+	 * 			password: (string)(required)(encrypted)
+	 * 		},
+	 * 		query: (string)(required)
+	 * 		delimiter: (string)(default '|')
+	 * 		filename: (string)(required)
+	 * 		charset: (string)(default 'utf8')
+	 * }
+	 */
+	public void selectAndAppend(Map<String, Object> args){
+		Map<String, Object> database = (Map<String, Object>) args.get("database");
+		String query = (String) args.get("query");
+		String delimiter = (String) args.get("delimiter");
+		String filename = (String) args.get("filename");
+		String charset = (String) args.get("charset");
+		
+		if(delimiter == null) delimiter = "|";
+		if(charset == null) charset = "utf8";
+		
+		TODO IMME
+	} //selectAndAppend
+	
+	/**
+	 * @param args: {
+	 * 		database: {
+	 * 			driver: (string)(required)
+	 * 			connUrl: (string)(required)
+	 * 			username: (string)(required)(encrypted)
+	 * 			password: (string)(required)(encrypted)
+	 * 		},
+	 * 		query: (string)(required)
+	 * 		delimiter: (string)(default: '|')
+	 * 		lineDelimiter: (string)(default: '\n')
+	 * }
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
+	 */
+	public String query(Map<String, Object> args) throws ClassNotFoundException, SQLException{
+		Map<String, Object> database = (Map<String, Object>) args.get("database");
+		String query = (String) args.get("query");
+		String delimiter = (String) args.get("delimiter");
+		String lineDelimiter = (String) args.get("lineDelimiter");
+		
+		if(delimiter == null) delimiter = "|";
+		if(lineDelimiter == null) lineDelimiter = "\n";
+		
+		final String finalDelimiter = delimiter;
+		final String finalLineDelimiter = lineDelimiter;
+		final StringBuilder resultSb = new StringBuilder();
+		query(getConnection(database), query, new Function<ResultSet, Void>() {
+			@Override
+			public Void apply(ResultSet rs){
+				try {
+					int colCount = rs.getMetaData().getColumnCount();
+					StringBuilder rowSb = new StringBuilder();
+					for (int i = 0; i < colCount; i++) {
+						String value = rs.getString(i);
+						if(value != null) rowSb.append(value);
+						if(i < colCount) {
+							rowSb.append(finalDelimiter);
+						} else{
+							if(rowSb.toString().trim().length() != 0)
+								resultSb.append(rowSb.toString()).append(finalLineDelimiter);
+						} //if
+					} //for i
+				} catch (SQLException e) {
+					logger.error(String.format("%s, errmsg: %s", e.getClass().getSimpleName(), e.getMessage()), e);
+				} //catch
+				return null;
+			} //apply
+		});
+		
+		return resultSb.toString();
+	} //query
+	
+	public void query(Map<String, Object> args, sun.org.mozilla.javascript.internal.Function callback){
+		TODO IMME
+	} //query
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 	public void selectAndAppend(String dbName, String query, String delimiter, String filename, String charsetName){
 		logger.info("select query : {}", query);
 		
@@ -147,10 +280,6 @@ public class DbHandler {
 			} // catch
 		} // finally
 	} //selectAndAppend
-
-	public String selectQuery(String dbName, String query) {
-		return selectQuery(dbName, query, " ");
-	} // selectQuery 
 
 	public DbRowIterator selectQueryIterator(String dbName, String query) {
 		logger.info("query : {}", query);
@@ -226,33 +355,19 @@ public class DbHandler {
 		} //finally
 	} // selectQuery
 	
-	private Connection getConnection(JSONObject dbProps) throws SQLException, ClassNotFoundException{
-		Class.forName(dbProps.getString("DRIVER"));
-		String username = dbProps.getString("USERNAME");
-		String password = dbProps.getString("PASSWORD");
-		String connUrl = dbProps.getString("CONNECTION_URL");
+	private Connection getConnection(Map<String, Object> database) throws SQLException, ClassNotFoundException{
+		Class.forName((String) database.get("driver"));
+		String username = (String) database.get("username");
+		String password = (String) database.get("password");
+		String connUrl = (String) database.get("connUrl");
+		
 		return DriverManager.getConnection(connUrl, username, password);
 	} //getConnection
 
 	private void close(Connection conn, Statement stmt, ResultSet rs) {
-		try{
-			if(conn!=null) {
-				conn.close();
-				conn=null;
-			} //if
-			
-			if (rs != null) {
-				rs.close();
-				rs = null;
-			} // if
-
-			if (stmt != null) {
-				stmt.close();
-				stmt = null;
-			}
-		} catch(SQLException e){
-			logger.error("", e);
-		} //catch
+		if(conn != null) try{ conn.close(); } catch(SQLException e){}
+		if(stmt!= null) try{ stmt.close(); } catch(SQLException e){}
+		if(rs!= null) try{ rs.close(); } catch(SQLException e){}
 	} //close
 
 	private boolean excuteUpdate(Connection conn, String query) throws SQLException {
