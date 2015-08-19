@@ -8,36 +8,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SpDbReader</title>
-
-<!-- jquery -->
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-
-<!-- bootstrap -->
-<link href="http://bootswatch.com/superhero/bootstrap.min.css" rel="stylesheet">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-
-<!-- bootbox -->
-<script src="https://github.com/makeusabrew/bootbox/releases/download/v4.4.0/bootbox.min.js"></script>
-
-<!-- string format -->
-<script src="/resource/js/lib/string.format.js"></script>
-
-<!-- js cols -->
-<script src="/resource/js/lib/js_cols.min.js"></script>
-
-<!-- ajax call js -->
-<script src="/resource/js/lib/ajax-call.js"></script>
-
-<!-- common css -->
-<link href="/resource/css/common.css" rel="stylesheet">
-
-<!-- index css -->
+<jsp:include page="inc/head.jsp" flush="false" />
 <link href="/resource/css/index.css" rel="stylesheet">
-
 </head>
 
 <body class="bg-blue-black">
-	<jsp:include page="inc/left-nav.jsp" flush="false"/>
+	<jsp:include page="inc/left-nav.jsp" flush="false" />
 	<div class="main-container">
 		<div class="row">
 			<div class="col-md-6">
