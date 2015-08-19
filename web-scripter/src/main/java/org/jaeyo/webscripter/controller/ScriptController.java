@@ -2,19 +2,15 @@ package org.jaeyo.webscripter.controller;
 
 import javax.inject.Inject;
 
-import org.jaeyo.webscripter.service.FileWriteStatisticsService;
 import org.jaeyo.webscripter.service.ScriptService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class ScriptController {
@@ -22,8 +18,6 @@ public class ScriptController {
 	
 	@Inject
 	private ScriptService scriptService;
-	@Inject
-	private FileWriteStatisticsService fileWriteStatisticsService;
 	
 	@RequestMapping(value = "/ScriptInfo/", method = RequestMethod.GET)
 	public @ResponseBody String getScriptInfo(){

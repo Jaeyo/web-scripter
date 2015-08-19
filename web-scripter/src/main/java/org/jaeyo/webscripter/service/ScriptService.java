@@ -1,20 +1,13 @@
 package org.jaeyo.webscripter.service;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
 import org.jaeyo.webscripter.dao.FileWriteStatisticsDAO;
 import org.jaeyo.webscripter.dao.ScriptDAO;
-import org.jaeyo.webscripter.exception.AlreadyStartedException;
-import org.jaeyo.webscripter.exception.NotFoundException;
-import org.jaeyo.webscripter.exception.ScriptNotRunningException;
 import org.jaeyo.webscripter.script.ScriptExecutor;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +25,10 @@ public class ScriptService {
 	
 	public JSONArray getScriptInfo(){
 		JSONArray scripts = scriptDAO.selectScriptInfo();
-		Set<Long> runningScriptSequences = scriptExecutor.getRunningScripts();
+		Set<String> runningScriptNames = scriptExecutor.getRunningScripts();
 		for (int i = 0; i < scripts.length(); i++) {
 			JSONObject scriptJson = scripts.getJSONObject(i);
-			if(runningScriptSequences.contains(scriptJson.getLong("SEQUENCE"))){
+			if(runningScriptNames.contains(scriptJson.getString("SCRIPT_NAME"))){
 				scriptJson.put("IS_RUNNING", true);
 			} else{
 				scriptJson.put("IS_RUNNING", false);

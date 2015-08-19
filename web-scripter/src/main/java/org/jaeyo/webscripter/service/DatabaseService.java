@@ -7,11 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import javax.inject.Inject;
-
-import org.jaeyo.webscripter.common.Function;
 import org.jaeyo.webscripter.common.JdbcUtil;
-import org.jaeyo.webscripter.dao.DatabaseDAO;
 import org.jaeyo.webscripter.rdb.JsonJdbcTemplate;
 import org.jaeyo.webscripter.rdb.SingleConnectionDataSource;
 import org.json.JSONArray;
@@ -21,14 +17,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Function;
 
 @Service
 public class DatabaseService {
 	private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
-	@Inject
-	private DatabaseDAO databaseDAO;
 	
 	public JSONArray getTables(JSONObject jdbcParams) throws ClassNotFoundException, JSONException, SQLException{
 		Connection conn = null;
@@ -78,11 +73,10 @@ public class DatabaseService {
 			conn = DriverManager.getConnection(jdbcParams.getString("connUrl"), jdbcParams.getString("username"), jdbcParams.getString("password"));
 			DatabaseMetaData meta = conn.getMetaData();
 			
-			Function handleResultSetFunction = new Function() {
+			Function<ResultSet, JSONArray> handleResultSetFunction = new Function<ResultSet, JSONArray>() {
 				@Override
-				public Object execute(Object... args) {
+				public JSONArray apply(ResultSet rs) {
 					try{
-						ResultSet rs = (ResultSet) args[0];
 						JSONArray result = new JSONArray();
 						while(rs.next()){
 							JSONObject columnInfo = new JSONObject();
@@ -95,27 +89,27 @@ public class DatabaseService {
 						logger.error(String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage()), e);
 						return null;
 					} //catch
-				} //execute
+				} //apply
 			};
 			
 			JSONArray result = null;
 			
 			rs = meta.getColumns(null, jdbcParams.getString("username"), tableName, null);
-			result = (JSONArray) handleResultSetFunction.execute(rs);
+			result = handleResultSetFunction.apply(rs);
 			
 			if(result.length() != 0) 
 				return result;
 			
 			rs.close();
 			rs = meta.getColumns(null, jdbcParams.getString("username").toLowerCase(), tableName.toLowerCase(), null);
-			result = (JSONArray) handleResultSetFunction.execute(rs);
+			result = handleResultSetFunction.apply(rs);
 	
 			if(result.length() != 0)
 				return result;
 			
 			rs.close();
 			rs = meta.getColumns(null, jdbcParams.getString("username").toUpperCase(), tableName.toUpperCase(), null);
-			result = (JSONArray) handleResultSetFunction.execute(rs);
+			result = handleResultSetFunction.apply(rs);
 			return result;
 		} finally{
 			if(conn != null)

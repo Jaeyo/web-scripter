@@ -20,40 +20,39 @@ public class ScriptDAO {
 	
 	public JSONArray selectScriptInfo(){
 		logger.info("");
-//		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, script, regdate, memo from script");
-		return ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, regdate, memo from script");
+		return ds.getJdbcTmpl().queryForJsonArray("select script_name, regdate, memo from script");
 	} //selectScriptInfo
 	
 	//-------------------------------------------------------------------------------------------------------------------
 	
 	public void save(String scriptName, String script, String memo){
 		logger.info("scriptName: {}", scriptName);
-		ds.getJdbcTmpl().update("insert into script (sequence, script_name, script, memo, regdate) "
+		ds.getJdbcTmpl().update("insert into script (script_name, script, memo, regdate) "
 				+ "values(next value for main_seq, ?, ?, ?, ?)", scriptName, script, memo, new Date());
 	} //save
 	
-	public void edit(long sequence, String scriptName, String script, String memo){
-		logger.info("sequence: {}, scriptName: {}", sequence, scriptName);
+	public void edit(String scriptName, String script, String memo){
+		logger.info("scriptName: {}", scriptName);
 		ds.getJdbcTmpl().update("update script set script_name = ?, script = ?, regdate = ?, memo = ? "
-				+ "where sequence = ?",
-				scriptName, script, new Date(), memo, sequence);
+				+ "where script_name = ?",
+				scriptName, script, new Date(), memo, scriptName);
 	} //edit
 	
-	public JSONObject loadScript(long sequence) throws NotFoundException{
-		logger.info("sequence: {}", sequence);
-		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select sequence, script_name, regdate, memo from script where sequence = ?", sequence);
+	public JSONObject loadScript(String scriptName) throws NotFoundException{
+		logger.info("scriptName: {}", scriptName);
+		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select script_name, regdate, memo from script where script_name = ?", scriptName);
 		
 		if(result == null || result.length() == 0)
-			throw new NotFoundException("script not found : " + sequence);
+			throw new NotFoundException("script not found : " + scriptName);
 		
 		JSONObject row = result.getJSONObject(0);
-		String script = ds.getJdbcTmpl().queryForObject("select script from script where sequence = ?", new Object[]{sequence}, String.class);
+		String script = ds.getJdbcTmpl().queryForObject("select script from script where script_name= ?", new Object[]{scriptName}, String.class);
 		row.put("SCRIPT", script);
 		return row;
 	} //loadScript
 	
-	public void removeScript(long sequence){
-		logger.info("sequence: {}", sequence);
-		ds.getJdbcTmpl().update("delete from script where sequence = ?", sequence);
+	public void removeScript(String scriptName){
+		logger.info("scriptName: {}", scriptName);
+		ds.getJdbcTmpl().update("delete from script where script_name = ?", scriptName);
 	} //removeScript
 } //class
