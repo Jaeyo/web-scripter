@@ -1,28 +1,29 @@
 [
     {
+        "class": "DateUtil",
         "methods": [
             {
                 "descs": ["long 형으로 주어진 시간(date)을 포맷(format)에 맞춰서 출력한다. long 형의 시간 값은 DateUtil.parse(), DateUtil.currentTimeMIllis() 를 통해 구할 수 있다."],
                 "title": "String format(long date, String format)",
-                "return": "포맷팅된 날짜",
+                "returnDesc": "포맷팅된 날짜",
                 "example": "var formattedDate = dateUtil.format(1414460642364, \"yyyyMMddHHmmss\"); // => 20141028104502 \nvar formattedDate = dateUtil.format(1414460642364, \"yyyyMMdd\"); // => 20141028\nvar formattedDate = dateUtil.format(1414460642364, \"yyyy-MM-dd\"); // => 2014-10-28"
             },
             {
                 "descs": ["포맷(format)에 맞춰 포맷팅된 시간값(date)를 long 형태의 시간 값으로 변환한다."],
                 "title": "long parse(String date, String format)",
-                "return": "long 타입의 시간 값",
+                "returnDesc": "long 타입의 시간 값",
                 "example": "var dateValue = dateUtil.parse(\"20141028104502\", \"yyyyMMddHHmmss\"); // => 1414460642364\nvar dateValue = dateUtil.parse(\"20141028\", \"yyyyMMdd\"); // => 1414422000000\nvar dateValue = dateUtil.parse(\"2014 10-28\", \"yyyy MM-dd\"); // => 1414422000000"
             },
             {
                 "descs": ["현재 시간을 long 형태의 시간 값으로 변환한다."],
                 "title": "long currentTimeMillis()",
-                "return": "long 타입의 시간값",
+                "returnDesc": "long 타입의 시간값",
                 "example": "var currentTime = dateUtil.currentTimeMillis(); // => 1414460642364"
             }
-        ],
-        "class": "DateUtil"
+        ]
     },
     {
+        "class": "DbHandler",
         "methods": [
             {
                 "descs": ["지정된 데이터베이스(dbName)에 대해서 insert, update, delete 쿼리(query)를 실행한다. 데이터베이스는 [[manual#registerdb|registerdb]] 메뉴를 통해 미리 등록되어 있어야 한다."],
@@ -38,7 +39,7 @@
                 "descs": [
                     "지정된 데이터베이스(dbName)에 대해서 select 쿼리(query)를 실행한 결과를 String 형식으로 반환한다. 반환되는 데이터들의 row간 구분자는 '\\n', column간 구분자는 공백(' ')으로 구성된다. 데이터베이스는 [[manual#registerdb|registerdb]] 메뉴를 통해 미리 등록되어 있어야 한다.",
                 ],
-                "return": "select 쿼리의 결과",
+                "returnDesc": "select 쿼리의 결과",
                 "title": "String selectQuery(String dbName, String query)",
                 "example": "var result = dbHandler.selectQuery(\"sampleDb1\", \"select value1, value2 from test_table\"); // => \"test|test2\\ntest3|test4\""
             },
@@ -47,14 +48,14 @@
                     "지정된 데이터베이스(dbName)에 대해서 select 쿼리(query)를 실행한 결과를 DbRowIterator 형식으로 반환한다. DbRowIterator 클래스를 통해 건수가 많은 데이터를 한번에 불러와 메모리에 과다 적재되는 문제를 방지하고 한 행씩 받아 처리할 수 있다.",
                     "DbRowIterator는 next()와 close() 두 개의 메소드를 가지는데, next()는 다음행 데이터를 문자열 배열 형태로 반환하며 마지막 행에 다다랐을 경우 null을 반환하고 close() 메소드는 데이터베이스와의 연결을 끊는다.",
                 ],
-                "return": "DbRowIterator",
+                "returnDesc": "DbRowIterator",
                 "title": "String selectQueryIterator(String dbName, String query)",
                 "example": "var rowIterator = dbHandler.selectQueryIterator(\"sampleDb1\", \"select value1, value2 from test_table\");\nvar row = null;\nwhile((row = rowIterator.next()) != null){\n  logger.info(\"column count is \" + row.length); // rowIterator.next()를 통해 문자열 배열 형태로 받았기 때문에 length 속성을 통해 컬럼 갯수를 확인할 수 있다.\n  for(var i=0; i<row.length; i++){\n    logger.info(\"column \" + i + \" : \" + row[i]); //각 컬럼별로 값을 로그로 출력한다.\n  } //for i\n} //while\nrowIterator.close(); //사용이 끝난 DbRowIterator는 항상 close 메소드를 호출하여 데이터베이스와의 연결을 종료시킨다."
             },
             {
                 "descs": ["지정된 데이터베이스(dbName)에 대해서 select 쿼리(query)를 실행한 결과를 String 형식을 변환하여 반환한다. 반환되는 데이터의 row간 구분자는 '\\n', column간 구분자는 파라미터에서 지정된 delimiter로 구성된다. 데이터베이스는 [[manual#registerdb|registerdb]]메뉴를 통해 미리 등록되어 있어야 한다."],
                 "title": "String selectQuery(String dbName, String query, String delimiter)",
-                "return": "select 쿼리의 결과",
+                "returnDesc": "select 쿼리의 결과",
                 "example": "String result = dbHandler.selectQuery(\"sampleDb1\", \"select value1, value2 from test_table\", \",\"); // => \"test1,test2\\ntest3,test4\""
             },
             {
@@ -62,10 +63,10 @@
                 "title": "void selectAndAppend(String dbName, String query, String delimiter, String filename, String charsetName)",
                 "example": "dbHandler.selectAndAppend(\"sampleDb1\", \"select value1, value2 from test_table\", \",\", \"/data/output.txt\", \"UTF-8\");"
             }
-        ],
-        "class": "DbHandler"
+        ]
     },
     {
+        "class": "FileExporter",
         "methods": [
             {
                 "descs": ["파라미터 content에 담긴 내용을 파일로 출력한다. filename은 절대경로를 포함한 파일명으로 작성되어야 하며 해당 파일이 없을 경우 자동으로 생성한다. 기존에 파일 내 기록된 내용이 있을 경우 덮어써진다."],
@@ -95,10 +96,10 @@
                 "title": "void createFile(String filename)",
                 "example": "fileExporter.createFile(\"/data/output.txt\"); // => /tmp/output.txt 파일이 생성된다."
             }
-        ],
-        "class": "FileExporter"
+        ]
     },
     {
+        "class": "Scheduler",
         "methods": [
             {
                 "descs": ["task에 담긴 로직을 period 주기에 따라 반복하여 실행한다. period는 밀리초를 기준으로 지정되어야 한다."],
@@ -109,11 +110,17 @@
                 "descs": ["task에 담긴 로직을 delay 만큼의 시간 이후에 period 주기에 따라 반복하여 실행한다. Delay와 period는 밀리초를 기준으로 지정되어야 한다."],
                 "title": "void schedule(long delay, long period, Runnable task)",
                 "example": "\tscheduler.schedule(3*1000, 5*1000, new java.lang.Runable(){\n\t\trun:function(){\n\t\t\tlogger.info(\u201ctest log\u201d);\n\t\t}\n\t});\n// => 3초후부터 5초마다 주기적으로 로그를 남긴다."
+            },
+            {
+            	"title": "void scheduleAtFixedTime(String[] hhMMs, Runnable task)",
+            	"descs": ["task에 담긴 로직을 24시간 주기로 정해진 시간(hhMMs)에 실행한다.", "hhMMs는 시간+분으로 구성된 4자리 문자열의 배열이다."],
+            	"example": "var hhmms = [];\nhhmms.push('0100');\nhhmms.push('1200');\nhhmms.push('1800');\nscheduler.scheduleAtFixedTime(hhmms, new java.lang.Runnable(){\n\trun:function(){\n\t\tlogger.info('test log');\n\t}\n});\n// => 매일 1시, 12시, 18시에 한번씩 로그를 남긴다."
+            	
             }
-        ],
-        "class": "Scheduler"
+        ]
     },
     {
+        "class": "SimpleRepo",
         "methods": [
             {
                 "descs": ["간단한 key-value 형태의 데이터를 저장한다. 저장된 내용은 conf/simple_repo.properties 파일 내에 xml 형태로 저장되어 재기동 이후에도 유지된다. 같은 key를 가진 서로 다른 데이터 value가 저장될 경우 나중에 요청된 value가 저장된다."],
@@ -135,10 +142,10 @@
                 "title": "void clear()",
                 "example": "simpleRepo.clear();"
             }
-        ],
-        "class": "SimpleRepo"
+        ]
     },
     {
+        "class": "RuntimeUtil",
         "methods": [
             {
                 "descs": ["프로세스 종료를 위한 포트를 개방한다. 기본 포트는 8021이다."],
@@ -160,10 +167,10 @@
                 "title": "void shutdown()",
                 "example": "runtimeUtil.shutdown();"
             }
-        ],
-        "class": "RuntimeUtil"
+        ]
     },
     {
+        "class": "Logger",
         "methods": [
             {
                 "descs": ["INFO 로그를 남긴다."],
@@ -190,10 +197,10 @@
                 "title": "void trace(String message)",
                 "example": "logger.trace(\u201cthis is trace log\u201d);"
             }
-        ],
-        "class": "Logger"
+        ]
     },
     {
+        "class": "FileReader",
         "methods": [
             {
                 "descs": [
@@ -236,23 +243,23 @@
                 "title": "String readAll(String filename, boolean delete, long maxBytes)",
                 "example": "var result = fileReader.readAll(\"/data/test.txt\", false, 1*1024*1024); //최대 1MB 만큼만 읽는다."
             }
-        ],
-        "class": "FileReader"
+        ]
     },
     {
+        "class": "OutputFileDeleteTask",
         "methods": [{
             "descs": ["출력 파일의 삭제를 위한 모니터링을 시작한다. period 주기마다 파일에 마지막으로 write된 시간을 감시하며 현재시간으로부터 expiredTime 만큼 경과했을 경우 해당 파일을 삭제한다. period와 expiredTime은 모두 밀리초 기준으로 작성되어야 한다."],
             "title": "void startMonitoring(long period, long expiredTime)",
             "example": "outputFileDeleteTask.startMonitoring(10*1000, 3*60*60*1000);"
-        }],
-        "class": "OutputFileDeleteTask"
+        }]
     },
     {
+        "class": "StringUtil",
         "methods": [{
             "descs": ["파라미터로 전달된 문자열(line)에서 구분자(delimiter) 기준으로 특정 부분에 있는 부분 문자열을 추출하여 반환한다."],
             "title": "String stringAt(String line, String delimiter, int index)",
             "example": "var result = stringUtil.stringAt(\"aaa,bbb,ccc,ddd\", \",\", 2); // ccc 반환"
-        }],
-        "class": "StringUtil"
+        }]
     }
 ]
+

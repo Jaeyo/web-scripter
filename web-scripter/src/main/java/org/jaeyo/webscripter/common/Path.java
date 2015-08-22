@@ -11,6 +11,9 @@ public class Path{
 	} // getPackagePath
 	
 	public static File getWebInfPath(){
-		return new File(getPackagePath(), "../WEB-INF");
+		File webInfPath = new File(getPackagePath(), "WEB-INF");
+		if(webInfPath.exists() == false) //in develop mode
+			return new File(getPackagePath(), "../src/main/resources/WEB-INF");
+		return webInfPath;
 	} //getWebInfPath
 } //class

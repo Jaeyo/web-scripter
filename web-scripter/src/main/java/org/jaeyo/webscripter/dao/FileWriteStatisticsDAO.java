@@ -16,10 +16,9 @@ public class FileWriteStatisticsDAO {
 	@Inject
 	private DerbyDataSource ds;
 	
-	public void insertStatistics(long scriptSequence, long timestamp, long count){
-		logger.info("scriptSequence: {}, timestamp: {}, count: {}", scriptSequence, timestamp, count);
-		ds.getJdbcTmpl().update("insert into filewrite_statistics (script_sequence, count_timestamp, count_value) values(?,?,?)", 
-				scriptSequence, new Date(timestamp), count);
+	public void insertStatistics(String scriptName, long timestamp, long count){
+		ds.getJdbcTmpl().update("insert into filewrite_statistics (script_name, count_timestamp, count_value) values(?,?,?)", 
+				scriptName, new Date(timestamp), count);
 	} //insertStatistics
 	
 	public void deleteUnderTimestamp(long timestamp){
@@ -27,10 +26,9 @@ public class FileWriteStatisticsDAO {
 		ds.getJdbcTmpl().update("delete from filewrite_statistics where count_timestamp < ?", new Date(timestamp));
 	} //deleteUnderTimestamp
 	
-	public JSONArray getScriptStatistics(long sequence){
-		logger.info("sequence: {}", sequence);
+	public JSONArray getScriptStatistics(String scriptName){
 		return ds.getJdbcTmpl().queryForJsonArray("select count_timestamp, count_value from filewrite_statistics "
-				+ "where script_sequence = ? "
-				+ "order by count_timestamp", sequence);
+				+ "where script_name = ? "
+				+ "order by count_timestamp", scriptName);
 	} //getScriptStatistics
 }  //class

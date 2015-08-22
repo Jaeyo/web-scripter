@@ -95,7 +95,6 @@ public class ContinuousFile implements Closeable{
 		
 		if(input==null) 
 			input=new BufferedReader(new InputStreamReader(new FileInputStream(currentFile), charset));
-//			input=new BufferedReader(new FileReader(currentFile));
 		
 		String line=input.readLine();
 		if(line!=null)

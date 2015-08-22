@@ -13,9 +13,8 @@ import javax.script.SimpleBindings;
 import org.jaeyo.webscripter.exception.AlreadyStartedException;
 import org.jaeyo.webscripter.script.bindings.DateUtil;
 import org.jaeyo.webscripter.script.bindings.DbHandler;
-import org.jaeyo.webscripter.script.bindings.FileExporter;
-import org.jaeyo.webscripter.script.bindings.FileReader;
-import org.jaeyo.webscripter.script.bindings.OutputFileDeleteTask;
+import org.jaeyo.webscripter.script.bindings.FileReaderFactory;
+import org.jaeyo.webscripter.script.bindings.FileWriterFactory;
 import org.jaeyo.webscripter.script.bindings.RuntimeUtil;
 import org.jaeyo.webscripter.script.bindings.Scheduler;
 import org.jaeyo.webscripter.script.bindings.SimpleRepo;
@@ -27,58 +26,51 @@ import org.springframework.stereotype.Component;
 @Component
 public class ScriptExecutor {
 	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutor.class);
-	private Scheduler schedulerBinding = new Scheduler();
-	private Map<Long, Thread> runningScripts = new HashMap<Long, Thread>();
+	private Map<String, ScriptThread> runningScripts = new HashMap<String, ScriptThread>();
 
-	public void execute(final long sequence, final String script) throws AlreadyStartedException{
-		logger.info("sequence: {}", sequence);
+	public void execute(String scriptName, final String script) throws AlreadyStartedException {
+		if(runningScripts.containsKey(scriptName))
+			throw new AlreadyStartedException(scriptName);
 		
-		if(runningScripts.containsKey(sequence))
-			throw new AlreadyStartedException(sequence+"");
-		
-		Thread executorThread = new Thread(new Runnable() {
+		ScriptThread thread = new ScriptThread(scriptName){
 			@Override
 			public void run() {
 				try{
-					Thread.currentThread().setName(String.format("ScriptThread-%s", sequence));
-					
 					Bindings bindings = new SimpleBindings();
-					bindings.put("dbHandler", new DbHandler());
 					bindings.put("dateUtil", new DateUtil());
-					bindings.put("scheduler", schedulerBinding);
-					bindings.put("fileExporter", new FileExporter());
-					bindings.put("simpleRepo", new SimpleRepo());
-					bindings.put("logger", logger);
+					bindings.put("dbHandler", new DbHandler());
+					bindings.put("fileReaderFactory", new FileReaderFactory());
+					bindings.put("fileWriterFactory", new FileWriterFactory());
 					bindings.put("runtimeUtil", new RuntimeUtil());
-					bindings.put("outputFileDeleteTask", new OutputFileDeleteTask()); 
-					bindings.put("fileReader", new FileReader());
+					bindings.put("scheduler", new Scheduler());
+					bindings.put("simpleRepo", new SimpleRepo());
 					bindings.put("stringUtil", new StringUtil());
 					ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
 					scriptEngine.eval(script, bindings);
 				} catch(Exception e){
 					if(e.getClass().equals(InterruptedException.class) == true)
 						return;
-					logger.error("", e);
+					logger.error(String.format("%s, errmsg: %s", e.getClass().getSimpleName(), e.getMessage()), e);
 				} finally{
-					runningScripts.remove(sequence);
+					if(isScheduled() == false && isFileReaderMonitoring() == false)
+						runningScripts.remove(getScriptName());
 				} //finally
 			} //run
-		});
-		executorThread.start();
-		runningScripts.put(sequence, executorThread);
+		};
+	
+		thread.start();
+		runningScripts.put(scriptName, thread);
 	} //execute
 	
-	public void stop(long sequence) {
-		Thread executorThread = runningScripts.remove(sequence);
-		if(executorThread != null)
-			executorThread.interrupt();
-		schedulerBinding.cancel(sequence);
+	public void stop(String scriptName) {
+		ScriptThread thread = runningScripts.remove(scriptName);
+		thread.stopScript();
 	} //stop
 
-	public Set<Long> getRunningScripts(){
-		Set<Long> runningScriptSequences = new HashSet<Long>();
-		runningScriptSequences.addAll(runningScripts.keySet());
-		runningScriptSequences.addAll(schedulerBinding.getRunningScriptSequences());
-		return runningScriptSequences;
+	public Set<String> getRunningScripts(){
+		Set<String> runningScriptNames = new HashSet<String>();
+		for(String scriptName: runningScripts.keySet())
+			runningScriptNames.add(scriptName);
+		return runningScriptNames;
 	} //getRunningScripts
 } //class

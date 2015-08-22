@@ -8,7 +8,8 @@ public class DerbyDataSourceTest {
 	@Test
 	public void test() {
 		DerbyDataSource ds = new DerbyDataSource();
-		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select * from database");
-		System.out.println(result.toString(4));
-	}
+//		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select script from script");
+		JSONArray result = ds.getJdbcTmpl().queryForJsonArray("select script_name, script from script");
+		System.out.println(result.toString());
+	} //test
 }

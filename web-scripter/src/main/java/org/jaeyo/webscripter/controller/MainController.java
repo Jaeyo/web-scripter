@@ -26,29 +26,31 @@ public class MainController {
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public ModelAndView main(){
-		return new ModelAndView("scripts");
+		return new ModelAndView("index");
 	} //main
 	
-	@RequestMapping(value = "/View/Configuration/", method = RequestMethod.GET)
-	public ModelAndView configuration(){
-		return new ModelAndView("configuration");
-	} //configuration
+	@RequestMapping(value = "/View/NewDb2File/", method = RequestMethod.GET)
+	public ModelAndView newDb2File(){
+		return new ModelAndView("new-db2file");
+	} //newDb2File
 	
 	
 	
-	@RequestMapping(value = "/Script/Run/", method = RequestMethod.POST)
-	public @ResponseBody String runScript(
-			@RequestParam(value = "script", required = true) String script){
-		try{
-			Bindings bindings = new SimpleBindings();
-			bindings.put("logger", logger);
-			ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
-			scriptEngine.eval(script, bindings);
-			return new JSONObject().put("success", 1).toString();
-		} catch(Exception e){
-			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
-			logger.error(msg, e);
-			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
-		} //catch
-	} //addNewTask
+	
+	
+//	@RequestMapping(value = "/Script/Run/", method = RequestMethod.POST)
+//	public @ResponseBody String runScript(
+//			@RequestParam(value = "script", required = true) String script){
+//		try{
+//			Bindings bindings = new SimpleBindings();
+//			bindings.put("logger", logger);
+//			ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("JavaScript");
+//			scriptEngine.eval(script, bindings);
+//			return new JSONObject().put("success", 1).toString();
+//		} catch(Exception e){
+//			String msg = String.format("%s, errmsg : %s", e.getClass().getSimpleName(), e.getMessage());
+//			logger.error(msg, e);
+//			return new JSONObject().put("success", 0).put("errmsg", msg).toString();
+//		} //catch
+//	} //addNewTask
 } //class

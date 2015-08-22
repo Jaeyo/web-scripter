@@ -2,10 +2,7 @@ package org.jaeyo.webscripter.service;
 
 import javax.inject.Inject;
 
-import org.jaeyo.webscripter.dao.DatabaseDAO;
-import org.jaeyo.webscripter.dao.EmbedDbDAO;
 import org.jaeyo.webscripter.dao.FileWriteStatisticsDAO;
-import org.jaeyo.webscripter.exception.DuplicateException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -18,17 +15,16 @@ public class FileWriteStatisticsService {
 	@Inject
 	private FileWriteStatisticsDAO fileWriteStatisticsDAO;
 	
-	public void insertStatistics(long scriptSequence, long timestamp, long count){
-		fileWriteStatisticsDAO.insertStatistics(scriptSequence, timestamp, count);
+	public void insertStatistics(String scriptName, long timestamp, long count){
+		fileWriteStatisticsDAO.insertStatistics(scriptName, timestamp, count);
 	} //insertStatistics
 	
 	public void deleteUnderTimestamp(long timestamp){
 		fileWriteStatisticsDAO.deleteUnderTimestamp(timestamp);
 	} //deleteUnderTimestamp
 	
-	public JSONArray getScriptStatistics(long sequence){
-		logger.info("sequence: {}", sequence);
-		JSONArray statistics = fileWriteStatisticsDAO.getScriptStatistics(sequence);
+	public JSONArray getScriptStatistics(String scriptName){
+		JSONArray statistics = fileWriteStatisticsDAO.getScriptStatistics(scriptName);
 		JSONArray rebuildedStatistics = new JSONArray();
 		
 		for (int i = 0; i < statistics.length(); i++) {

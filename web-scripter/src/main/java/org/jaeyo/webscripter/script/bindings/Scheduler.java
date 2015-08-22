@@ -1,65 +1,89 @@
 package org.jaeyo.webscripter.script.bindings;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
+import org.jaeyo.webscripter.script.ScriptThread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sun.org.mozilla.javascript.internal.Context;
+import sun.org.mozilla.javascript.internal.Function;
+import sun.org.mozilla.javascript.internal.Scriptable;
+import sun.org.mozilla.javascript.internal.ScriptableObject;
+
 public class Scheduler {
-	private Map<Long, SchedulerTimer> timers = new HashMap<Long, SchedulerTimer>();
+	private static final Logger logger = LoggerFactory.getLogger(Scheduler.class);
 	
-	public void schedule(long delay, long period, final Runnable task) {
-		final long sequence = Long.parseLong(Thread.currentThread().getName().replace("ScriptThread-", ""));
-		SchedulerTimer timer = timers.get(sequence);
-		if(timer == null){
-			timer = new SchedulerTimer();
-			timers.put(sequence, timer);
-		} //if
+	/**
+	 * @param args: {
+	 * 		delay: (long)(default: 0)
+	 * 		period: (long)(required)
+	 * }
+	 * @param task: function(){ ... }
+	 */
+	public void schedule(Map<String, Object> args, final Function task){
+		Long delay = (Long) args.get("delay");
+		Long period = (Long) args.get("period");
 		
+		if(delay == null) delay = 0L;
+		
+		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				Thread.currentThread().setName("ScriptThread-" + sequence);
-				task.run();
+				Context context = Context.enter();
+				ScriptableObject scope = context.initStandardObjects();
+				Scriptable that = context.newObject(scope);
+				task.call(context, that, scope, new Object[]{});
 			} // run
 		}, delay, period);
-	} // schedule
-
-	public void schedule(long period, final Runnable task) {
-		schedule(0, period, task);
-	} // schedule
-	
-	public void cancel(long sequence){
-		SchedulerTimer timer = timers.remove(sequence);
-		if(timer != null)
-			timer.cancel();
-	} //cancel
-	
-	public Set<Long> getRunningScriptSequences(){
-		Set<Long> runningScriptSequences = new HashSet<Long>();
-		for (Entry<Long, SchedulerTimer> entry : timers.entrySet()) {
-			if(entry.getValue().isScheduled == true)
-				runningScriptSequences.add(entry.getKey());
-		} //for entry
-		return runningScriptSequences;
-	} //getRunningScriptSequences
-	
-	class SchedulerTimer extends Timer {
-		private boolean isScheduled = false;
 		
-		@Override
-		public void schedule(TimerTask task, long delay, long period) {
-			isScheduled = true;
-			super.schedule(task, delay, period);
-		} //schedule
+		ScriptThread thread = (ScriptThread) Thread.currentThread();
+		thread.addSchedulerTimer(timer);
+	} // schedule
 
-		@Override
-		public void cancel() {
-			isScheduled = false;
-			super.cancel();
-		} //cancel
-	} //class
+	/**
+	 * @param args: {
+	 * 		times: [ (string)(hhMM)(required) ]
+	 * }
+	 * @param task: function(){ ... }
+	 */
+	public void scheduleAtFixedTime(Map<String, Object> args, Function task){
+		List<String> hhMMs = (List<String>) args.get("times");
+		
+		String yyyyMMdd = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		SimpleDateFormat format4yyyyMMddHHmm = new SimpleDateFormat("yyyyMMddHHmm");
+		
+		for(String hhMM : hhMMs){
+			try {
+				long targetTimestamp = format4yyyyMMddHHmm.parse(yyyyMMdd + hhMM).getTime();
+				if(targetTimestamp < System.currentTimeMillis())
+					targetTimestamp += 24 * 60 * 60 * 1000;
+				
+				long delay = targetTimestamp - System.currentTimeMillis();
+				long period = 24 * 60 * 60 * 1000;
+				
+				Map<String, Object> scheduleArgs = new HashMap<String, Object>();
+				scheduleArgs.put("delay", delay);
+				scheduleArgs.put("period", period);
+				schedule(scheduleArgs, task);
+			} catch (ParseException e) {
+				logger.error(String.format("%s, errmsg : %s, hhMMs : %s", e.getClass().getSimpleName(), e.getMessage(), hhMMs), e);
+			} //catch
+		} //for hhMM
+	} //scheduleAtFixedTime
 } // class

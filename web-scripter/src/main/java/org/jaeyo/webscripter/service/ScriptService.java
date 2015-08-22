@@ -6,12 +6,8 @@ import javax.inject.Inject;
 
 import org.jaeyo.webscripter.dao.FileWriteStatisticsDAO;
 import org.jaeyo.webscripter.dao.ScriptDAO;
-import org.jaeyo.webscripter.exception.AlreadyStartedException;
-import org.jaeyo.webscripter.exception.NotFoundException;
-import org.jaeyo.webscripter.exception.ScriptNotRunningException;
 import org.jaeyo.webscripter.script.ScriptExecutor;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,20 +23,12 @@ public class ScriptService {
 	@Inject
 	private FileWriteStatisticsDAO fileWriteStatisticsDAO;
 	
-	public void save(String scriptName, String script, String memo){
-		scriptDAO.save(scriptName, script, memo);
-	} //save
-	
-	public void edit(long sequence, String scriptName, String script, String memo){
-		scriptDAO.edit(sequence, scriptName, script, memo);
-	} //edit
-	
-	public JSONArray loadScripts(){
-		JSONArray scripts = scriptDAO.loadScripts();
-		Set<Long> runningScriptSequences = scriptExecutor.getRunningScripts();
+	public JSONArray getScriptInfo(){
+		JSONArray scripts = scriptDAO.selectScriptInfo();
+		Set<String> runningScriptNames = scriptExecutor.getRunningScripts();
 		for (int i = 0; i < scripts.length(); i++) {
 			JSONObject scriptJson = scripts.getJSONObject(i);
-			if(runningScriptSequences.contains(scriptJson.getLong("SEQUENCE"))){
+			if(runningScriptNames.contains(scriptJson.getString("SCRIPT_NAME"))){
 				scriptJson.put("IS_RUNNING", true);
 			} else{
 				scriptJson.put("IS_RUNNING", false);
@@ -50,23 +38,39 @@ public class ScriptService {
 		return scripts;
 	} //loadScripts
 	
-	public JSONObject loadScript(long sequence) throws NotFoundException{
-		return scriptDAO.loadScript(sequence);
-	} //loadScript
+	//---------------------------------------------------------------------------------------
 	
-	public void startScript(long sequence) throws AlreadyStartedException, JSONException, NotFoundException {
-		logger.info("sequence: {}", sequence);
-		String script = loadScript(sequence).getString("SCRIPT");
-		scriptExecutor.execute(sequence, script);
-	} //startScript
-	
-	public void stopScript(long sequence) throws ScriptNotRunningException{
-		logger.info("sequence: {}", sequence);
-		scriptExecutor.stop(sequence);
-	} //stopScript
-	
-	public void removeScript(long sequence){
-		logger.info("sequence: {}", sequence);
-		scriptDAO.removeScript(sequence);
-	} //removeScript
+//	public void save(String scriptName, String script, String memo){
+//		scriptDAO.save(scriptName, script, memo);
+//	} //save
+//	
+//	public void edit(long sequence, String scriptName, String script, String memo){
+//		scriptDAO.edit(sequence, scriptName, script, memo);
+//	} //edit
+//	
+//	public JSONObject loadScript(long sequence) throws NotFoundException{
+//		return scriptDAO.loadScript(sequence);
+//	} //loadScript
+//	
+//	public void startScript(long sequence) throws AlreadyStartedException, JSONException, NotFoundException {
+//		logger.info("sequence: {}", sequence);
+//		String script = loadScript(sequence).getString("SCRIPT");
+//		scriptExecutor.execute(sequence, script);
+//	} //startScript
+//	
+//	public void stopScript(long sequence) throws ScriptNotRunningException{
+//		logger.info("sequence: {}", sequence);
+//		scriptExecutor.stop(sequence);
+//	} //stopScript
+//	
+//	public void removeScript(long sequence){
+//		logger.info("sequence: {}", sequence);
+//		scriptDAO.removeScript(sequence);
+//	} //removeScript
+//	
+//	public JSONArray loadDoc() throws IOException{
+//		InputStream docInput = this.getClass().getClassLoader().getResourceAsStream("spdbreader-doc.json");
+//		String doc = IOUtils.toString(docInput, "utf8");
+//		return new JSONArray(doc);
+//	} //loadDoc
 } //class

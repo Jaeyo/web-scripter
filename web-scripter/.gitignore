@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 derby.log
+=======
+*.log
+>>>>>>> ee3417dc403dd855e51f18287f975175fb536d91
 target/*

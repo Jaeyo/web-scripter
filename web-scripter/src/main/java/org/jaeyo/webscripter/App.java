@@ -18,8 +18,5 @@ public class App {
 		JettyServer jetty = new JettyServer();
 		jetty.start();
 		jetty.join();
-		
-		//TODO new database 등록할 때 필수항목 옆에 표시해놓기. script에서도 
-		//TODO spdbreader-doc.json 파싱
 	} //main
 } //class

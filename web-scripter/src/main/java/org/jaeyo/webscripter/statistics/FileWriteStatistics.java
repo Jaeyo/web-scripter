@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FileWriteStatistics {
-	private Map<Long, TreeMap<Long, AtomicLong>> counters = new HashMap<Long, TreeMap<Long,AtomicLong>>();
+	private Map<String, TreeMap<Long, AtomicLong>> counters = new HashMap<String, TreeMap<Long,AtomicLong>>();
 	private Timer timer = new Timer();
 	
 	@Inject
@@ -26,13 +26,13 @@ public class FileWriteStatistics {
 			@Override
 			public void run() {
 				synchronized (counters) {
-					for(Entry<Long, TreeMap<Long, AtomicLong>> counterEntry : counters.entrySet()){
-						long scriptSequence = counterEntry.getKey();
+					for(Entry<String, TreeMap<Long, AtomicLong>> counterEntry : counters.entrySet()){
+						String scriptName = counterEntry.getKey();
 						TreeMap<Long, AtomicLong> counter = counterEntry.getValue();
 						while(counter.keySet().size() >= 2){
 							long oldCountTimestamp = counter.firstKey();
 							long oldCountValue = counter.remove(oldCountTimestamp).get();
-							fileWriteStatisticsService.insertStatistics(scriptSequence, oldCountTimestamp, oldCountValue);
+							fileWriteStatisticsService.insertStatistics(scriptName, oldCountTimestamp, oldCountValue);
 						} //if
 					} //for counter
 				} //sync
@@ -42,12 +42,12 @@ public class FileWriteStatistics {
 		}, 60*1000, 60*1000);
 	} //INIT
 
-	public void incrementCount(long scriptSequence){
+	public void incrementCount(String scriptName){
 		synchronized (counters) {
-			TreeMap<Long, AtomicLong> counter = counters.get(scriptSequence);
+			TreeMap<Long, AtomicLong> counter = counters.get(scriptName);
 			if(counter == null){
 				counter = new TreeMap<Long, AtomicLong>();
-				counters.put(scriptSequence, counter);
+				counters.put(scriptName, counter);
 			} //if
 
 			long timestamp = System.currentTimeMillis();
